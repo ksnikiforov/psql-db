@@ -17,6 +17,34 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: check_purchase(); Type: FUNCTION; Schema: public; Owner: kirill
+--
+
+CREATE FUNCTION public.check_purchase() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+		cond bool;
+BEGIN
+    SELECT NEW.comic_id IN (SELECT pb.book_id from customers as c, purchase as p, purchased_book as pb
+                            WHERE c.customer_id=NEW.customer_id
+                            AND c.customer_id=p.customer_id
+                            AND p.purchase_id=pb.purchase_id
+                           	AND p.status='delivered')
+    INTO cond;
+    
+		IF NOT cond THEN
+    		RETURN NULL;
+    ELSE
+    		RETURN NEW;
+    END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.check_purchase() OWNER TO kirill;
+
+--
 -- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
@@ -59,7 +87,7 @@ ALTER FUNCTION public.status_update() OWNER TO kirill;
 -- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
-CREATE FUNCTION public.top_authors(book_num integer, lim integer, genre text DEFAULT '0'::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
+CREATE FUNCTION public.top_authors(book_num integer, lim integer, genre text DEFAULT ''::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
     LANGUAGE plpgsql
     AS $_$
 BEGIN
@@ -68,7 +96,7 @@ BEGIN
         select author_book.author_id, ceil(avg(rating)) as avg_rating 
         from comic_book, author_book
         where comic_book.comic_id=author_book.comic_id
-      	and ($3 = '0'
+      	and ($3 = ''
         or comic_book.comic_id in (select comic_book.comic_id from comic_book, genre
                                     where $3=genre.genre
                                     and comic_book.comic_id=genre.comic_id))
@@ -355,7 +383,7 @@ ALTER SEQUENCE public.purchase_id_seq OWNED BY public.purchase.purchase_id;
 
 CREATE TABLE public.purchased_book (
     book_id integer NOT NULL,
-    purchaise_id integer NOT NULL,
+    purchase_id integer NOT NULL,
     quanity integer NOT NULL
 );
 
@@ -2271,6 +2299,9 @@ ultrices	115
 --
 
 COPY public.log ("time", description, purchase_id) FROM stdin;
+2020-06-11 02:15:22.693783	paid	8
+2020-06-11 02:22:49.195683	delivered	8
+2020-06-11 02:26:51.334096	paid	8
 \.
 
 
@@ -2387,6 +2418,7 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 --
 
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
+8	2020-06-11 02:15:22.693783	$10.00	1	\N	paid
 \.
 
 
@@ -2394,7 +2426,8 @@ COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status
 -- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
-COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
+COPY public.purchased_book (book_id, purchase_id, quanity) FROM stdin;
+1	8	1
 \.
 
 
@@ -2403,7 +2436,6 @@ COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
 --
 
 COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, cons, date) FROM stdin;
-5	1	1	5	\N	\N	\N	2020-06-10 17:54:57.513562
 9	1	11	10	nice	nice	not nice	2020-06-10 17:55:56.785995
 11	2	90	7	\N	\N	\N	2020-06-10 18:51:10.442313
 12	47	43	2	luctus vulputate,	Curabitur	eu dolor egestas rhoncus. Proin nisl	2020-06-10 18:58:12.939536
@@ -2806,6 +2838,7 @@ COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, co
 409	75	26	7	\N	\N	\N	2020-06-10 19:02:04.509975
 410	16	26	9	\N	\N	\N	2020-06-10 19:02:04.509975
 411	366	18	1	\N	\N	\N	2020-06-10 19:02:04.509975
+425	1	1	10	\N	\N	\N	2020-06-11 02:26:38.959631
 \.
 
 
@@ -2866,14 +2899,14 @@ SELECT pg_catalog.setval('public.publishers_id_seq', 1, false);
 -- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
-SELECT pg_catalog.setval('public.purchase_id_seq', 7, true);
+SELECT pg_catalog.setval('public.purchase_id_seq', 8, true);
 
 
 --
 -- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
-SELECT pg_catalog.setval('public.reviews_id_seq', 411, true);
+SELECT pg_catalog.setval('public.reviews_id_seq', 427, true);
 
 
 --
@@ -2960,7 +2993,7 @@ ALTER TABLE ONLY public.purchase
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchaise_id);
+    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchase_id);
 
 
 --
@@ -3017,7 +3050,7 @@ CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 -- Name: fki_purchase; Type: INDEX; Schema: public; Owner: kirill
 --
 
-CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
+CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchase_id);
 
 
 --
@@ -3025,6 +3058,15 @@ CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
 --
 
 CREATE INDEX fki_series_id ON public.comic_book USING btree (series_id);
+
+
+--
+-- Name: reviews check_purchase; Type: TRIGGER; Schema: public; Owner: kirill
+--
+
+CREATE TRIGGER check_purchase BEFORE INSERT ON public.reviews FOR EACH ROW EXECUTE FUNCTION public.check_purchase();
+
+ALTER TABLE public.reviews DISABLE TRIGGER check_purchase;
 
 
 --
@@ -3111,7 +3153,7 @@ ALTER TABLE ONLY public.comic_book
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchase FOREIGN KEY (purchaise_id) REFERENCES public.purchase(purchase_id) NOT VALID;
+    ADD CONSTRAINT purchase FOREIGN KEY (purchase_id) REFERENCES public.purchase(purchase_id) NOT VALID;
 
 
 --
