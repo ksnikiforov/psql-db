@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.3
--- Dumped by pg_dump version 12.3
+-- Dumped from database version 11.7 (Raspbian 11.7-0+deb10u1)
+-- Dumped by pg_dump version 11.7 (Raspbian 11.7-0+deb10u1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,28 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: status_update(); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: livbig
+--
+
+CREATE FUNCTION public.rating_recalculation() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+begin
+update comic_book
+set rating = stars from(
+select comic_id, avg(rating) as stars
+from reviews
+group by comic_id
+) as foo
+where comic_book.comic_id = foo.comic_id;
+end;
+$$;
+
+
+ALTER FUNCTION public.rating_recalculation() OWNER TO livbig;
+
+--
+-- Name: status_update(); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
 CREATE FUNCTION public.status_update() RETURNS trigger
@@ -32,14 +53,14 @@ END;
 $$;
 
 
-ALTER FUNCTION public.status_update() OWNER TO kirill;
+ALTER FUNCTION public.status_update() OWNER TO livbig;
 
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET default_with_oids = false;
 
 --
--- Name: author_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: author_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.author_book (
@@ -48,10 +69,10 @@ CREATE TABLE public.author_book (
 );
 
 
-ALTER TABLE public.author_book OWNER TO kirill;
+ALTER TABLE public.author_book OWNER TO livbig;
 
 --
--- Name: authors; Type: TABLE; Schema: public; Owner: kirill
+-- Name: authors; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.authors (
@@ -61,10 +82,10 @@ CREATE TABLE public.authors (
 );
 
 
-ALTER TABLE public.authors OWNER TO kirill;
+ALTER TABLE public.authors OWNER TO livbig;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.authors_id_seq
@@ -76,17 +97,17 @@ CREATE SEQUENCE public.authors_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authors_id_seq OWNER TO kirill;
+ALTER TABLE public.authors_id_seq OWNER TO livbig;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.author_id;
 
 
 --
--- Name: comic_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: comic_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.comic_book (
@@ -103,10 +124,10 @@ CREATE TABLE public.comic_book (
 );
 
 
-ALTER TABLE public.comic_book OWNER TO kirill;
+ALTER TABLE public.comic_book OWNER TO livbig;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.comic_book_id_seq
@@ -118,17 +139,17 @@ CREATE SEQUENCE public.comic_book_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.comic_book_id_seq OWNER TO kirill;
+ALTER TABLE public.comic_book_id_seq OWNER TO livbig;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.comic_book_id_seq OWNED BY public.comic_book.comic_id;
 
 
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: kirill
+-- Name: customers; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.customers (
@@ -139,10 +160,10 @@ CREATE TABLE public.customers (
 );
 
 
-ALTER TABLE public.customers OWNER TO kirill;
+ALTER TABLE public.customers OWNER TO livbig;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.customer_id_seq
@@ -154,17 +175,17 @@ CREATE SEQUENCE public.customer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.customer_id_seq OWNER TO kirill;
+ALTER TABLE public.customer_id_seq OWNER TO livbig;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.customer_id_seq OWNED BY public.customers.customer_id;
 
 
 --
--- Name: employee; Type: TABLE; Schema: public; Owner: kirill
+-- Name: employee; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.employee (
@@ -175,10 +196,10 @@ CREATE TABLE public.employee (
 );
 
 
-ALTER TABLE public.employee OWNER TO kirill;
+ALTER TABLE public.employee OWNER TO livbig;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.employee_id_seq
@@ -190,17 +211,17 @@ CREATE SEQUENCE public.employee_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.employee_id_seq OWNER TO kirill;
+ALTER TABLE public.employee_id_seq OWNER TO livbig;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.employee_id_seq OWNED BY public.employee.emp_id;
 
 
 --
--- Name: genre; Type: TABLE; Schema: public; Owner: kirill
+-- Name: genre; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.genre (
@@ -209,10 +230,10 @@ CREATE TABLE public.genre (
 );
 
 
-ALTER TABLE public.genre OWNER TO kirill;
+ALTER TABLE public.genre OWNER TO livbig;
 
 --
--- Name: log; Type: TABLE; Schema: public; Owner: kirill
+-- Name: log; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.log (
@@ -222,10 +243,10 @@ CREATE TABLE public.log (
 );
 
 
-ALTER TABLE public.log OWNER TO kirill;
+ALTER TABLE public.log OWNER TO livbig;
 
 --
--- Name: publishers; Type: TABLE; Schema: public; Owner: kirill
+-- Name: publishers; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.publishers (
@@ -234,10 +255,10 @@ CREATE TABLE public.publishers (
 );
 
 
-ALTER TABLE public.publishers OWNER TO kirill;
+ALTER TABLE public.publishers OWNER TO livbig;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.publishers_id_seq
@@ -249,17 +270,17 @@ CREATE SEQUENCE public.publishers_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.publishers_id_seq OWNER TO kirill;
+ALTER TABLE public.publishers_id_seq OWNER TO livbig;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.publishers_id_seq OWNED BY public.publishers.publisher_id;
 
 
 --
--- Name: purchase; Type: TABLE; Schema: public; Owner: kirill
+-- Name: purchase; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.purchase (
@@ -274,10 +295,10 @@ CREATE TABLE public.purchase (
 );
 
 
-ALTER TABLE public.purchase OWNER TO kirill;
+ALTER TABLE public.purchase OWNER TO livbig;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.purchase_id_seq
@@ -289,17 +310,17 @@ CREATE SEQUENCE public.purchase_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.purchase_id_seq OWNER TO kirill;
+ALTER TABLE public.purchase_id_seq OWNER TO livbig;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.purchase_id_seq OWNED BY public.purchase.purchase_id;
 
 
 --
--- Name: purchased_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: purchased_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.purchased_book (
@@ -309,10 +330,10 @@ CREATE TABLE public.purchased_book (
 );
 
 
-ALTER TABLE public.purchased_book OWNER TO kirill;
+ALTER TABLE public.purchased_book OWNER TO livbig;
 
 --
--- Name: reviews; Type: TABLE; Schema: public; Owner: kirill
+-- Name: reviews; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.reviews (
@@ -329,10 +350,10 @@ CREATE TABLE public.reviews (
 );
 
 
-ALTER TABLE public.reviews OWNER TO kirill;
+ALTER TABLE public.reviews OWNER TO livbig;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.reviews_id_seq
@@ -344,17 +365,17 @@ CREATE SEQUENCE public.reviews_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.reviews_id_seq OWNER TO kirill;
+ALTER TABLE public.reviews_id_seq OWNER TO livbig;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.review_id;
 
 
 --
--- Name: series; Type: TABLE; Schema: public; Owner: kirill
+-- Name: series; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.series (
@@ -365,10 +386,10 @@ CREATE TABLE public.series (
 );
 
 
-ALTER TABLE public.series OWNER TO kirill;
+ALTER TABLE public.series OWNER TO livbig;
 
 --
--- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.series_id_seq
@@ -380,73 +401,73 @@ CREATE SEQUENCE public.series_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.series_id_seq OWNER TO kirill;
+ALTER TABLE public.series_id_seq OWNER TO livbig;
 
 --
--- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.series_id_seq OWNED BY public.series.series_id;
 
 
 --
--- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.authors ALTER COLUMN author_id SET DEFAULT nextval('public.authors_id_seq'::regclass);
 
 
 --
--- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book ALTER COLUMN comic_id SET DEFAULT nextval('public.comic_book_id_seq'::regclass);
 
 
 --
--- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.customers ALTER COLUMN customer_id SET DEFAULT nextval('public.customer_id_seq'::regclass);
 
 
 --
--- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.employee ALTER COLUMN emp_id SET DEFAULT nextval('public.employee_id_seq'::regclass);
 
 
 --
--- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.publishers ALTER COLUMN publisher_id SET DEFAULT nextval('public.publishers_id_seq'::regclass);
 
 
 --
--- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase ALTER COLUMN purchase_id SET DEFAULT nextval('public.purchase_id_seq'::regclass);
 
 
 --
--- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews ALTER COLUMN review_id SET DEFAULT nextval('public.reviews_id_seq'::regclass);
 
 
 --
--- Name: series series_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: series series_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.series ALTER COLUMN series_id SET DEFAULT nextval('public.series_id_seq'::regclass);
 
 
 --
--- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.author_book (author_id, comic_id) FROM stdin;
@@ -994,7 +1015,7 @@ COPY public.author_book (author_id, comic_id) FROM stdin;
 
 
 --
--- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.authors (author_id, name, surname) FROM stdin;
@@ -1102,141 +1123,52 @@ COPY public.authors (author_id, name, surname) FROM stdin;
 
 
 --
--- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id) FROM stdin;
-1	9	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19
-2	3	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18
-3	3	515	mauris a nunc. In at	$10.52	1938-11-14	2	65
-4	5	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86
-5	4	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100
-6	9	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25
-7	7	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85
 8	8	910	consequat, lectus sit amet luctus vulputate, nisi sem semper	$32.26	2003-09-13	5	14
-9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88
 10	2	467	euismod et, commodo at, libero.	$3.49	1963-09-04	10	16
 11	2	670	fringilla ornare placerat, orci lacus vestibulum lorem, sit amet ultricies sem	$7.80	2016-05-01	10	20
-12	10	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47
-13	3	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37
-14	5	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70
-15	5	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51
-16	5	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89
-17	6	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6
-18	2	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18
-19	5	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12
-20	3	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65
 21	5	620	Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate	$24.26	2009-05-24	6	99
-22	6	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36
-23	6	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40
 24	1	563	dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu odio tristique pharetra.	$88.18	1976-03-14	9	81
 25	3	973	lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum fermentum arcu. Vestibulum	$30.79	2004-05-16	5	82
 26	1	749	lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$80.37	1960-02-22	1	21
 27	5	160	a, malesuada id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis	$27.14	2007-09-27	10	32
-28	7	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18
-29	2	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68
-30	5	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79
-31	1	666	vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus.	$70.89	1965-05-09	4	72
 32	6	204	elit, a feugiat tellus lorem eu metus. In lorem. Donec	$40.10	1971-01-07	10	39
-33	2	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82
-34	7	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67
-35	1	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73
 36	10	904	lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$79.03	1955-12-22	5	80
-37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6
-38	2	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77
 39	6	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13
 40	1	73	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam auctor, velit	$46.09	1972-12-12	1	69
 41	5	114	erat neque non quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames	$25.70	1981-06-12	6	57
-42	9	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8
-43	10	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71
-44	9	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54
 45	6	600	Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales	$44.28	1943-06-21	3	40
-46	5	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98
-47	2	647	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem,	$50.36	2001-02-07	1	52
-48	6	798	vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate	$98.98	1958-09-06	10	56
 49	10	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80
 50	1	221	Fusce aliquet magna a neque. Nullam ut nisi	$87.70	1984-11-27	6	66
-51	4	251	cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem.	$94.75	1972-08-18	3	92
 52	2	776	risus varius orci, in consequat enim diam vel arcu. Curabitur ut odio vel est	$90.99	1987-06-13	6	64
-53	3	91	libero. Donec consectetuer mauris id sapien. Cras dolor dolor, tempus	$87.25	1933-07-18	4	24
 54	8	963	iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$7.31	1976-06-30	1	5
 55	1	822	amet nulla. Donec non justo. Proin	$54.91	1947-02-24	8	23
-56	1	684	dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed eu eros.	$51.07	1973-01-15	6	72
-57	7	406	accumsan convallis, ante lectus convallis est, vitae sodales	$77.13	1986-08-22	8	50
-58	10	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44
-59	9	132	arcu. Curabitur ut odio vel est tempor bibendum. Donec	$5.59	2019-08-07	6	34
-60	3	525	quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus.	$65.64	1945-10-09	6	21
-61	9	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91
-62	3	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75
 63	2	230	Morbi metus. Vivamus euismod urna.	$25.24	1996-08-19	4	70
-64	6	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77
 65	4	546	sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet,	$69.17	1964-08-06	6	48
-66	2	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13
-67	9	691	eget, ipsum. Donec sollicitudin adipiscing ligula. Aenean gravida nunc sed pede. Cum	$11.20	1936-10-21	7	54
-68	7	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75
 69	9	689	velit. Cras lorem lorem, luctus ut,	$17.91	1948-07-18	6	3
-70	7	342	Nunc commodo auctor velit. Aliquam nisl. Nulla eu neque	$65.14	1937-02-07	1	77
-71	9	786	Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam	$52.02	1952-03-03	10	27
-72	8	655	dolor sit amet, consectetuer adipiscing elit. Aliquam	$8.03	1993-04-04	1	80
 73	1	563	Praesent luctus. Curabitur egestas nunc sed libero. Proin sed turpis nec mauris blandit mattis.	$0.78	1952-04-19	9	94
 74	3	528	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus.	$7.31	1936-06-27	9	15
-75	5	898	dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac	$68.43	2001-12-04	9	15
-76	9	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49
-77	7	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6
-78	9	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72
-79	2	918	ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce aliquam, enim nec tempus	$77.75	1936-07-31	6	63
-80	9	286	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend non, dapibus rutrum,	$86.10	2006-08-07	4	73
 81	8	90	In tincidunt congue turpis. In condimentum. Donec at	$41.01	1963-05-07	9	10
 82	1	951	sed libero. Proin sed turpis nec mauris blandit	$91.56	1957-06-01	2	23
 83	6	905	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$85.22	1999-05-14	7	63
-84	8	289	neque. Morbi quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla.	$84.64	1993-04-27	5	7
-85	5	787	pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec est. Nunc ullamcorper,	$90.19	1947-11-16	1	24
 86	7	470	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc	$85.19	2004-10-10	3	11
-87	1	45	diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est	$6.03	1938-11-19	7	23
-88	9	954	placerat, orci lacus vestibulum lorem, sit amet ultricies	$57.70	1932-07-15	10	65
-89	8	962	quam quis diam. Pellentesque habitant morbi tristique senectus	$27.07	2008-03-21	7	19
-90	8	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15
-91	7	525	arcu. Vestibulum ante ipsum primis in faucibus orci luctus	$20.31	1947-09-07	9	77
 92	7	88	magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$94.88	1993-05-18	3	68
-93	2	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78
 94	8	576	leo, in lobortis tellus justo sit amet nulla. Donec	$84.89	1934-03-28	9	2
-95	6	769	non ante bibendum ullamcorper. Duis cursus, diam at pretium aliquet,	$21.18	1936-10-15	7	58
-96	4	417	Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc	$65.53	2010-06-24	10	41
 97	4	993	quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$85.84	1963-05-29	5	69
-98	3	196	purus. Duis elementum, dui quis accumsan convallis,	$32.34	1933-06-10	9	99
-99	3	408	venenatis vel, faucibus id, libero.	$34.94	1959-09-29	4	61
-100	3	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60
 101	2	82	erat, in consectetuer ipsum nunc	$94.57	1955-08-20	10	14
 102	5	724	magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus.	$26.77	1957-05-19	5	95
-103	3	951	mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$87.01	1944-11-07	5	71
-104	7	184	mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$32.08	2019-07-30	8	8
-105	4	260	adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis	$55.58	1989-08-04	3	57
-106	4	468	Nullam scelerisque neque sed sem egestas blandit. Nam nulla magna, malesuada vel,	$32.15	1970-03-03	6	48
 107	1	250	mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam adipiscing	$16.26	2006-11-03	3	47
 108	1	777	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat	$80.82	1968-03-05	3	46
-109	2	498	tellus, imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor	$16.04	1983-01-13	5	6
 110	10	672	Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus. Proin nisl	$55.33	1988-11-28	7	91
-111	8	632	Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a, malesuada id,	$92.93	1982-04-13	9	86
-112	4	271	eget metus eu erat semper rutrum. Fusce dolor quam, elementum at, egestas a,	$19.66	1949-05-10	3	17
-113	6	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2
 114	2	854	Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	$82.78	2002-08-03	7	73
-115	3	536	Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper.	$36.28	1973-03-22	10	25
-116	7	491	sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris	$36.42	1989-06-22	7	41
 117	9	676	faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.	$62.68	1993-02-19	8	32
-118	2	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63
-119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2
-120	7	51	adipiscing ligula. Aenean gravida nunc sed pede. Cum sociis natoque	$41.49	2013-04-06	1	97
-121	9	332	cursus non, egestas a, dui. Cras	$25.42	2007-05-24	7	83
 122	8	830	ut, pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis	$47.88	1943-07-21	8	98
 123	7	597	eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$91.94	1999-11-13	3	61
-124	5	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79
-125	10	101	Ut semper pretium neque. Morbi quis	$57.26	1977-02-05	6	87
-126	9	994	Nullam velit dui, semper et, lacinia vitae, sodales at, velit.	$27.12	1943-01-04	2	38
 127	3	82	vitae risus. Duis a mi fringilla mi	$92.29	1933-12-25	1	18
-128	8	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27
-129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100
 130	2	281	adipiscing elit. Etiam laoreet, libero et tristique	$82.33	2005-06-04	10	8
-131	1	628	diam. Sed diam lorem, auctor quis, tristique	$28.47	1957-02-28	9	58
 132	4	153	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend	$56.64	1972-05-20	5	1
 133	4	829	nec, diam. Duis mi enim, condimentum eget, volutpat ornare, facilisis eget, ipsum. Donec	$87.84	1996-04-29	4	3
 134	7	625	pede. Suspendisse dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer	$64.53	1952-07-16	7	14
@@ -1244,273 +1176,362 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 136	6	631	mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$46.67	1960-10-11	4	4
 137	5	333	amet massa. Quisque porttitor eros nec	$40.51	1961-05-18	5	62
 138	6	318	ipsum. Suspendisse non leo. Vivamus nibh dolor,	$17.91	1961-02-22	3	32
-139	7	725	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	$35.29	2007-07-17	9	67
-140	9	378	ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet	$26.49	2001-08-12	5	60
-141	1	349	sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis	$44.77	1959-05-24	5	62
-142	9	279	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem	$65.49	1938-08-31	5	98
 143	10	815	Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam.	$29.80	1990-07-06	8	65
 144	5	500	molestie in, tempus eu, ligula.	$80.22	1951-12-19	8	68
-145	4	513	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit	$5.60	1940-01-20	9	7
-146	7	41	Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$6.19	1992-06-26	9	13
-147	3	917	risus. Nulla eget metus eu erat semper rutrum. Fusce dolor quam, elementum at,	$32.50	1978-08-27	6	31
 148	4	563	Quisque purus sapien, gravida non, sollicitudin	$56.83	2012-04-23	2	90
-149	4	582	semper erat, in consectetuer ipsum nunc id enim. Curabitur massa. Vestibulum accumsan neque et	$3.24	1972-12-08	6	22
 150	7	434	magnis dis parturient montes, nascetur ridiculus mus. Proin	$51.18	1982-07-11	10	34
-151	2	937	feugiat. Lorem ipsum dolor sit amet,	$30.34	1956-03-10	4	10
 152	6	697	quam quis diam. Pellentesque habitant morbi tristique senectus et	$32.56	1985-07-18	10	57
-153	1	34	egestas ligula. Nullam feugiat placerat velit. Quisque	$82.06	2011-02-14	7	9
 154	6	579	Proin velit. Sed malesuada augue ut lacus. Nulla	$50.14	1979-09-22	3	90
-155	7	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34
 156	4	426	id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec,	$10.92	1943-03-10	4	31
-157	9	250	nascetur ridiculus mus. Aenean eget magna. Suspendisse tristique neque	$99.80	1956-10-28	9	78
 158	8	913	odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$94.47	1948-05-20	1	64
-159	9	550	justo sit amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper.	$72.39	2006-07-10	9	28
-160	9	710	ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor	$43.16	1974-07-04	4	14
 161	2	545	odio a purus. Duis elementum, dui quis accumsan convallis,	$34.53	1966-08-16	5	7
 162	1	698	dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer sem elit,	$24.78	1980-09-08	10	84
-163	5	70	ipsum nunc id enim. Curabitur	$19.21	1940-12-13	2	71
-164	9	541	enim. Etiam gravida molestie arcu. Sed eu nibh vulputate mauris sagittis placerat. Cras	$94.44	1931-08-17	5	43
-165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32
-166	5	186	bibendum fermentum metus. Aenean sed pede nec ante blandit viverra.	$51.41	1960-12-21	2	44
-167	4	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10
-168	1	383	ut, nulla. Cras eu tellus eu augue porttitor interdum.	$25.01	1980-07-10	3	92
-169	10	348	libero mauris, aliquam eu, accumsan sed,	$25.22	2015-12-19	7	3
-170	8	488	Nullam nisl. Maecenas malesuada fringilla est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed	$99.49	1954-04-06	3	47
-171	2	887	dapibus gravida. Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$86.24	1938-01-13	8	31
 172	2	752	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed	$49.53	2010-11-01	3	7
-173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44
-174	8	488	Integer vitae nibh. Donec est mauris, rhoncus id,	$89.97	1965-01-15	5	69
-175	3	929	eleifend. Cras sed leo. Cras	$69.77	1962-03-13	4	11
 176	2	378	quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla. In tincidunt congue	$17.15	1983-01-04	8	44
 238	9	340	non leo. Vivamus nibh dolor, nonummy ac, feugiat	$8.65	2003-03-23	5	66
-177	6	129	sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh. Aliquam ornare, libero at	$40.86	2013-08-13	5	24
-178	6	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44
 179	3	287	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer	$92.38	1973-01-19	10	13
-180	1	153	Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$61.28	1983-10-02	7	96
-181	7	447	lorem lorem, luctus ut, pellentesque eget,	$85.19	2008-09-14	4	7
 182	2	935	libero. Proin sed turpis nec	$58.61	1960-05-07	7	84
 183	2	872	adipiscing fringilla, porttitor vulputate, posuere	$90.93	2018-07-20	5	20
-184	7	545	enim diam vel arcu. Curabitur ut odio vel est tempor	$2.82	1942-10-14	1	82
 185	9	261	dapibus id, blandit at, nisi. Cum sociis natoque	$31.62	1939-07-16	5	76
 186	3	599	dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit.	$96.29	1997-03-27	6	48
-187	1	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8
 188	10	965	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et,	$9.63	1953-02-18	3	2
-189	10	469	a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$39.94	1943-07-22	10	93
-190	10	445	Cras sed leo. Cras vehicula aliquet libero. Integer	$71.56	1959-11-14	1	85
-191	2	855	malesuada augue ut lacus. Nulla tincidunt,	$34.71	1941-06-12	10	19
-192	5	784	dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus. Vivamus euismod urna. Nullam	$11.94	1949-12-20	2	57
 193	9	962	urna. Nunc quis arcu vel quam dignissim	$60.45	1970-01-05	10	20
-194	4	528	ut ipsum ac mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris	$54.20	1977-08-08	2	13
-195	3	758	dui quis accumsan convallis, ante lectus	$80.99	1949-01-08	4	53
-196	3	233	molestie orci tincidunt adipiscing. Mauris molestie pharetra	$2.51	1976-09-02	6	87
-197	2	550	enim. Curabitur massa. Vestibulum accumsan neque	$45.08	1961-06-06	4	100
-198	1	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48
-199	10	1	eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur	$54.18	1931-04-10	7	64
-200	8	558	dui augue eu tellus. Phasellus elit	$8.74	1982-02-01	5	6
 201	5	730	mauris. Morbi non sapien molestie orci tincidunt	$72.06	1982-02-22	1	47
 202	4	321	penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$83.45	1987-08-30	8	86
-203	6	40	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus.	$22.40	1960-07-11	9	49
 204	5	731	neque. In ornare sagittis felis. Donec tempor, est ac	$78.33	2012-10-29	5	81
 205	7	775	ac libero nec ligula consectetuer rhoncus. Nullam velit dui, semper et, lacinia vitae,	$38.36	2016-09-17	8	12
 206	5	623	leo. Morbi neque tellus, imperdiet non, vestibulum nec, euismod in,	$95.62	1940-10-02	7	6
 207	10	761	Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$37.65	1953-03-27	2	72
-208	1	906	imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas. Duis	$30.08	1979-03-23	5	79
-209	5	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36
 210	9	550	sit amet ultricies sem magna nec quam. Curabitur vel lectus. Cum sociis natoque penatibus	$49.24	1943-12-07	7	9
 211	6	516	tempor lorem, eget mollis lectus pede	$71.45	1986-06-28	6	20
-212	6	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37
-213	8	53	urna. Nunc quis arcu vel quam dignissim pharetra.	$41.57	2018-06-09	1	69
-214	4	429	sapien. Nunc pulvinar arcu et pede. Nunc sed orci	$48.61	1931-04-19	1	43
-215	7	141	Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec	$16.58	1980-04-06	3	67
-216	5	263	magna. Cras convallis convallis dolor. Quisque tincidunt pede	$84.40	2008-07-04	3	46
 217	3	753	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam	$23.30	1942-06-27	4	90
-218	7	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81
 219	4	669	Nullam feugiat placerat velit. Quisque varius. Nam	$38.26	1956-11-01	7	28
 220	3	997	dui quis accumsan convallis, ante lectus convallis	$3.14	1996-11-11	6	100
-221	10	187	eu enim. Etiam imperdiet dictum magna.	$66.80	1989-12-17	2	70
 222	8	684	non nisi. Aenean eget metus. In nec orci. Donec nibh. Quisque nonummy ipsum non	$75.11	1952-12-10	5	87
-223	3	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89
-224	10	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16
-225	7	46	viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$78.85	1952-03-19	6	48
-226	6	781	vulputate, posuere vulputate, lacus. Cras interdum. Nunc	$42.81	1983-01-23	6	7
-227	1	196	malesuada malesuada. Integer id magna et ipsum cursus	$44.01	1947-02-17	5	28
-228	10	567	Proin velit. Sed malesuada augue ut lacus. Nulla	$37.77	1942-11-04	6	57
 229	7	818	Aliquam tincidunt, nunc ac mattis ornare, lectus ante dictum	$39.00	1992-02-12	2	68
-230	6	353	Donec luctus aliquet odio. Etiam ligula tortor, dictum eu, placerat eget, venenatis a, magna. Lorem	$2.27	1968-11-22	2	48
-231	8	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55
-232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15
 233	2	82	egestas a, dui. Cras pellentesque. Sed dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed	$38.09	1941-11-07	6	64
-234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78
 235	9	585	accumsan neque et nunc. Quisque ornare tortor at	$9.13	1956-05-23	3	10
 236	7	616	sed tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet ullamcorper.	$83.86	2000-03-03	4	24
 237	1	135	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida	$32.37	1992-08-09	9	44
+178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44
 239	10	176	ante lectus convallis est, vitae sodales nisi magna sed	$11.53	1988-04-05	8	44
-240	8	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51
 241	6	788	sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent	$24.11	2003-06-27	6	14
-242	5	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49
-243	9	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28
 244	10	488	Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$50.35	1990-11-30	10	14
 245	5	714	sed pede nec ante blandit viverra. Donec tempus, lorem	$76.80	1996-07-27	6	31
 246	8	393	dui quis accumsan convallis, ante	$19.31	1936-12-22	8	60
-247	4	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17
 248	1	80	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem, eget mollis	$20.02	1963-02-27	7	57
-249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62
-250	3	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89
-251	9	432	id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus,	$67.50	1983-03-10	2	51
 252	9	910	ligula. Aenean euismod mauris eu elit. Nulla facilisi.	$9.76	1962-11-30	8	84
-253	7	230	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac	$5.24	2008-12-05	7	81
-254	6	321	Quisque ornare tortor at risus.	$55.69	1971-01-11	9	23
 255	8	285	fermentum metus. Aenean sed pede nec ante blandit viverra.	$41.88	2013-08-19	7	31
 256	4	555	placerat, orci lacus vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$91.54	1949-09-27	2	92
 257	8	987	massa. Integer vitae nibh. Donec est	$91.15	1968-09-04	8	3
-258	1	365	consectetuer adipiscing elit. Etiam laoreet, libero	$2.19	1980-02-12	5	74
 259	3	978	velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus.	$45.66	1943-07-31	2	87
 260	3	659	augue id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$26.19	2006-12-25	9	15
 261	9	955	torquent per conubia nostra, per inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare.	$99.09	1984-11-21	8	78
-262	5	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82
-263	3	672	fermentum vel, mauris. Integer sem elit, pharetra ut, pharetra	$85.61	1989-01-26	3	6
 264	5	526	Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan laoreet ipsum.	$68.11	1930-06-25	3	95
-265	4	960	vel sapien imperdiet ornare. In faucibus. Morbi vehicula.	$7.93	1943-03-12	5	27
 266	9	279	Etiam laoreet, libero et tristique pellentesque, tellus	$37.51	1966-02-08	2	4
-267	7	307	Curabitur consequat, lectus sit amet luctus vulputate, nisi sem semper	$74.32	1965-01-01	4	84
-268	9	93	mauris elit, dictum eu, eleifend nec,	$74.74	1970-05-22	10	30
-269	4	874	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus.	$15.93	1941-08-17	2	72
-270	3	486	est mauris, rhoncus id, mollis nec, cursus	$51.06	1944-06-12	10	63
 271	1	108	convallis, ante lectus convallis est, vitae sodales nisi magna sed dui.	$62.84	2000-05-07	2	18
 272	5	322	sed leo. Cras vehicula aliquet libero. Integer in magna. Phasellus	$28.31	1979-09-15	8	68
-273	9	623	amet, risus. Donec nibh enim, gravida	$12.84	1958-06-28	1	49
-274	9	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78
 275	1	601	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem	$26.41	1982-05-13	8	80
 276	6	510	pede. Nunc sed orci lobortis augue scelerisque mollis. Phasellus libero mauris, aliquam	$5.06	1964-02-24	1	54
 277	5	63	facilisis, magna tellus faucibus leo, in lobortis tellus justo sit amet nulla.	$63.82	2016-03-22	8	75
-278	6	85	amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam	$18.54	1985-05-28	5	35
 279	5	111	quis arcu vel quam dignissim	$10.89	1973-04-21	5	72
-280	3	106	quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce	$7.97	2007-04-01	8	73
 281	2	857	lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$33.96	1959-10-08	1	78
 282	10	152	rhoncus. Nullam velit dui, semper	$13.28	1946-12-09	10	1
-283	4	786	elementum sem, vitae aliquam eros	$2.42	1943-12-18	1	6
-284	6	170	amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat.	$36.76	1966-01-12	3	88
-285	5	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45
-286	7	385	arcu iaculis enim, sit amet ornare	$73.09	2005-09-13	10	20
-287	3	60	dignissim pharetra. Nam ac nulla.	$28.47	1959-05-31	7	30
-288	10	229	et malesuada fames ac turpis	$31.58	1983-09-29	5	16
-289	10	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10
-290	7	246	vitae purus gravida sagittis. Duis gravida. Praesent eu nulla	$10.08	1981-07-26	2	53
-291	2	664	lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis,	$7.51	1982-05-11	3	25
-292	10	523	ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut sagittis lobortis	$28.27	1987-02-21	6	78
-293	4	109	euismod est arcu ac orci. Ut semper	$27.96	2008-02-21	10	79
 294	3	555	mollis. Duis sit amet diam eu dolor	$71.42	1955-11-08	8	37
-295	10	992	pharetra. Nam ac nulla. In tincidunt	$89.51	1967-06-20	7	29
-296	10	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25
-297	9	876	dictum. Phasellus in felis. Nulla tempor	$94.42	2017-11-22	8	3
 298	7	336	vel est tempor bibendum. Donec	$73.68	1948-07-19	10	1
-299	2	328	augue ut lacus. Nulla tincidunt, neque vitae semper egestas,	$87.32	2008-04-18	8	47
-300	5	162	Duis mi enim, condimentum eget, volutpat	$98.56	1975-09-20	4	39
-301	4	749	mauris elit, dictum eu, eleifend	$93.82	2006-08-15	3	100
-302	1	374	ut mi. Duis risus odio, auctor vitae, aliquet	$88.77	1979-07-28	6	72
 303	3	172	nibh lacinia orci, consectetuer euismod est arcu ac orci. Ut semper pretium neque. Morbi quis	$67.26	1994-06-22	3	28
 304	5	563	est, mollis non, cursus non, egestas a,	$14.29	2013-02-02	1	75
 305	1	272	id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt	$51.48	2010-10-19	9	24
 306	5	98	nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas	$20.43	1959-06-04	7	4
-307	9	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33
 308	6	761	vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$84.51	1997-12-29	8	62
-309	5	828	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam	$71.23	1981-12-26	1	78
 310	3	653	Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue	$8.54	1980-08-08	7	12
-311	3	304	augue malesuada malesuada. Integer id	$73.57	1968-01-25	6	44
-312	3	432	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit,	$36.57	1991-11-30	6	86
-313	3	592	Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$70.59	1954-12-14	9	34
-314	7	289	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac facilisis facilisis, magna	$60.35	1978-11-28	9	18
-315	3	783	Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$30.63	1979-01-25	2	64
-316	3	969	mollis nec, cursus a, enim. Suspendisse aliquet,	$19.29	1966-03-13	3	82
-317	5	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97
 318	8	58	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae	$22.73	2014-03-22	3	17
-319	8	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72
 320	7	309	diam. Pellentesque habitant morbi tristique senectus et netus	$54.42	1986-02-01	10	48
-321	1	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31
-322	10	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2
-323	2	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5
-324	3	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39
 325	5	393	tellus. Phasellus elit pede, malesuada vel, venenatis vel, faucibus id, libero. Donec consectetuer	$66.35	1932-09-04	7	71
-326	10	478	justo faucibus lectus, a sollicitudin orci	$51.06	1931-06-24	4	95
-327	4	542	sem ut dolor dapibus gravida.	$82.02	1974-03-19	1	64
 328	6	785	at, iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$56.57	2005-10-19	6	42
 329	5	572	montes, nascetur ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu.	$78.61	1930-07-18	10	35
-330	6	742	ipsum non arcu. Vivamus sit amet risus. Donec egestas. Aliquam nec	$88.30	1988-09-20	5	19
-331	2	524	lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit	$39.60	1986-03-07	1	96
 332	1	772	Cras vehicula aliquet libero. Integer in magna. Phasellus dolor elit,	$2.06	2020-04-22	10	76
 333	4	638	pede ac urna. Ut tincidunt vehicula risus. Nulla eget metus eu	$13.25	1995-09-08	9	50
-334	4	106	velit. Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices.	$85.18	1962-12-20	1	82
 335	4	196	enim. Suspendisse aliquet, sem ut cursus	$70.66	1943-12-10	9	4
 336	5	152	amet ornare lectus justo eu arcu. Morbi	$53.61	2018-10-18	6	38
-337	8	317	eu, odio. Phasellus at augue id ante	$56.46	1994-02-05	3	71
 338	7	416	amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus. Ut nec urna	$98.12	1955-09-24	3	37
-339	1	844	egestas. Duis ac arcu. Nunc mauris. Morbi non sapien molestie	$37.60	1947-10-11	6	70
-340	8	581	aliquet, sem ut cursus luctus,	$52.47	1952-01-17	4	22
-341	3	171	at, nisi. Cum sociis natoque penatibus et magnis dis parturient	$76.66	2002-11-11	8	30
 342	9	26	Lorem ipsum dolor sit amet, consectetuer adipiscing elit.	$14.90	1941-06-09	3	39
-343	2	332	ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$59.85	1951-08-24	3	77
 344	7	253	pellentesque, tellus sem mollis dui, in	$26.03	2014-08-12	7	40
 345	9	402	natoque penatibus et magnis dis	$57.18	1999-07-16	8	82
 346	10	342	pede et risus. Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan	$47.88	2003-10-28	7	87
-347	10	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14
-348	2	803	vulputate, lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$11.30	1962-06-04	6	75
-349	1	847	non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum	$4.23	1988-06-29	3	28
-350	10	745	nisl arcu iaculis enim, sit amet ornare lectus justo eu arcu. Morbi sit amet massa.	$98.45	1997-03-24	5	34
-351	8	857	adipiscing lobortis risus. In mi pede, nonummy ut,	$35.10	1990-10-10	2	31
 352	2	658	est, mollis non, cursus non, egestas a, dui. Cras pellentesque. Sed	$5.34	1961-02-06	3	40
 353	8	227	ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque	$18.43	1974-03-09	6	34
-354	7	576	ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;	$95.56	2016-09-10	8	78
 355	8	9	vel arcu. Curabitur ut odio vel est	$36.50	1998-09-04	7	28
 356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59
-357	4	700	a, enim. Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum	$88.44	1980-02-20	1	37
-358	4	196	sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$20.67	2012-09-27	9	37
-359	1	491	erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt pede ac urna.	$39.79	1940-10-18	6	89
 360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46
-361	5	662	consequat auctor, nunc nulla vulputate	$48.28	1933-02-01	7	83
-362	5	549	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris	$13.11	1949-11-09	3	66
-363	9	443	egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor scelerisque	$29.75	1965-02-15	10	40
-364	6	919	mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a	$45.73	1940-02-28	9	80
-365	10	193	tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet	$11.99	1986-11-30	2	71
-366	2	124	dis parturient montes, nascetur ridiculus	$90.22	2012-08-22	7	70
 367	4	966	id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis quis,	$76.41	2019-05-27	7	28
-368	2	20	Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing. Mauris	$19.13	1945-06-19	9	17
-369	10	707	Integer id magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim tempor arcu.	$78.40	1963-07-14	7	25
-370	9	273	luctus vulputate, nisi sem semper erat, in consectetuer ipsum nunc id enim. Curabitur	$38.99	1952-09-19	5	8
 371	1	296	dictum placerat, augue. Sed molestie. Sed id risus quis	$30.10	1995-01-12	7	78
 372	1	141	vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat.	$50.97	1993-04-11	7	56
-373	5	628	Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum	$62.18	2016-02-24	7	41
-374	3	481	aliquam, enim nec tempus scelerisque, lorem	$4.36	1966-12-18	5	21
-375	9	925	sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed	$50.47	1958-11-22	3	6
-376	3	389	Proin mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$81.60	2008-04-26	6	71
 377	7	309	amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas	$93.49	1987-10-19	4	39
-378	6	286	porttitor tellus non magna. Nam	$31.05	1952-08-14	9	79
-379	5	766	Phasellus ornare. Fusce mollis. Duis sit	$12.19	1932-05-23	9	69
-380	5	113	augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$63.02	2000-06-12	2	47
-381	8	344	scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed	$30.54	2000-05-25	10	91
-382	9	405	metus. Aenean sed pede nec ante blandit viverra.	$21.22	1952-01-10	8	98
 383	2	66	est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue ut lacus. Nulla	$20.12	1974-03-08	1	72
-384	6	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48
 385	4	158	magna. Sed eu eros. Nam consequat dolor	$17.28	1985-06-27	4	25
 386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45
-387	5	359	elit. Aliquam auctor, velit eget laoreet posuere, enim nisl elementum	$48.17	2009-11-01	9	57
 388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5
-389	3	354	mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla	$96.58	1943-08-11	10	34
-390	7	988	Pellentesque tincidunt tempus risus. Donec egestas.	$92.30	1958-12-14	2	80
-391	7	337	dictum. Proin eget odio. Aliquam	$99.20	1942-05-07	10	36
-392	8	684	dignissim tempor arcu. Vestibulum ut	$38.70	1985-04-14	9	51
-393	2	38	mus. Proin vel arcu eu odio tristique pharetra. Quisque ac libero	$24.89	1967-09-20	8	54
-394	2	681	ac mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$42.39	1949-08-18	1	92
 395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41
-396	10	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18
-397	3	204	tellus non magna. Nam ligula elit, pretium et, rutrum	$3.38	1983-03-04	4	36
-398	3	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51
-399	3	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9
-400	5	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43
+1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19
+2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18
+3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65
+4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86
+5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100
+6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25
+7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85
+9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88
+12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47
+13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37
+14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70
+15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51
+16	9	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89
+17	4	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6
+18	9	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18
+19	10	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12
+20	8	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65
+22	8	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36
+23	3	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40
+28	8	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18
+29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68
+30	6	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79
+31	5	666	vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus.	$70.89	1965-05-09	4	72
+33	3	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82
+34	8	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67
+35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73
+37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6
+38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77
+42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8
+43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71
+44	6	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54
+46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98
+47	3	647	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem,	$50.36	2001-02-07	1	52
+48	1	798	vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate	$98.98	1958-09-06	10	56
+51	7	251	cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem.	$94.75	1972-08-18	3	92
+53	2	91	libero. Donec consectetuer mauris id sapien. Cras dolor dolor, tempus	$87.25	1933-07-18	4	24
+56	6	684	dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed eu eros.	$51.07	1973-01-15	6	72
+57	3	406	accumsan convallis, ante lectus convallis est, vitae sodales	$77.13	1986-08-22	8	50
+58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44
+59	8	132	arcu. Curabitur ut odio vel est tempor bibendum. Donec	$5.59	2019-08-07	6	34
+60	4	525	quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus.	$65.64	1945-10-09	6	21
+61	2	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91
+62	1	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75
+64	1	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77
+66	9	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13
+67	2	691	eget, ipsum. Donec sollicitudin adipiscing ligula. Aenean gravida nunc sed pede. Cum	$11.20	1936-10-21	7	54
+68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75
+70	9	342	Nunc commodo auctor velit. Aliquam nisl. Nulla eu neque	$65.14	1937-02-07	1	77
+71	10	786	Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam	$52.02	1952-03-03	10	27
+72	4	655	dolor sit amet, consectetuer adipiscing elit. Aliquam	$8.03	1993-04-04	1	80
+75	5	898	dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac	$68.43	2001-12-04	9	15
+76	10	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49
+77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6
+78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72
+79	5	918	ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce aliquam, enim nec tempus	$77.75	1936-07-31	6	63
+80	4	286	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend non, dapibus rutrum,	$86.10	2006-08-07	4	73
+84	6	289	neque. Morbi quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla.	$84.64	1993-04-27	5	7
+85	10	787	pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec est. Nunc ullamcorper,	$90.19	1947-11-16	1	24
+87	4	45	diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est	$6.03	1938-11-19	7	23
+88	2	954	placerat, orci lacus vestibulum lorem, sit amet ultricies	$57.70	1932-07-15	10	65
+89	6	962	quam quis diam. Pellentesque habitant morbi tristique senectus	$27.07	2008-03-21	7	19
+90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15
+91	7	525	arcu. Vestibulum ante ipsum primis in faucibus orci luctus	$20.31	1947-09-07	9	77
+93	10	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78
+95	4	769	non ante bibendum ullamcorper. Duis cursus, diam at pretium aliquet,	$21.18	1936-10-15	7	58
+96	10	417	Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc	$65.53	2010-06-24	10	41
+98	8	196	purus. Duis elementum, dui quis accumsan convallis,	$32.34	1933-06-10	9	99
+99	8	408	venenatis vel, faucibus id, libero.	$34.94	1959-09-29	4	61
+100	4	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60
+103	6	951	mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$87.01	1944-11-07	5	71
+104	7	184	mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$32.08	2019-07-30	8	8
+105	5	260	adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis	$55.58	1989-08-04	3	57
+106	8	468	Nullam scelerisque neque sed sem egestas blandit. Nam nulla magna, malesuada vel,	$32.15	1970-03-03	6	48
+109	6	498	tellus, imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor	$16.04	1983-01-13	5	6
+111	2	632	Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a, malesuada id,	$92.93	1982-04-13	9	86
+112	9	271	eget metus eu erat semper rutrum. Fusce dolor quam, elementum at, egestas a,	$19.66	1949-05-10	3	17
+113	2	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2
+115	7	536	Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper.	$36.28	1973-03-22	10	25
+116	6	491	sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris	$36.42	1989-06-22	7	41
+118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63
+119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2
+120	4	51	adipiscing ligula. Aenean gravida nunc sed pede. Cum sociis natoque	$41.49	2013-04-06	1	97
+121	5	332	cursus non, egestas a, dui. Cras	$25.42	2007-05-24	7	83
+124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79
+125	9	101	Ut semper pretium neque. Morbi quis	$57.26	1977-02-05	6	87
+126	7	994	Nullam velit dui, semper et, lacinia vitae, sodales at, velit.	$27.12	1943-01-04	2	38
+128	6	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27
+129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100
+131	5	628	diam. Sed diam lorem, auctor quis, tristique	$28.47	1957-02-28	9	58
+139	4	725	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	$35.29	2007-07-17	9	67
+140	7	378	ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet	$26.49	2001-08-12	5	60
+141	5	349	sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis	$44.77	1959-05-24	5	62
+142	2	279	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem	$65.49	1938-08-31	5	98
+145	6	513	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit	$5.60	1940-01-20	9	7
+146	4	41	Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$6.19	1992-06-26	9	13
+147	6	917	risus. Nulla eget metus eu erat semper rutrum. Fusce dolor quam, elementum at,	$32.50	1978-08-27	6	31
+149	8	582	semper erat, in consectetuer ipsum nunc id enim. Curabitur massa. Vestibulum accumsan neque et	$3.24	1972-12-08	6	22
+151	4	937	feugiat. Lorem ipsum dolor sit amet,	$30.34	1956-03-10	4	10
+153	4	34	egestas ligula. Nullam feugiat placerat velit. Quisque	$82.06	2011-02-14	7	9
+155	9	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34
+157	10	250	nascetur ridiculus mus. Aenean eget magna. Suspendisse tristique neque	$99.80	1956-10-28	9	78
+159	8	550	justo sit amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper.	$72.39	2006-07-10	9	28
+160	4	710	ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor	$43.16	1974-07-04	4	14
+163	3	70	ipsum nunc id enim. Curabitur	$19.21	1940-12-13	2	71
+164	6	541	enim. Etiam gravida molestie arcu. Sed eu nibh vulputate mauris sagittis placerat. Cras	$94.44	1931-08-17	5	43
+165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32
+166	6	186	bibendum fermentum metus. Aenean sed pede nec ante blandit viverra.	$51.41	1960-12-21	2	44
+167	2	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10
+168	6	383	ut, nulla. Cras eu tellus eu augue porttitor interdum.	$25.01	1980-07-10	3	92
+169	5	348	libero mauris, aliquam eu, accumsan sed,	$25.22	2015-12-19	7	3
+170	5	488	Nullam nisl. Maecenas malesuada fringilla est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed	$99.49	1954-04-06	3	47
+171	10	887	dapibus gravida. Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$86.24	1938-01-13	8	31
+173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44
+174	9	488	Integer vitae nibh. Donec est mauris, rhoncus id,	$89.97	1965-01-15	5	69
+175	8	929	eleifend. Cras sed leo. Cras	$69.77	1962-03-13	4	11
+177	7	129	sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh. Aliquam ornare, libero at	$40.86	2013-08-13	5	24
+180	7	153	Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$61.28	1983-10-02	7	96
+181	4	447	lorem lorem, luctus ut, pellentesque eget,	$85.19	2008-09-14	4	7
+184	1	545	enim diam vel arcu. Curabitur ut odio vel est tempor	$2.82	1942-10-14	1	82
+187	3	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8
+189	8	469	a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$39.94	1943-07-22	10	93
+190	9	445	Cras sed leo. Cras vehicula aliquet libero. Integer	$71.56	1959-11-14	1	85
+191	7	855	malesuada augue ut lacus. Nulla tincidunt,	$34.71	1941-06-12	10	19
+192	6	784	dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus. Vivamus euismod urna. Nullam	$11.94	1949-12-20	2	57
+194	4	528	ut ipsum ac mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris	$54.20	1977-08-08	2	13
+195	7	758	dui quis accumsan convallis, ante lectus	$80.99	1949-01-08	4	53
+196	3	233	molestie orci tincidunt adipiscing. Mauris molestie pharetra	$2.51	1976-09-02	6	87
+197	8	550	enim. Curabitur massa. Vestibulum accumsan neque	$45.08	1961-06-06	4	100
+198	8	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48
+199	7	1	eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur	$54.18	1931-04-10	7	64
+200	2	558	dui augue eu tellus. Phasellus elit	$8.74	1982-02-01	5	6
+203	1	40	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus.	$22.40	1960-07-11	9	49
+208	6	906	imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas. Duis	$30.08	1979-03-23	5	79
+209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36
+212	2	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37
+213	7	53	urna. Nunc quis arcu vel quam dignissim pharetra.	$41.57	2018-06-09	1	69
+214	4	429	sapien. Nunc pulvinar arcu et pede. Nunc sed orci	$48.61	1931-04-19	1	43
+215	8	141	Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec	$16.58	1980-04-06	3	67
+216	8	263	magna. Cras convallis convallis dolor. Quisque tincidunt pede	$84.40	2008-07-04	3	46
+218	4	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81
+221	8	187	eu enim. Etiam imperdiet dictum magna.	$66.80	1989-12-17	2	70
+223	7	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89
+224	5	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16
+225	1	46	viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$78.85	1952-03-19	6	48
+226	4	781	vulputate, posuere vulputate, lacus. Cras interdum. Nunc	$42.81	1983-01-23	6	7
+227	4	196	malesuada malesuada. Integer id magna et ipsum cursus	$44.01	1947-02-17	5	28
+228	6	567	Proin velit. Sed malesuada augue ut lacus. Nulla	$37.77	1942-11-04	6	57
+230	2	353	Donec luctus aliquet odio. Etiam ligula tortor, dictum eu, placerat eget, venenatis a, magna. Lorem	$2.27	1968-11-22	2	48
+231	5	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55
+232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15
+234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78
+240	4	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51
+242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49
+243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28
+247	9	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17
+249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62
+250	2	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89
+251	7	432	id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus,	$67.50	1983-03-10	2	51
+253	10	230	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac	$5.24	2008-12-05	7	81
+254	6	321	Quisque ornare tortor at risus.	$55.69	1971-01-11	9	23
+258	2	365	consectetuer adipiscing elit. Etiam laoreet, libero	$2.19	1980-02-12	5	74
+262	1	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82
+263	3	672	fermentum vel, mauris. Integer sem elit, pharetra ut, pharetra	$85.61	1989-01-26	3	6
+265	9	960	vel sapien imperdiet ornare. In faucibus. Morbi vehicula.	$7.93	1943-03-12	5	27
+267	5	307	Curabitur consequat, lectus sit amet luctus vulputate, nisi sem semper	$74.32	1965-01-01	4	84
+268	3	93	mauris elit, dictum eu, eleifend nec,	$74.74	1970-05-22	10	30
+269	6	874	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus.	$15.93	1941-08-17	2	72
+270	2	486	est mauris, rhoncus id, mollis nec, cursus	$51.06	1944-06-12	10	63
+273	4	623	amet, risus. Donec nibh enim, gravida	$12.84	1958-06-28	1	49
+274	6	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78
+278	10	85	amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam	$18.54	1985-05-28	5	35
+280	3	106	quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce	$7.97	2007-04-01	8	73
+283	7	786	elementum sem, vitae aliquam eros	$2.42	1943-12-18	1	6
+284	6	170	amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat.	$36.76	1966-01-12	3	88
+285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45
+286	10	385	arcu iaculis enim, sit amet ornare	$73.09	2005-09-13	10	20
+287	1	60	dignissim pharetra. Nam ac nulla.	$28.47	1959-05-31	7	30
+288	4	229	et malesuada fames ac turpis	$31.58	1983-09-29	5	16
+289	7	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10
+290	2	246	vitae purus gravida sagittis. Duis gravida. Praesent eu nulla	$10.08	1981-07-26	2	53
+291	3	664	lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis,	$7.51	1982-05-11	3	25
+292	10	523	ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut sagittis lobortis	$28.27	1987-02-21	6	78
+293	6	109	euismod est arcu ac orci. Ut semper	$27.96	2008-02-21	10	79
+295	4	992	pharetra. Nam ac nulla. In tincidunt	$89.51	1967-06-20	7	29
+296	5	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25
+297	5	876	dictum. Phasellus in felis. Nulla tempor	$94.42	2017-11-22	8	3
+299	5	328	augue ut lacus. Nulla tincidunt, neque vitae semper egestas,	$87.32	2008-04-18	8	47
+300	6	162	Duis mi enim, condimentum eget, volutpat	$98.56	1975-09-20	4	39
+301	4	749	mauris elit, dictum eu, eleifend	$93.82	2006-08-15	3	100
+302	10	374	ut mi. Duis risus odio, auctor vitae, aliquet	$88.77	1979-07-28	6	72
+307	7	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33
+309	5	828	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam	$71.23	1981-12-26	1	78
+311	7	304	augue malesuada malesuada. Integer id	$73.57	1968-01-25	6	44
+312	10	432	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit,	$36.57	1991-11-30	6	86
+313	5	592	Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$70.59	1954-12-14	9	34
+314	8	289	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac facilisis facilisis, magna	$60.35	1978-11-28	9	18
+315	2	783	Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$30.63	1979-01-25	2	64
+316	10	969	mollis nec, cursus a, enim. Suspendisse aliquet,	$19.29	1966-03-13	3	82
+317	7	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97
+319	2	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72
+321	2	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31
+322	8	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2
+323	7	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5
+324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39
+326	6	478	justo faucibus lectus, a sollicitudin orci	$51.06	1931-06-24	4	95
+327	7	542	sem ut dolor dapibus gravida.	$82.02	1974-03-19	1	64
+330	8	742	ipsum non arcu. Vivamus sit amet risus. Donec egestas. Aliquam nec	$88.30	1988-09-20	5	19
+331	10	524	lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit	$39.60	1986-03-07	1	96
+334	3	106	velit. Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices.	$85.18	1962-12-20	1	82
+337	4	317	eu, odio. Phasellus at augue id ante	$56.46	1994-02-05	3	71
+339	9	844	egestas. Duis ac arcu. Nunc mauris. Morbi non sapien molestie	$37.60	1947-10-11	6	70
+340	6	581	aliquet, sem ut cursus luctus,	$52.47	1952-01-17	4	22
+341	9	171	at, nisi. Cum sociis natoque penatibus et magnis dis parturient	$76.66	2002-11-11	8	30
+343	4	332	ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$59.85	1951-08-24	3	77
+347	6	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14
+348	3	803	vulputate, lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$11.30	1962-06-04	6	75
+349	10	847	non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum	$4.23	1988-06-29	3	28
+350	2	745	nisl arcu iaculis enim, sit amet ornare lectus justo eu arcu. Morbi sit amet massa.	$98.45	1997-03-24	5	34
+351	8	857	adipiscing lobortis risus. In mi pede, nonummy ut,	$35.10	1990-10-10	2	31
+354	2	576	ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;	$95.56	2016-09-10	8	78
+357	4	700	a, enim. Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum	$88.44	1980-02-20	1	37
+358	5	196	sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$20.67	2012-09-27	9	37
+359	2	491	erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt pede ac urna.	$39.79	1940-10-18	6	89
+361	3	662	consequat auctor, nunc nulla vulputate	$48.28	1933-02-01	7	83
+362	8	549	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris	$13.11	1949-11-09	3	66
+363	8	443	egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor scelerisque	$29.75	1965-02-15	10	40
+364	7	919	mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a	$45.73	1940-02-28	9	80
+365	5	193	tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet	$11.99	1986-11-30	2	71
+366	1	124	dis parturient montes, nascetur ridiculus	$90.22	2012-08-22	7	70
+368	2	20	Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing. Mauris	$19.13	1945-06-19	9	17
+369	8	707	Integer id magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim tempor arcu.	$78.40	1963-07-14	7	25
+370	7	273	luctus vulputate, nisi sem semper erat, in consectetuer ipsum nunc id enim. Curabitur	$38.99	1952-09-19	5	8
+373	3	628	Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum	$62.18	2016-02-24	7	41
+374	5	481	aliquam, enim nec tempus scelerisque, lorem	$4.36	1966-12-18	5	21
+375	7	925	sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed	$50.47	1958-11-22	3	6
+376	2	389	Proin mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$81.60	2008-04-26	6	71
+378	6	286	porttitor tellus non magna. Nam	$31.05	1952-08-14	9	79
+379	8	766	Phasellus ornare. Fusce mollis. Duis sit	$12.19	1932-05-23	9	69
+380	6	113	augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$63.02	2000-06-12	2	47
+381	9	344	scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed	$30.54	2000-05-25	10	91
+382	7	405	metus. Aenean sed pede nec ante blandit viverra.	$21.22	1952-01-10	8	98
+384	1	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48
+387	4	359	elit. Aliquam auctor, velit eget laoreet posuere, enim nisl elementum	$48.17	2009-11-01	9	57
+389	7	354	mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla	$96.58	1943-08-11	10	34
+390	5	988	Pellentesque tincidunt tempus risus. Donec egestas.	$92.30	1958-12-14	2	80
+391	4	337	dictum. Proin eget odio. Aliquam	$99.20	1942-05-07	10	36
+392	6	684	dignissim tempor arcu. Vestibulum ut	$38.70	1985-04-14	9	51
+393	8	38	mus. Proin vel arcu eu odio tristique pharetra. Quisque ac libero	$24.89	1967-09-20	8	54
+394	5	681	ac mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$42.39	1949-08-18	1	92
+396	5	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18
+397	4	204	tellus non magna. Nam ligula elit, pretium et, rutrum	$3.38	1983-03-04	4	36
+398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51
+399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9
+400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43
 \.
 
 
 --
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.customers (customer_id, name, email, phone) FROM stdin;
@@ -1609,7 +1630,7 @@ COPY public.customers (customer_id, name, email, phone) FROM stdin;
 
 
 --
--- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.employee (emp_id, name, surname, phone) FROM stdin;
@@ -1708,7 +1729,7 @@ COPY public.employee (emp_id, name, surname, phone) FROM stdin;
 
 
 --
--- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.genre (genre, comic_id) FROM stdin;
@@ -2216,7 +2237,7 @@ ultrices	115
 
 
 --
--- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.log ("time", description, purchase_id) FROM stdin;
@@ -2224,7 +2245,7 @@ COPY public.log ("time", description, purchase_id) FROM stdin;
 
 
 --
--- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.publishers (publisher_id, name) FROM stdin;
@@ -2332,7 +2353,7 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 
 
 --
--- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
@@ -2340,7 +2361,7 @@ COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status
 
 
 --
--- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
@@ -2348,17 +2369,418 @@ COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
 
 
 --
--- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, cons, date) FROM stdin;
 5	1	1	5	\N	\N	\N	2020-06-10 17:54:57.513562
 9	1	11	10	nice	nice	not nice	2020-06-10 17:55:56.785995
+11	2	90	7	\N	\N	\N	2020-06-10 18:51:10.442313
+12	47	43	2	luctus vulputate,	Curabitur	eu dolor egestas rhoncus. Proin nisl	2020-06-10 18:58:12.939536
+13	60	36	2	accumsan convallis, ante lectus convallis est,	a purus.	libero et tristique pellentesque, tellus sem mollis dui, in sodales	2020-06-10 18:58:12.939536
+14	215	11	10	velit. Cras lorem lorem, luctus ut, pellentesque eget, dictum placerat,	leo.	Nunc	2020-06-10 18:58:12.939536
+15	121	38	1	urna et arcu imperdiet ullamcorper. Duis	libero.	id nunc interdum feugiat. Sed nec	2020-06-10 18:58:12.939536
+16	315	11	2	laoreet lectus quis massa. Mauris	lacus	Mauris vestibulum, neque	2020-06-10 18:58:12.939536
+17	149	84	8	ut, molestie in, tempus eu, ligula. Aenean euismod	lacinia	rutrum lorem ac risus.	2020-06-10 18:58:12.939536
+18	180	96	7	arcu. Vivamus	massa. Suspendisse eleifend. Cras	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat.	2020-06-10 18:58:12.939536
+19	203	41	1	ante dictum mi, ac	luctus lobortis. Class aptent taciti sociosqu ad litora torquent per	rhoncus id,	2020-06-10 18:58:12.939536
+20	66	28	6	velit. Quisque varius.	sem egestas blandit. Nam nulla	tristique neque venenatis lacus. Etiam bibendum	2020-06-10 18:58:12.939536
+21	381	80	9	in faucibus orci luctus et ultrices posuere cubilia Curae; Donec	sit amet,	mi. Aliquam	2020-06-10 18:58:12.939536
+22	17	70	4	Phasellus elit pede, malesuada	bibendum sed, est. Nunc laoreet lectus quis massa.	dolor, nonummy ac, feugiat non,	2020-06-10 18:58:12.981668
+23	169	58	8	habitant morbi tristique	Donec tempus, lorem fringilla ornare placerat, orci lacus	iaculis aliquet diam. Sed diam lorem, auctor quis, tristique ac,	2020-06-10 18:58:12.981668
+24	140	95	7	dolor, nonummy ac, feugiat non, lobortis quis, pede.	In lorem. Donec elementum, lorem ut	Cum sociis natoque	2020-06-10 18:58:12.981668
+25	396	75	8	accumsan sed, facilisis	feugiat. Sed nec metus facilisis lorem tristique	nisi nibh lacinia orci, consectetuer euismod est arcu ac	2020-06-10 18:58:12.981668
+26	145	46	1	nibh. Donec est mauris, rhoncus id, mollis nec,	congue turpis. In condimentum. Donec at arcu.	orci	2020-06-10 18:58:12.981668
+27	317	16	7	Fusce aliquet	nisi magna sed dui. Fusce aliquam, enim nec	convallis in, cursus et,	2020-06-10 18:58:12.981668
+28	190	90	9	amet ante. Vivamus non lorem vitae odio sagittis	Cras	egestas nunc sed libero. Proin	2020-06-10 18:58:12.981668
+29	197	16	10	non sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh.	dapibus gravida. Aliquam tincidunt, nunc ac mattis	erat volutpat.	2020-06-10 18:58:12.981668
+30	141	46	5	Curabitur vel lectus. Cum sociis	velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc	diam. Proin dolor. Nulla semper tellus id nunc	2020-06-10 18:58:12.981668
+31	351	59	8	luctus. Curabitur egestas nunc sed libero. Proin	dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas	ut eros non enim commodo hendrerit. Donec	2020-06-10 18:58:12.981668
+32	121	28	6	consequat,	suscipit nonummy. Fusce	mus. Proin	2020-06-10 18:58:13.028585
+33	393	75	10	ac turpis egestas.	ligula	Aliquam nec enim. Nunc ut erat. Sed	2020-06-10 18:58:13.028585
+34	48	82	1	dictum magna. Ut tincidunt orci quis lectus.	eu nulla at sem molestie sodales. Mauris blandit enim	vehicula risus. Nulla eget metus	2020-06-10 18:58:13.028585
+35	33	40	7	faucibus id, libero. Donec consectetuer mauris id sapien.	venenatis a, magna. Lorem ipsum	mi. Duis risus	2020-06-10 18:58:13.028585
+36	131	45	5	felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam	ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae	Phasellus ornare. Fusce mollis. Duis sit amet diam eu	2020-06-10 18:58:13.028585
+37	42	18	3	sapien, gravida non, sollicitudin a, malesuada id,	massa lobortis ultrices. Vivamus	eu tempor erat	2020-06-10 18:58:13.028585
+38	231	28	5	ipsum. Curabitur consequat,	magna nec quam. Curabitur vel lectus.	Morbi metus. Vivamus euismod urna. Nullam	2020-06-10 18:58:13.028585
+39	35	94	10	fringilla mi lacinia mattis. Integer	magna. Cras convallis convallis dolor. Quisque tincidunt pede ac	ipsum. Suspendisse sagittis. Nullam vitae diam.	2020-06-10 18:58:13.028585
+40	187	38	4	velit. Aliquam nisl.	vitae sodales nisi magna sed dui. Fusce	nec tellus. Nunc	2020-06-10 18:58:13.028585
+41	151	38	2	nulla at sem molestie sodales. Mauris blandit enim consequat	habitant morbi tristique senectus et netus et malesuada	Duis elementum, dui quis accumsan convallis, ante lectus convallis	2020-06-10 18:58:13.028585
+42	215	52	5	Phasellus	nonummy. Fusce fermentum fermentum arcu. Vestibulum ante ipsum	magna. Ut tincidunt orci quis lectus. Nullam suscipit, est	2020-06-10 18:58:13.050001
+43	79	18	5	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing	mollis. Duis sit amet diam eu dolor egestas	Fusce	2020-06-10 18:58:13.050001
+44	80	52	9	Curabitur egestas nunc	amet diam	vulputate, posuere vulputate, lacus. Cras interdum. Nunc	2020-06-10 18:58:13.050001
+45	290	39	2	Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum	auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	quis massa. Mauris vestibulum, neque sed	2020-06-10 18:58:13.050001
+46	153	90	2	ullamcorper, velit in aliquet lobortis, nisi nibh lacinia orci, consectetuer	magnis dis parturient montes, nascetur	in, cursus et, eros. Proin ultrices. Duis volutpat nunc	2020-06-10 18:58:13.050001
+47	227	99	4	dis parturient	in faucibus orci luctus	feugiat non, lobortis quis, pede. Suspendisse dui. Fusce	2020-06-10 18:58:13.050001
+48	104	27	9	ut dolor dapibus	pulvinar arcu et pede. Nunc	sit amet ornare lectus justo eu arcu. Morbi sit amet	2020-06-10 18:58:13.050001
+49	98	27	8	Donec egestas.	nunc	aliquet vel, vulputate eu, odio. Phasellus at	2020-06-10 18:58:13.050001
+50	330	74	7	aliquam iaculis, lacus pede sagittis augue, eu tempor erat neque	eu neque pellentesque massa	eu erat semper rutrum.	2020-06-10 18:58:13.050001
+51	109	72	9	euismod	nunc nulla vulputate dui, nec	magna,	2020-06-10 18:58:13.050001
+52	249	62	7	mauris a	adipiscing	mus. Aenean	2020-06-10 18:58:13.068366
+53	209	40	10	sodales elit erat vitae	pede,	dolor elit, pellentesque	2020-06-10 18:58:13.068366
+54	321	42	2	vestibulum nec, euismod	pharetra nibh. Aliquam ornare, libero	nunc nulla vulputate dui, nec tempus mauris erat	2020-06-10 18:58:13.068366
+55	398	18	10	velit. Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae	in	neque vitae semper egestas, urna justo faucibus lectus, a sollicitudin	2020-06-10 18:58:13.068366
+56	95	62	2	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	quis urna. Nunc quis arcu vel quam dignissim pharetra.	2020-06-10 18:58:13.068366
+57	354	31	3	luctus aliquet odio. Etiam ligula tortor, dictum eu,	molestie. Sed id risus quis diam luctus lobortis. Class aptent	ut	2020-06-10 18:58:13.068366
+58	104	61	5	magna. Nam	Nam consequat dolor vitae dolor. Donec	Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	2020-06-10 18:58:13.068366
+59	118	95	7	et, eros. Proin ultrices.	risus	tellus.	2020-06-10 18:58:13.068366
+60	221	18	8	Aliquam	amet,	vel, mauris. Integer sem	2020-06-10 18:58:13.068366
+61	56	79	6	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae	vel turpis. Aliquam adipiscing lobortis risus. In	ut, pharetra	2020-06-10 18:58:13.068366
+62	327	17	8	luctus lobortis. Class aptent taciti sociosqu ad litora torquent	id	nunc est,	2020-06-10 18:58:13.086372
+63	159	64	8	eu, odio. Phasellus	fames ac turpis egestas. Fusce aliquet	iaculis nec, eleifend non, dapibus rutrum, justo. Praesent luctus.	2020-06-10 18:58:13.086372
+64	14	74	4	per inceptos hymenaeos. Mauris	Cum sociis natoque penatibus et magnis dis	et	2020-06-10 18:58:13.086372
+65	365	46	4	sem, consequat nec, mollis vitae, posuere at, velit.	Aliquam fringilla cursus purus. Nullam scelerisque	orci. Ut semper pretium neque. Morbi quis urna.	2020-06-10 18:58:13.086372
+66	91	78	9	sollicitudin commodo ipsum. Suspendisse non leo. Vivamus nibh	tincidunt nibh. Phasellus nulla. Integer vulputate, risus a	dolor.	2020-06-10 18:58:13.086372
+67	343	52	4	consectetuer ipsum nunc id enim. Curabitur	sagittis felis. Donec tempor, est ac	Nam consequat dolor vitae dolor. Donec fringilla. Donec	2020-06-10 18:58:13.086372
+68	231	56	2	Phasellus ornare. Fusce mollis. Duis sit amet diam	Morbi accumsan	metus facilisis	2020-06-10 18:58:13.086372
+69	301	41	2	Praesent	malesuada vel,	blandit congue. In scelerisque scelerisque dui. Suspendisse ac	2020-06-10 18:58:13.086372
+70	88	47	2	tempus risus. Donec egestas.	amet,	odio a purus.	2020-06-10 18:58:13.086372
+71	373	53	3	nec enim. Nunc ut	lorem vitae odio sagittis semper. Nam tempor	dis parturient montes,	2020-06-10 18:58:13.086372
+72	191	12	4	tellus,	Donec tempor, est ac mattis semper, dui lectus rutrum urna,	ullamcorper magna. Sed eu eros. Nam consequat	2020-06-10 18:58:13.107184
+73	61	79	1	at, velit. Cras lorem lorem, luctus ut,	risus. Donec egestas. Duis ac arcu.	lorem, eget mollis lectus pede et	2020-06-10 18:58:13.107184
+74	160	75	5	sodales. Mauris blandit enim consequat purus. Maecenas libero	pede, nonummy ut, molestie in, tempus eu, ligula.	id, ante. Nunc mauris sapien, cursus	2020-06-10 18:58:13.107184
+75	13	80	7	molestie pharetra nibh. Aliquam ornare, libero	cursus et, magna. Praesent interdum ligula eu	et, eros. Proin ultrices. Duis volutpat nunc sit	2020-06-10 18:58:13.107184
+76	146	26	4	Donec dignissim magna a tortor. Nunc commodo auctor velit.	vel nisl. Quisque fringilla euismod enim.	aliquet lobortis, nisi nibh lacinia orci,	2020-06-10 18:58:13.107184
+77	347	96	6	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer	nec quam. Curabitur vel lectus. Cum sociis natoque penatibus	scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia.	2020-06-10 18:58:13.107184
+78	365	69	2	taciti	Sed eu nibh vulputate mauris sagittis placerat. Cras	semper cursus.	2020-06-10 18:58:13.107184
+79	64	12	1	et	mollis non, cursus non, egestas	Morbi sit amet massa. Quisque porttitor	2020-06-10 18:58:13.107184
+80	1	16	5	non enim. Mauris quis turpis	lorem	Suspendisse commodo tincidunt nibh. Phasellus nulla. Integer	2020-06-10 18:58:13.107184
+81	78	75	4	vel turpis. Aliquam adipiscing lobortis risus. In mi pede,	Suspendisse	cursus et, magna. Praesent interdum ligula eu enim. Etiam	2020-06-10 18:58:13.107184
+82	31	57	5	ligula. Donec luctus aliquet	diam lorem, auctor quis, tristique ac, eleifend vitae,	Integer	2020-06-10 18:58:13.126415
+83	226	54	4	scelerisque scelerisque dui.	orci lobortis augue scelerisque mollis. Phasellus libero	Pellentesque habitant morbi tristique senectus et netus et	2020-06-10 18:58:13.126415
+84	227	55	5	ornare, lectus ante dictum mi, ac mattis velit justo nec	lorem, sit amet ultricies sem magna nec quam. Curabitur	urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas	2020-06-10 18:58:13.126415
+85	87	60	4	feugiat nec, diam. Duis mi enim, condimentum eget, volutpat	Suspendisse ac metus vitae velit egestas	nisl sem, consequat nec, mollis vitae,	2020-06-10 18:58:13.126415
+86	151	71	4	Sed auctor odio a purus. Duis elementum,	Fusce fermentum fermentum arcu. Vestibulum	Ut semper pretium neque. Morbi	2020-06-10 18:58:13.126415
+87	227	90	3	elit sed consequat auctor, nunc	gravida	Pellentesque habitant morbi tristique senectus et netus et malesuada	2020-06-10 18:58:13.126415
+88	171	29	10	magna a neque.	senectus et netus et malesuada fames ac turpis egestas.	consectetuer ipsum nunc id	2020-06-10 18:58:13.126415
+89	106	67	7	malesuada. Integer id magna et	rutrum. Fusce dolor	rhoncus. Nullam velit dui, semper	2020-06-10 18:58:13.126415
+90	30	69	7	semper, dui lectus	mi lorem, vehicula	quam. Curabitur vel lectus. Cum sociis natoque penatibus et magnis	2020-06-10 18:58:13.126415
+91	115	58	10	luctus vulputate, nisi sem semper erat, in consectetuer	mattis.	nec, leo. Morbi neque tellus, imperdiet non,	2020-06-10 18:58:13.126415
+92	6	22	8	in molestie	aliquet magna a	risus. Donec egestas. Aliquam nec enim. Nunc ut erat. Sed	2020-06-10 18:58:13.145232
+93	59	91	9	in molestie tortor nibh sit amet	orci. Donec nibh. Quisque nonummy	est. Nunc laoreet lectus quis massa. Mauris vestibulum,	2020-06-10 18:58:13.145232
+94	75	53	5	nibh sit amet orci. Ut sagittis lobortis mauris. Suspendisse	quis turpis vitae purus gravida sagittis.	tellus id nunc interdum feugiat. Sed	2020-06-10 18:58:13.145232
+95	307	79	7	urna justo faucibus lectus, a sollicitudin orci	vulputate	ligula. Nullam feugiat placerat velit. Quisque	2020-06-10 18:58:13.145232
+96	44	17	8	tempor arcu. Vestibulum ut eros non enim commodo hendrerit.	congue.	Sed neque. Sed eget lacus.	2020-06-10 18:58:13.145232
+97	269	28	6	Donec	justo. Proin non massa non ante bibendum	Aliquam erat volutpat. Nulla facilisis. Suspendisse commodo tincidunt nibh.	2020-06-10 18:58:13.145232
+98	84	85	4	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam.	Donec consectetuer mauris id sapien. Cras dolor dolor, tempus non,	felis. Nulla tempor	2020-06-10 18:58:13.145232
+99	309	79	5	In tincidunt congue turpis. In	orci lobortis augue scelerisque mollis. Phasellus libero	semper, dui lectus rutrum	2020-06-10 18:58:13.145232
+100	312	56	10	Aliquam fringilla cursus purus. Nullam scelerisque neque sed sem egestas	magna, malesuada vel, convallis in, cursus et, eros.	at fringilla purus mauris a nunc. In at pede.	2020-06-10 18:58:13.145232
+101	268	30	5	tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus	et tristique pellentesque, tellus sem mollis dui,	neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec est.	2020-06-10 18:58:13.145232
+102	301	92	5	orci.	Nulla interdum. Curabitur dictum. Phasellus in	pellentesque massa lobortis ultrices. Vivamus rhoncus.	2020-06-10 18:58:15.328531
+103	316	100	10	nisi. Aenean eget metus. In nec orci. Donec nibh.	Fusce fermentum fermentum arcu. Vestibulum ante	eros. Proin ultrices. Duis volutpat nunc	2020-06-10 18:58:15.328531
+104	223	76	7	ullamcorper	semper	Vestibulum ante ipsum primis	2020-06-10 18:58:15.328531
+105	249	51	8	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat	nec, eleifend non, dapibus	pretium et, rutrum non, hendrerit id, ante. Nunc	2020-06-10 18:58:15.328531
+106	23	50	3	arcu. Vestibulum ante ipsum	dui augue eu tellus. Phasellus elit pede, malesuada	consectetuer ipsum nunc id enim. Curabitur massa. Vestibulum accumsan	2020-06-10 18:58:15.328531
+107	234	22	3	fermentum fermentum	nisi a odio semper cursus. Integer	ornare, lectus ante dictum mi, ac mattis	2020-06-10 18:58:15.328531
+108	337	83	4	egestas a, scelerisque sed, sapien. Nunc pulvinar arcu et	Cras	Donec elementum,	2020-06-10 18:58:15.328531
+109	380	29	7	odio sagittis	sodales nisi magna sed	quis diam. Pellentesque habitant morbi tristique	2020-06-10 18:58:15.328531
+110	251	65	10	augue porttitor interdum.	nisi. Mauris nulla.	In at pede. Cras vulputate velit eu	2020-06-10 18:58:15.328531
+111	394	17	8	felis eget varius ultrices, mauris ipsum porta elit,	mi eleifend egestas.	pharetra nibh.	2020-06-10 18:58:15.328531
+112	20	63	8	\N	\N	\N	2020-06-10 19:01:28.742142
+113	91	76	4	\N	\N	\N	2020-06-10 19:01:28.742142
+114	151	38	8	\N	\N	\N	2020-06-10 19:01:28.742142
+115	195	92	4	\N	\N	\N	2020-06-10 19:01:28.742142
+116	112	22	9	\N	\N	\N	2020-06-10 19:01:28.742142
+117	224	65	7	\N	\N	\N	2020-06-10 19:01:28.742142
+118	218	66	4	\N	\N	\N	2020-06-10 19:01:28.742142
+119	59	14	6	\N	\N	\N	2020-06-10 19:01:28.742142
+120	100	46	4	\N	\N	\N	2020-06-10 19:01:28.742142
+121	66	73	10	\N	\N	\N	2020-06-10 19:01:28.742142
+122	369	12	9	\N	\N	\N	2020-06-10 19:01:28.755084
+123	85	56	10	\N	\N	\N	2020-06-10 19:01:28.755084
+124	302	23	10	\N	\N	\N	2020-06-10 19:01:28.755084
+125	145	54	10	\N	\N	\N	2020-06-10 19:01:28.755084
+126	247	27	9	\N	\N	\N	2020-06-10 19:01:28.755084
+127	242	72	10	\N	\N	\N	2020-06-10 19:01:28.755084
+128	90	85	6	\N	\N	\N	2020-06-10 19:01:28.755084
+129	198	48	8	\N	\N	\N	2020-06-10 19:01:28.755084
+130	12	18	1	\N	\N	\N	2020-06-10 19:01:28.755084
+131	66	96	10	\N	\N	\N	2020-06-10 19:01:28.755084
+132	396	88	5	\N	\N	\N	2020-06-10 19:01:28.763838
+133	339	42	9	\N	\N	\N	2020-06-10 19:01:28.763838
+134	51	28	7	\N	\N	\N	2020-06-10 19:01:28.763838
+135	362	22	9	\N	\N	\N	2020-06-10 19:01:28.763838
+136	334	25	3	\N	\N	\N	2020-06-10 19:01:28.763838
+137	93	29	10	\N	\N	\N	2020-06-10 19:01:28.763838
+138	228	98	6	\N	\N	\N	2020-06-10 19:01:28.763838
+139	208	40	5	\N	\N	\N	2020-06-10 19:01:28.763838
+140	5	52	2	\N	\N	\N	2020-06-10 19:01:28.763838
+141	42	34	10	\N	\N	\N	2020-06-10 19:01:28.763838
+142	326	33	6	\N	\N	\N	2020-06-10 19:01:28.773325
+143	199	87	7	\N	\N	\N	2020-06-10 19:01:28.773325
+144	43	35	6	\N	\N	\N	2020-06-10 19:01:28.773325
+145	33	85	1	\N	\N	\N	2020-06-10 19:01:28.773325
+146	105	47	8	\N	\N	\N	2020-06-10 19:01:28.773325
+147	232	33	7	\N	\N	\N	2020-06-10 19:01:28.773325
+148	358	72	4	\N	\N	\N	2020-06-10 19:01:28.773325
+149	389	33	8	\N	\N	\N	2020-06-10 19:01:28.773325
+150	297	49	7	\N	\N	\N	2020-06-10 19:01:28.773325
+151	287	89	1	\N	\N	\N	2020-06-10 19:01:28.773325
+152	43	71	5	\N	\N	\N	2020-06-10 19:01:28.784185
+153	265	24	9	\N	\N	\N	2020-06-10 19:01:28.784185
+154	358	61	6	\N	\N	\N	2020-06-10 19:01:28.784185
+155	90	24	1	\N	\N	\N	2020-06-10 19:01:28.784185
+156	249	17	2	\N	\N	\N	2020-06-10 19:01:28.784185
+157	209	39	3	\N	\N	\N	2020-06-10 19:01:28.784185
+158	72	77	4	\N	\N	\N	2020-06-10 19:01:28.784185
+159	121	30	9	\N	\N	\N	2020-06-10 19:01:28.784185
+160	129	74	5	\N	\N	\N	2020-06-10 19:01:28.784185
+161	363	93	8	\N	\N	\N	2020-06-10 19:01:28.784185
+162	280	49	3	\N	\N	\N	2020-06-10 19:01:28.794285
+163	322	17	8	\N	\N	\N	2020-06-10 19:01:28.794285
+164	75	62	2	\N	\N	\N	2020-06-10 19:01:28.794285
+165	53	87	1	\N	\N	\N	2020-06-10 19:01:28.794285
+166	60	54	2	\N	\N	\N	2020-06-10 19:01:28.794285
+167	369	95	6	\N	\N	\N	2020-06-10 19:01:28.794285
+168	90	16	10	\N	\N	\N	2020-06-10 19:01:28.794285
+169	46	38	4	\N	\N	\N	2020-06-10 19:01:28.794285
+170	177	75	3	\N	\N	\N	2020-06-10 19:01:28.794285
+171	168	59	6	\N	\N	\N	2020-06-10 19:01:28.794285
+172	396	38	1	\N	\N	\N	2020-06-10 19:01:28.801969
+173	118	17	2	\N	\N	\N	2020-06-10 19:01:28.801969
+174	362	11	10	\N	\N	\N	2020-06-10 19:01:28.801969
+175	391	45	4	\N	\N	\N	2020-06-10 19:01:28.801969
+176	208	82	7	\N	\N	\N	2020-06-10 19:01:28.801969
+177	91	16	8	\N	\N	\N	2020-06-10 19:01:28.801969
+178	330	46	8	\N	\N	\N	2020-06-10 19:01:28.801969
+179	262	74	1	\N	\N	\N	2020-06-10 19:01:28.801969
+180	200	91	2	\N	\N	\N	2020-06-10 19:01:28.801969
+181	216	40	8	\N	\N	\N	2020-06-10 19:01:28.801969
+182	157	42	9	\N	\N	\N	2020-06-10 19:01:28.810044
+183	194	67	6	\N	\N	\N	2020-06-10 19:01:28.810044
+184	99	73	10	\N	\N	\N	2020-06-10 19:01:28.810044
+185	126	79	7	\N	\N	\N	2020-06-10 19:01:28.810044
+186	293	79	6	\N	\N	\N	2020-06-10 19:01:28.810044
+187	13	13	10	\N	\N	\N	2020-06-10 19:01:28.810044
+188	51	16	8	\N	\N	\N	2020-06-10 19:01:28.810044
+189	153	65	5	\N	\N	\N	2020-06-10 19:01:28.810044
+190	177	29	7	\N	\N	\N	2020-06-10 19:01:28.810044
+191	348	72	3	\N	\N	\N	2020-06-10 19:01:28.810044
+192	297	96	8	\N	\N	\N	2020-06-10 19:01:28.820359
+193	380	57	3	\N	\N	\N	2020-06-10 19:01:28.820359
+194	364	29	5	\N	\N	\N	2020-06-10 19:01:28.820359
+195	129	45	7	\N	\N	\N	2020-06-10 19:01:28.820359
+196	397	84	1	\N	\N	\N	2020-06-10 19:01:28.820359
+197	184	67	1	\N	\N	\N	2020-06-10 19:01:28.820359
+198	273	100	5	\N	\N	\N	2020-06-10 19:01:28.820359
+199	29	52	5	\N	\N	\N	2020-06-10 19:01:28.820359
+200	300	53	6	\N	\N	\N	2020-06-10 19:01:28.820359
+201	368	48	2	\N	\N	\N	2020-06-10 19:01:28.820359
+202	296	11	5	\N	\N	\N	2020-06-10 19:01:29.850087
+203	273	82	4	\N	\N	\N	2020-06-10 19:01:29.850087
+204	70	48	9	\N	\N	\N	2020-06-10 19:01:29.850087
+205	393	43	6	\N	\N	\N	2020-06-10 19:01:29.850087
+206	111	41	2	\N	\N	\N	2020-06-10 19:01:29.850087
+207	284	32	8	\N	\N	\N	2020-06-10 19:01:29.850087
+208	234	87	8	\N	\N	\N	2020-06-10 19:01:29.850087
+209	142	21	2	\N	\N	\N	2020-06-10 19:01:29.850087
+210	125	36	9	\N	\N	\N	2020-06-10 19:01:29.850087
+211	19	34	10	\N	\N	\N	2020-06-10 19:01:29.850087
+212	349	70	10	\N	\N	\N	2020-06-10 19:01:48.697325
+213	288	55	4	\N	\N	\N	2020-06-10 19:01:48.697325
+214	316	75	10	\N	\N	\N	2020-06-10 19:01:48.697325
+215	283	89	7	\N	\N	\N	2020-06-10 19:01:48.697325
+216	181	24	4	\N	\N	\N	2020-06-10 19:01:48.697325
+217	14	47	8	\N	\N	\N	2020-06-10 19:01:48.697325
+218	370	100	9	\N	\N	\N	2020-06-10 19:01:48.697325
+219	243	69	4	\N	\N	\N	2020-06-10 19:01:48.697325
+220	273	96	2	\N	\N	\N	2020-06-10 19:01:48.697325
+221	379	24	8	\N	\N	\N	2020-06-10 19:01:48.697325
+222	375	22	10	\N	\N	\N	2020-06-10 19:01:48.706719
+223	57	44	1	\N	\N	\N	2020-06-10 19:01:48.706719
+224	119	85	8	\N	\N	\N	2020-06-10 19:01:48.706719
+225	194	17	1	\N	\N	\N	2020-06-10 19:01:48.706719
+226	80	58	1	\N	\N	\N	2020-06-10 19:01:48.706719
+227	42	14	3	\N	\N	\N	2020-06-10 19:01:48.706719
+228	51	88	7	\N	\N	\N	2020-06-10 19:01:48.706719
+229	192	51	10	\N	\N	\N	2020-06-10 19:01:48.706719
+230	399	22	5	\N	\N	\N	2020-06-10 19:01:48.706719
+231	313	90	5	\N	\N	\N	2020-06-10 19:01:48.706719
+232	326	37	5	\N	\N	\N	2020-06-10 19:01:48.713983
+233	374	91	1	\N	\N	\N	2020-06-10 19:01:48.713983
+234	314	90	8	\N	\N	\N	2020-06-10 19:01:48.713983
+235	390	34	5	\N	\N	\N	2020-06-10 19:01:48.713983
+236	139	59	4	\N	\N	\N	2020-06-10 19:01:48.713983
+237	378	30	8	\N	\N	\N	2020-06-10 19:01:48.713983
+238	240	41	4	\N	\N	\N	2020-06-10 19:01:48.713983
+239	323	96	4	\N	\N	\N	2020-06-10 19:01:48.713983
+240	297	72	1	\N	\N	\N	2020-06-10 19:01:48.713983
+241	258	51	2	\N	\N	\N	2020-06-10 19:01:48.713983
+242	33	20	2	\N	\N	\N	2020-06-10 19:01:48.72183
+243	109	57	2	\N	\N	\N	2020-06-10 19:01:48.72183
+244	20	40	10	\N	\N	\N	2020-06-10 19:01:48.72183
+245	34	68	9	\N	\N	\N	2020-06-10 19:01:48.72183
+246	362	75	6	\N	\N	\N	2020-06-10 19:01:48.72183
+247	53	43	2	\N	\N	\N	2020-06-10 19:01:48.72183
+248	166	85	6	\N	\N	\N	2020-06-10 19:01:48.72183
+249	254	74	6	\N	\N	\N	2020-06-10 19:01:48.72183
+250	37	80	5	\N	\N	\N	2020-06-10 19:01:48.72183
+251	147	52	6	\N	\N	\N	2020-06-10 19:01:48.72183
+252	387	86	3	\N	\N	\N	2020-06-10 19:01:48.731451
+253	189	14	8	\N	\N	\N	2020-06-10 19:01:48.731451
+254	58	88	3	\N	\N	\N	2020-06-10 19:01:48.731451
+255	358	78	1	\N	\N	\N	2020-06-10 19:01:48.731451
+256	46	51	9	\N	\N	\N	2020-06-10 19:01:48.731451
+257	15	16	7	\N	\N	\N	2020-06-10 19:01:48.731451
+258	375	48	3	\N	\N	\N	2020-06-10 19:01:48.731451
+259	380	41	7	\N	\N	\N	2020-06-10 19:01:48.731451
+260	44	94	8	\N	\N	\N	2020-06-10 19:01:48.731451
+261	289	25	4	\N	\N	\N	2020-06-10 19:01:48.731451
+262	90	80	6	\N	\N	\N	2020-06-10 19:01:48.739191
+263	76	24	10	\N	\N	\N	2020-06-10 19:01:48.739191
+264	289	49	9	\N	\N	\N	2020-06-10 19:01:48.739191
+265	361	17	3	\N	\N	\N	2020-06-10 19:01:48.739191
+266	1	77	3	\N	\N	\N	2020-06-10 19:01:48.739191
+267	214	68	4	\N	\N	\N	2020-06-10 19:01:48.739191
+268	278	79	10	\N	\N	\N	2020-06-10 19:01:48.739191
+269	270	76	2	\N	\N	\N	2020-06-10 19:01:48.739191
+270	30	13	4	\N	\N	\N	2020-06-10 19:01:48.739191
+271	267	97	5	\N	\N	\N	2020-06-10 19:01:48.739191
+272	288	85	4	\N	\N	\N	2020-06-10 19:01:48.746824
+273	364	36	9	\N	\N	\N	2020-06-10 19:01:48.746824
+274	7	23	6	\N	\N	\N	2020-06-10 19:01:48.746824
+275	359	16	2	\N	\N	\N	2020-06-10 19:01:48.746824
+276	95	39	6	\N	\N	\N	2020-06-10 19:01:48.746824
+277	373	55	2	\N	\N	\N	2020-06-10 19:01:48.746824
+278	209	56	5	\N	\N	\N	2020-06-10 19:01:48.746824
+279	90	61	3	\N	\N	\N	2020-06-10 19:01:48.746824
+280	106	99	9	\N	\N	\N	2020-06-10 19:01:48.746824
+281	285	13	3	\N	\N	\N	2020-06-10 19:01:48.746824
+282	160	41	2	\N	\N	\N	2020-06-10 19:01:48.754376
+283	299	55	9	\N	\N	\N	2020-06-10 19:01:48.754376
+284	68	26	2	\N	\N	\N	2020-06-10 19:01:48.754376
+285	230	29	2	\N	\N	\N	2020-06-10 19:01:48.754376
+286	4	53	6	\N	\N	\N	2020-06-10 19:01:48.754376
+287	174	33	9	\N	\N	\N	2020-06-10 19:01:48.754376
+288	35	47	6	\N	\N	\N	2020-06-10 19:01:48.754376
+289	113	32	2	\N	\N	\N	2020-06-10 19:01:48.754376
+290	358	26	8	\N	\N	\N	2020-06-10 19:01:48.754376
+291	47	91	3	\N	\N	\N	2020-06-10 19:01:48.754376
+292	250	58	2	\N	\N	\N	2020-06-10 19:01:48.7604
+293	164	82	6	\N	\N	\N	2020-06-10 19:01:48.7604
+294	378	24	4	\N	\N	\N	2020-06-10 19:01:48.7604
+295	374	86	9	\N	\N	\N	2020-06-10 19:01:48.7604
+296	392	39	6	\N	\N	\N	2020-06-10 19:01:48.7604
+297	13	34	10	\N	\N	\N	2020-06-10 19:01:48.7604
+298	103	18	6	\N	\N	\N	2020-06-10 19:01:48.7604
+299	96	47	10	\N	\N	\N	2020-06-10 19:01:48.7604
+300	191	77	8	\N	\N	\N	2020-06-10 19:01:48.7604
+301	165	25	10	\N	\N	\N	2020-06-10 19:01:48.7604
+302	354	57	1	\N	\N	\N	2020-06-10 19:01:49.660829
+303	213	81	7	\N	\N	\N	2020-06-10 19:01:49.660829
+304	6	55	8	\N	\N	\N	2020-06-10 19:01:49.660829
+305	173	55	6	\N	\N	\N	2020-06-10 19:01:49.660829
+306	71	69	10	\N	\N	\N	2020-06-10 19:01:49.660829
+307	191	45	8	\N	\N	\N	2020-06-10 19:01:49.660829
+308	197	99	6	\N	\N	\N	2020-06-10 19:01:49.660829
+309	169	48	4	\N	\N	\N	2020-06-10 19:01:49.660829
+310	350	36	2	\N	\N	\N	2020-06-10 19:01:49.660829
+311	22	28	8	\N	\N	\N	2020-06-10 19:01:49.660829
+312	394	76	1	\N	\N	\N	2020-06-10 19:02:03.988976
+313	251	82	5	\N	\N	\N	2020-06-10 19:02:03.988976
+314	77	43	3	\N	\N	\N	2020-06-10 19:02:03.988976
+315	2	35	1	\N	\N	\N	2020-06-10 19:02:03.988976
+316	224	97	2	\N	\N	\N	2020-06-10 19:02:03.988976
+317	381	58	9	\N	\N	\N	2020-06-10 19:02:03.988976
+318	291	81	3	\N	\N	\N	2020-06-10 19:02:03.988976
+319	78	46	2	\N	\N	\N	2020-06-10 19:02:03.988976
+320	163	72	3	\N	\N	\N	2020-06-10 19:02:03.988976
+321	389	76	6	\N	\N	\N	2020-06-10 19:02:03.988976
+322	299	37	1	\N	\N	\N	2020-06-10 19:02:04.00168
+323	167	35	2	\N	\N	\N	2020-06-10 19:02:04.00168
+324	231	53	5	\N	\N	\N	2020-06-10 19:02:04.00168
+325	124	29	8	\N	\N	\N	2020-06-10 19:02:04.00168
+326	61	27	3	\N	\N	\N	2020-06-10 19:02:04.00168
+327	116	80	6	\N	\N	\N	2020-06-10 19:02:04.00168
+328	397	59	7	\N	\N	\N	2020-06-10 19:02:04.00168
+329	231	30	8	\N	\N	\N	2020-06-10 19:02:04.00168
+330	376	78	2	\N	\N	\N	2020-06-10 19:02:04.00168
+331	175	97	8	\N	\N	\N	2020-06-10 19:02:04.00168
+332	178	78	9	\N	\N	\N	2020-06-10 19:02:04.01343
+333	295	68	3	\N	\N	\N	2020-06-10 19:02:04.01343
+334	286	39	10	\N	\N	\N	2020-06-10 19:02:04.01343
+335	151	11	2	\N	\N	\N	2020-06-10 19:02:04.01343
+336	194	93	6	\N	\N	\N	2020-06-10 19:02:04.01343
+337	169	20	4	\N	\N	\N	2020-06-10 19:02:04.01343
+338	116	21	6	\N	\N	\N	2020-06-10 19:02:04.01343
+339	44	29	8	\N	\N	\N	2020-06-10 19:02:04.01343
+340	358	75	5	\N	\N	\N	2020-06-10 19:02:04.01343
+341	387	61	5	\N	\N	\N	2020-06-10 19:02:04.01343
+342	116	42	7	\N	\N	\N	2020-06-10 19:02:04.023195
+343	89	60	1	\N	\N	\N	2020-06-10 19:02:04.023195
+344	120	77	6	\N	\N	\N	2020-06-10 19:02:04.023195
+345	400	26	8	\N	\N	\N	2020-06-10 19:02:04.023195
+346	296	80	5	\N	\N	\N	2020-06-10 19:02:04.023195
+347	38	99	1	\N	\N	\N	2020-06-10 19:02:04.023195
+348	196	54	3	\N	\N	\N	2020-06-10 19:02:04.023195
+349	250	43	1	\N	\N	\N	2020-06-10 19:02:04.023195
+350	20	16	7	\N	\N	\N	2020-06-10 19:02:04.023195
+351	3	46	5	\N	\N	\N	2020-06-10 19:02:04.023195
+352	84	86	7	\N	\N	\N	2020-06-10 19:02:04.031117
+353	251	26	7	\N	\N	\N	2020-06-10 19:02:04.031117
+354	28	88	8	\N	\N	\N	2020-06-10 19:02:04.031117
+355	208	21	5	\N	\N	\N	2020-06-10 19:02:04.031117
+356	34	100	7	\N	\N	\N	2020-06-10 19:02:04.031117
+357	170	72	5	\N	\N	\N	2020-06-10 19:02:04.031117
+358	192	61	1	\N	\N	\N	2020-06-10 19:02:04.031117
+359	67	29	2	\N	\N	\N	2020-06-10 19:02:04.031117
+360	323	78	10	\N	\N	\N	2020-06-10 19:02:04.031117
+361	44	81	4	\N	\N	\N	2020-06-10 19:02:04.031117
+362	319	95	2	\N	\N	\N	2020-06-10 19:02:04.038881
+363	340	61	7	\N	\N	\N	2020-06-10 19:02:04.038881
+364	341	18	9	\N	\N	\N	2020-06-10 19:02:04.038881
+365	357	85	4	\N	\N	\N	2020-06-10 19:02:04.038881
+366	15	65	6	\N	\N	\N	2020-06-10 19:02:04.038881
+367	187	35	2	\N	\N	\N	2020-06-10 19:02:04.038881
+368	120	41	1	\N	\N	\N	2020-06-10 19:02:04.038881
+369	363	27	8	\N	\N	\N	2020-06-10 19:02:04.038881
+370	292	38	10	\N	\N	\N	2020-06-10 19:02:04.038881
+371	295	94	5	\N	\N	\N	2020-06-10 19:02:04.038881
+372	9	15	10	\N	\N	\N	2020-06-10 19:02:04.049146
+373	173	87	8	\N	\N	\N	2020-06-10 19:02:04.049146
+374	382	36	7	\N	\N	\N	2020-06-10 19:02:04.049146
+375	365	46	8	\N	\N	\N	2020-06-10 19:02:04.049146
+376	57	78	4	\N	\N	\N	2020-06-10 19:02:04.049146
+377	195	62	9	\N	\N	\N	2020-06-10 19:02:04.049146
+378	89	16	10	\N	\N	\N	2020-06-10 19:02:04.049146
+379	157	14	10	\N	\N	\N	2020-06-10 19:02:04.049146
+380	284	67	3	\N	\N	\N	2020-06-10 19:02:04.049146
+381	60	43	8	\N	\N	\N	2020-06-10 19:02:04.049146
+382	324	96	1	\N	\N	\N	2020-06-10 19:02:04.05912
+383	268	16	1	\N	\N	\N	2020-06-10 19:02:04.05912
+384	62	76	1	\N	\N	\N	2020-06-10 19:02:04.05912
+385	212	82	2	\N	\N	\N	2020-06-10 19:02:04.05912
+386	15	19	8	\N	\N	\N	2020-06-10 19:02:04.05912
+387	327	32	6	\N	\N	\N	2020-06-10 19:02:04.05912
+388	263	16	3	\N	\N	\N	2020-06-10 19:02:04.05912
+389	105	94	2	\N	\N	\N	2020-06-10 19:02:04.05912
+390	115	81	3	\N	\N	\N	2020-06-10 19:02:04.05912
+391	331	85	10	\N	\N	\N	2020-06-10 19:02:04.05912
+392	12	49	8	\N	\N	\N	2020-06-10 19:02:04.069359
+393	253	27	10	\N	\N	\N	2020-06-10 19:02:04.069359
+394	384	96	1	\N	\N	\N	2020-06-10 19:02:04.069359
+395	42	74	8	\N	\N	\N	2020-06-10 19:02:04.069359
+396	155	18	9	\N	\N	\N	2020-06-10 19:02:04.069359
+397	18	33	9	\N	\N	\N	2020-06-10 19:02:04.069359
+398	128	44	6	\N	\N	\N	2020-06-10 19:02:04.069359
+399	225	81	1	\N	\N	\N	2020-06-10 19:02:04.069359
+400	177	95	10	\N	\N	\N	2020-06-10 19:02:04.069359
+401	274	77	6	\N	\N	\N	2020-06-10 19:02:04.069359
+402	340	95	4	\N	\N	\N	2020-06-10 19:02:04.509975
+403	370	76	5	\N	\N	\N	2020-06-10 19:02:04.509975
+404	80	57	1	\N	\N	\N	2020-06-10 19:02:04.509975
+405	44	20	1	\N	\N	\N	2020-06-10 19:02:04.509975
+406	311	32	7	\N	\N	\N	2020-06-10 19:02:04.509975
+407	230	61	2	\N	\N	\N	2020-06-10 19:02:04.509975
+408	99	11	6	\N	\N	\N	2020-06-10 19:02:04.509975
+409	75	26	7	\N	\N	\N	2020-06-10 19:02:04.509975
+410	16	26	9	\N	\N	\N	2020-06-10 19:02:04.509975
+411	366	18	1	\N	\N	\N	2020-06-10 19:02:04.509975
 \.
 
 
 --
--- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
@@ -2376,63 +2798,63 @@ COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
 
 
 --
--- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.authors_id_seq', 1, false);
 
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.comic_book_id_seq', 2, true);
 
 
 --
--- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.customer_id_seq', 1, false);
 
 
 --
--- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.employee_id_seq', 1, false);
 
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.publishers_id_seq', 1, false);
 
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.purchase_id_seq', 7, true);
 
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
-SELECT pg_catalog.setval('public.reviews_id_seq', 9, true);
+SELECT pg_catalog.setval('public.reviews_id_seq', 411, true);
 
 
 --
--- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.series_id_seq', 1, true);
 
 
 --
--- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -2440,7 +2862,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.authors
@@ -2448,7 +2870,7 @@ ALTER TABLE ONLY public.authors
 
 
 --
--- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -2456,7 +2878,7 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.customers
@@ -2464,7 +2886,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.employee
@@ -2472,7 +2894,7 @@ ALTER TABLE ONLY public.employee
 
 
 --
--- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.genre
@@ -2480,7 +2902,7 @@ ALTER TABLE ONLY public.genre
 
 
 --
--- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.log
@@ -2488,7 +2910,7 @@ ALTER TABLE ONLY public.log
 
 
 --
--- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.publishers
@@ -2496,7 +2918,7 @@ ALTER TABLE ONLY public.publishers
 
 
 --
--- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -2504,7 +2926,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -2512,7 +2934,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.series
@@ -2520,70 +2942,70 @@ ALTER TABLE ONLY public.series
 
 
 --
--- Name: fki_author; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_author; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_author ON public.author_book USING btree (author_id);
 
 
 --
--- Name: fki_book; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_book; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_book ON public.purchased_book USING btree (book_id);
 
 
 --
--- Name: fki_comic; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_comic; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_comic ON public.author_book USING btree (comic_id);
 
 
 --
--- Name: fki_customer; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_customer; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_customer ON public.purchase USING btree (customer_id);
 
 
 --
--- Name: fki_employee; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_employee; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_employee ON public.purchase USING btree (employee_id);
 
 
 --
--- Name: fki_publishers; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_publishers; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 
 
 --
--- Name: fki_purchase; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_purchase; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
 
 
 --
--- Name: fki_series_id; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_series_id; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_series_id ON public.comic_book USING btree (series_id);
 
 
 --
--- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: kirill
+-- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: livbig
 --
 
-CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE FUNCTION public.status_update();
+CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE PROCEDURE public.status_update();
 
 
 --
--- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -2591,7 +3013,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -2599,7 +3021,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews
@@ -2607,7 +3029,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -2615,7 +3037,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: genre comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: genre comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.genre
@@ -2623,7 +3045,7 @@ ALTER TABLE ONLY public.genre
 
 
 --
--- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews
@@ -2631,7 +3053,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -2639,7 +3061,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -2647,7 +3069,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -2655,7 +3077,7 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -2663,7 +3085,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
