@@ -431,7 +431,7 @@ ALTER SEQUENCE public.purchase_id_seq OWNED BY public.purchase.purchase_id;
 
 CREATE TABLE public.purchased_book (
     book_id integer NOT NULL,
-    purchaise_id integer NOT NULL,
+    purchase_id integer NOT NULL,
     quanity integer NOT NULL
 );
 
@@ -2731,7 +2731,7 @@ COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status
 -- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
-COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
+COPY public.purchased_book (book_id, purchase_id, quanity) FROM stdin;
 1	9	100
 \.
 
@@ -3298,7 +3298,7 @@ ALTER TABLE ONLY public.purchase
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchaise_id);
+    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchase_id);
 
 
 --
@@ -3355,7 +3355,7 @@ CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 -- Name: fki_purchase; Type: INDEX; Schema: public; Owner: kirill
 --
 
-CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
+CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchase_id);
 
 
 --
@@ -3465,7 +3465,7 @@ ALTER TABLE ONLY public.comic_book
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchase FOREIGN KEY (purchaise_id) REFERENCES public.purchase(purchase_id) NOT VALID;
+    ADD CONSTRAINT purchase FOREIGN KEY (purchase_id) REFERENCES public.purchase(purchase_id) NOT VALID;
 
 
 --
