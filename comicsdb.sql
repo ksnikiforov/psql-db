@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.3
--- Dumped by pg_dump version 12.3
+-- Dumped from database version 11.7 (Raspbian 11.7-0+deb10u1)
+-- Dumped by pg_dump version 11.7 (Raspbian 11.7-0+deb10u1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: check_purchase(); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: check_purchase(); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
 CREATE FUNCTION public.check_purchase() RETURNS trigger
@@ -42,10 +42,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.check_purchase() OWNER TO kirill;
+ALTER FUNCTION public.check_purchase() OWNER TO livbig;
 
 --
--- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
 CREATE FUNCTION public.rating_recalculation() RETURNS void
@@ -63,10 +63,10 @@ end;
 $$;
 
 
-ALTER FUNCTION public.rating_recalculation() OWNER TO kirill;
+ALTER FUNCTION public.rating_recalculation() OWNER TO livbig;
 
 --
--- Name: status_update(); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: status_update(); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
 CREATE FUNCTION public.status_update() RETURNS trigger
@@ -81,10 +81,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.status_update() OWNER TO kirill;
+ALTER FUNCTION public.status_update() OWNER TO livbig;
 
 --
--- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
 CREATE FUNCTION public.top_authors(book_num integer, lim integer, genre text DEFAULT ''::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
@@ -111,14 +111,14 @@ end;
 $_$;
 
 
-ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO kirill;
+ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO livbig;
 
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET default_with_oids = false;
 
 --
--- Name: author_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: author_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.author_book (
@@ -127,10 +127,10 @@ CREATE TABLE public.author_book (
 );
 
 
-ALTER TABLE public.author_book OWNER TO kirill;
+ALTER TABLE public.author_book OWNER TO livbig;
 
 --
--- Name: authors; Type: TABLE; Schema: public; Owner: kirill
+-- Name: authors; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.authors (
@@ -140,10 +140,10 @@ CREATE TABLE public.authors (
 );
 
 
-ALTER TABLE public.authors OWNER TO kirill;
+ALTER TABLE public.authors OWNER TO livbig;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.authors_id_seq
@@ -155,17 +155,17 @@ CREATE SEQUENCE public.authors_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authors_id_seq OWNER TO kirill;
+ALTER TABLE public.authors_id_seq OWNER TO livbig;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.author_id;
 
 
 --
--- Name: comic_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: comic_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.comic_book (
@@ -182,10 +182,10 @@ CREATE TABLE public.comic_book (
 );
 
 
-ALTER TABLE public.comic_book OWNER TO kirill;
+ALTER TABLE public.comic_book OWNER TO livbig;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.comic_book_id_seq
@@ -197,17 +197,17 @@ CREATE SEQUENCE public.comic_book_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.comic_book_id_seq OWNER TO kirill;
+ALTER TABLE public.comic_book_id_seq OWNER TO livbig;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.comic_book_id_seq OWNED BY public.comic_book.comic_id;
 
 
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: kirill
+-- Name: customers; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.customers (
@@ -218,10 +218,10 @@ CREATE TABLE public.customers (
 );
 
 
-ALTER TABLE public.customers OWNER TO kirill;
+ALTER TABLE public.customers OWNER TO livbig;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.customer_id_seq
@@ -233,17 +233,17 @@ CREATE SEQUENCE public.customer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.customer_id_seq OWNER TO kirill;
+ALTER TABLE public.customer_id_seq OWNER TO livbig;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.customer_id_seq OWNED BY public.customers.customer_id;
 
 
 --
--- Name: employee; Type: TABLE; Schema: public; Owner: kirill
+-- Name: employee; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.employee (
@@ -254,10 +254,10 @@ CREATE TABLE public.employee (
 );
 
 
-ALTER TABLE public.employee OWNER TO kirill;
+ALTER TABLE public.employee OWNER TO livbig;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.employee_id_seq
@@ -269,17 +269,17 @@ CREATE SEQUENCE public.employee_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.employee_id_seq OWNER TO kirill;
+ALTER TABLE public.employee_id_seq OWNER TO livbig;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.employee_id_seq OWNED BY public.employee.emp_id;
 
 
 --
--- Name: genre; Type: TABLE; Schema: public; Owner: kirill
+-- Name: genre; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.genre (
@@ -288,10 +288,10 @@ CREATE TABLE public.genre (
 );
 
 
-ALTER TABLE public.genre OWNER TO kirill;
+ALTER TABLE public.genre OWNER TO livbig;
 
 --
--- Name: log; Type: TABLE; Schema: public; Owner: kirill
+-- Name: log; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.log (
@@ -301,10 +301,10 @@ CREATE TABLE public.log (
 );
 
 
-ALTER TABLE public.log OWNER TO kirill;
+ALTER TABLE public.log OWNER TO livbig;
 
 --
--- Name: publishers; Type: TABLE; Schema: public; Owner: kirill
+-- Name: publishers; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.publishers (
@@ -313,10 +313,10 @@ CREATE TABLE public.publishers (
 );
 
 
-ALTER TABLE public.publishers OWNER TO kirill;
+ALTER TABLE public.publishers OWNER TO livbig;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.publishers_id_seq
@@ -328,17 +328,17 @@ CREATE SEQUENCE public.publishers_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.publishers_id_seq OWNER TO kirill;
+ALTER TABLE public.publishers_id_seq OWNER TO livbig;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.publishers_id_seq OWNED BY public.publishers.publisher_id;
 
 
 --
--- Name: purchase; Type: TABLE; Schema: public; Owner: kirill
+-- Name: purchase; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.purchase (
@@ -353,10 +353,10 @@ CREATE TABLE public.purchase (
 );
 
 
-ALTER TABLE public.purchase OWNER TO kirill;
+ALTER TABLE public.purchase OWNER TO livbig;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.purchase_id_seq
@@ -368,30 +368,30 @@ CREATE SEQUENCE public.purchase_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.purchase_id_seq OWNER TO kirill;
+ALTER TABLE public.purchase_id_seq OWNER TO livbig;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.purchase_id_seq OWNED BY public.purchase.purchase_id;
 
 
 --
--- Name: purchased_book; Type: TABLE; Schema: public; Owner: kirill
+-- Name: purchased_book; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.purchased_book (
     book_id integer NOT NULL,
-    purchase_id integer NOT NULL,
+    purchaise_id integer NOT NULL,
     quanity integer NOT NULL
 );
 
 
-ALTER TABLE public.purchased_book OWNER TO kirill;
+ALTER TABLE public.purchased_book OWNER TO livbig;
 
 --
--- Name: reviews; Type: TABLE; Schema: public; Owner: kirill
+-- Name: reviews; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.reviews (
@@ -408,10 +408,10 @@ CREATE TABLE public.reviews (
 );
 
 
-ALTER TABLE public.reviews OWNER TO kirill;
+ALTER TABLE public.reviews OWNER TO livbig;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.reviews_id_seq
@@ -423,17 +423,17 @@ CREATE SEQUENCE public.reviews_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.reviews_id_seq OWNER TO kirill;
+ALTER TABLE public.reviews_id_seq OWNER TO livbig;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.review_id;
 
 
 --
--- Name: series; Type: TABLE; Schema: public; Owner: kirill
+-- Name: series; Type: TABLE; Schema: public; Owner: livbig
 --
 
 CREATE TABLE public.series (
@@ -444,10 +444,10 @@ CREATE TABLE public.series (
 );
 
 
-ALTER TABLE public.series OWNER TO kirill;
+ALTER TABLE public.series OWNER TO livbig;
 
 --
--- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
 --
 
 CREATE SEQUENCE public.series_id_seq
@@ -459,73 +459,73 @@ CREATE SEQUENCE public.series_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.series_id_seq OWNER TO kirill;
+ALTER TABLE public.series_id_seq OWNER TO livbig;
 
 --
--- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
 --
 
 ALTER SEQUENCE public.series_id_seq OWNED BY public.series.series_id;
 
 
 --
--- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.authors ALTER COLUMN author_id SET DEFAULT nextval('public.authors_id_seq'::regclass);
 
 
 --
--- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book ALTER COLUMN comic_id SET DEFAULT nextval('public.comic_book_id_seq'::regclass);
 
 
 --
--- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.customers ALTER COLUMN customer_id SET DEFAULT nextval('public.customer_id_seq'::regclass);
 
 
 --
--- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.employee ALTER COLUMN emp_id SET DEFAULT nextval('public.employee_id_seq'::regclass);
 
 
 --
--- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.publishers ALTER COLUMN publisher_id SET DEFAULT nextval('public.publishers_id_seq'::regclass);
 
 
 --
--- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase ALTER COLUMN purchase_id SET DEFAULT nextval('public.purchase_id_seq'::regclass);
 
 
 --
--- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews ALTER COLUMN review_id SET DEFAULT nextval('public.reviews_id_seq'::regclass);
 
 
 --
--- Name: series series_id; Type: DEFAULT; Schema: public; Owner: kirill
+-- Name: series series_id; Type: DEFAULT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.series ALTER COLUMN series_id SET DEFAULT nextval('public.series_id_seq'::regclass);
 
 
 --
--- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.author_book (author_id, comic_id) FROM stdin;
@@ -1073,7 +1073,7 @@ COPY public.author_book (author_id, comic_id) FROM stdin;
 
 
 --
--- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.authors (author_id, name, surname) FROM stdin;
@@ -1181,7 +1181,7 @@ COPY public.authors (author_id, name, surname) FROM stdin;
 
 
 --
--- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id) FROM stdin;
@@ -1195,9 +1195,11 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 27	5	160	a, malesuada id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis	$27.14	2007-09-27	10	32
 32	6	204	elit, a feugiat tellus lorem eu metus. In lorem. Donec	$40.10	1971-01-07	10	39
 36	10	904	lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$79.03	1955-12-22	5	80
+39	6	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13
 40	1	73	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam auctor, velit	$46.09	1972-12-12	1	69
 41	5	114	erat neque non quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames	$25.70	1981-06-12	6	57
 45	6	600	Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales	$44.28	1943-06-21	3	40
+49	10	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80
 50	1	221	Fusce aliquet magna a neque. Nullam ut nisi	$87.70	1984-11-27	6	66
 52	2	776	risus varius orci, in consequat enim diam vel arcu. Curabitur ut odio vel est	$90.99	1987-06-13	6	64
 54	8	963	iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$7.31	1976-06-30	1	5
@@ -1242,9 +1244,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 158	8	913	odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$94.47	1948-05-20	1	64
 161	2	545	odio a purus. Duis elementum, dui quis accumsan convallis,	$34.53	1966-08-16	5	7
 162	1	698	dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer sem elit,	$24.78	1980-09-08	10	84
-39	1	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13
-61	2	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91
-62	1	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75
 172	2	752	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed	$49.53	2010-11-01	3	7
 176	2	378	quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla. In tincidunt congue	$17.15	1983-01-04	8	44
 238	9	340	non leo. Vivamus nibh dolor, nonummy ac, feugiat	$8.65	2003-03-23	5	66
@@ -1272,7 +1271,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 235	9	585	accumsan neque et nunc. Quisque ornare tortor at	$9.13	1956-05-23	3	10
 236	7	616	sed tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet ullamcorper.	$83.86	2000-03-03	4	24
 237	1	135	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida	$32.37	1992-08-09	9	44
-64	1	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77
+178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44
 239	10	176	ante lectus convallis est, vitae sodales nisi magna sed	$11.53	1988-04-05	8	44
 241	6	788	sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent	$24.11	2003-06-27	6	14
 244	10	488	Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$50.35	1990-11-30	10	14
@@ -1332,10 +1331,24 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45
 388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5
 395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41
-93	10	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78
-66	9	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13
-49	0	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80
-76	10	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49
+1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19
+2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18
+3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65
+4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86
+5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100
+6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25
+7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85
+9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88
+12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47
+13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37
+14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70
+15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51
+16	9	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89
+17	4	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6
+18	9	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18
+19	10	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12
+20	8	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65
+22	8	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36
 23	3	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40
 28	8	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18
 29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68
@@ -1346,6 +1359,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73
 37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6
 38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77
+42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8
 43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71
 44	6	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54
 46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98
@@ -1358,12 +1372,17 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44
 59	8	132	arcu. Curabitur ut odio vel est tempor bibendum. Donec	$5.59	2019-08-07	6	34
 60	4	525	quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus.	$65.64	1945-10-09	6	21
+61	2	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91
+62	1	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75
+64	1	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77
+66	9	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13
 67	2	691	eget, ipsum. Donec sollicitudin adipiscing ligula. Aenean gravida nunc sed pede. Cum	$11.20	1936-10-21	7	54
 68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75
 70	9	342	Nunc commodo auctor velit. Aliquam nisl. Nulla eu neque	$65.14	1937-02-07	1	77
 71	10	786	Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam	$52.02	1952-03-03	10	27
 72	4	655	dolor sit amet, consectetuer adipiscing elit. Aliquam	$8.03	1993-04-04	1	80
 75	5	898	dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac	$68.43	2001-12-04	9	15
+76	10	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49
 77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6
 78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72
 79	5	918	ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce aliquam, enim nec tempus	$77.75	1936-07-31	6	63
@@ -1375,6 +1394,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 89	6	962	quam quis diam. Pellentesque habitant morbi tristique senectus	$27.07	2008-03-21	7	19
 90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15
 91	7	525	arcu. Vestibulum ante ipsum primis in faucibus orci luctus	$20.31	1947-09-07	9	77
+93	10	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78
 95	4	769	non ante bibendum ullamcorper. Duis cursus, diam at pretium aliquet,	$21.18	1936-10-15	7	58
 96	10	417	Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc	$65.53	2010-06-24	10	41
 98	8	196	purus. Duis elementum, dui quis accumsan convallis,	$32.34	1933-06-10	9	99
@@ -1391,6 +1411,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 115	7	536	Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper.	$36.28	1973-03-22	10	25
 116	6	491	sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris	$36.42	1989-06-22	7	41
 118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63
+119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2
 120	4	51	adipiscing ligula. Aenean gravida nunc sed pede. Cum sociis natoque	$41.49	2013-04-06	1	97
 121	5	332	cursus non, egestas a, dui. Cras	$25.42	2007-05-24	7	83
 124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79
@@ -1444,6 +1465,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 203	1	40	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus.	$22.40	1960-07-11	9	49
 208	6	906	imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas. Duis	$30.08	1979-03-23	5	79
 209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36
+212	2	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37
 213	7	53	urna. Nunc quis arcu vel quam dignissim pharetra.	$41.57	2018-06-09	1	69
 214	4	429	sapien. Nunc pulvinar arcu et pede. Nunc sed orci	$48.61	1931-04-19	1	43
 215	8	141	Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec	$16.58	1980-04-06	3	67
@@ -1482,7 +1504,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 278	10	85	amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam	$18.54	1985-05-28	5	35
 280	3	106	quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce	$7.97	2007-04-01	8	73
 283	7	786	elementum sem, vitae aliquam eros	$2.42	1943-12-18	1	6
-212	2	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37
 284	6	170	amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat.	$36.76	1966-01-12	3	88
 285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45
 286	10	385	arcu iaculis enim, sit amet ornare	$73.09	2005-09-13	10	20
@@ -1508,6 +1529,11 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 314	8	289	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac facilisis facilisis, magna	$60.35	1978-11-28	9	18
 315	2	783	Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$30.63	1979-01-25	2	64
 316	10	969	mollis nec, cursus a, enim. Suspendisse aliquet,	$19.29	1966-03-13	3	82
+317	7	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97
+319	2	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72
+321	2	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31
+322	8	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2
+323	7	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5
 324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39
 326	6	478	justo faucibus lectus, a sollicitudin orci	$51.06	1931-06-24	4	95
 327	7	542	sem ut dolor dapibus gravida.	$82.02	1974-03-19	1	64
@@ -1519,6 +1545,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 340	6	581	aliquet, sem ut cursus luctus,	$52.47	1952-01-17	4	22
 341	9	171	at, nisi. Cum sociis natoque penatibus et magnis dis parturient	$76.66	2002-11-11	8	30
 343	4	332	ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$59.85	1951-08-24	3	77
+347	6	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14
 348	3	803	vulputate, lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$11.30	1962-06-04	6	75
 349	10	847	non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum	$4.23	1988-06-29	3	28
 350	2	745	nisl arcu iaculis enim, sit amet ornare lectus justo eu arcu. Morbi sit amet massa.	$98.45	1997-03-24	5	34
@@ -1542,25 +1569,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 376	2	389	Proin mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$81.60	2008-04-26	6	71
 378	6	286	porttitor tellus non magna. Nam	$31.05	1952-08-14	9	79
 379	8	766	Phasellus ornare. Fusce mollis. Duis sit	$12.19	1932-05-23	9	69
-178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44
-1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19
-2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18
-3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65
-4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86
-5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100
-6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25
-7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85
-9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88
-12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47
-13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37
-14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70
-15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51
-16	9	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89
-17	4	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6
-18	9	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18
-19	10	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12
-20	8	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65
-347	6	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14
 380	6	113	augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$63.02	2000-06-12	2	47
 381	9	344	scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed	$30.54	2000-05-25	10	91
 382	7	405	metus. Aenean sed pede nec ante blandit viverra.	$21.22	1952-01-10	8	98
@@ -1577,19 +1585,11 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51
 399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9
 400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43
-22	8	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36
-42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8
-119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2
-317	7	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97
-319	2	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72
-321	2	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31
-322	8	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2
-323	7	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5
 \.
 
 
 --
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.customers (customer_id, name, email, phone) FROM stdin;
@@ -1688,7 +1688,7 @@ COPY public.customers (customer_id, name, email, phone) FROM stdin;
 
 
 --
--- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.employee (emp_id, name, surname, phone) FROM stdin;
@@ -1787,515 +1787,771 @@ COPY public.employee (emp_id, name, surname, phone) FROM stdin;
 
 
 --
--- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.genre (genre, comic_id) FROM stdin;
-euismod	2
-ante	115
-magnis	184
-nec	68
-Donec	72
-tellus	86
-sit	397
-amet	324
-orci	363
-sit	228
-libero.	282
-imperdiet	290
-congue	322
-Aliquam	291
-ligula.	27
-adipiscing	231
-Morbi	132
-cursus	183
-cursus.	377
-ante,	78
-a	153
-Aenean	131
-et	384
-nibh	390
-ornare,	390
-posuere,	204
-et	348
-Proin	4
-egestas.	198
-nulla	356
-ipsum	100
-Curabitur	193
-eget	298
-Proin	318
-dis	247
-eget	131
-non	118
-Curabitur	46
-Aliquam	168
-laoreet	212
-mi	3
-Donec	351
-sapien,	169
-sagittis	72
-a	364
-a	369
-velit	156
-dapibus	314
-amet	192
-pharetra.	303
-Donec	290
-sem.	274
-tempor	244
-auctor	174
-hendrerit	81
-augue	347
-vitae,	310
-sit	273
-diam	209
-vitae	16
-est,	35
-montes,	193
-Donec	157
-at,	48
-Nam	176
-nibh	318
-Nunc	251
-commodo	268
-odio.	325
-Cras	171
-nulla	36
-tristique	328
-congue	384
-rutrum	117
-ligula	33
-libero.	45
-consectetuer	154
-molestie	381
-viverra.	347
-magna.	28
-luctus	37
-dolor	160
-a,	46
-Donec	350
-dapibus	190
-Aliquam	254
-euismod	101
-nulla	190
-ante	120
-Nam	328
-diam	99
-enim.	396
-augue	10
-est	130
-a,	62
-aliquet	95
-augue	32
-vel,	165
-at,	197
-sem	113
-Nunc	87
-Proin	105
-ultrices.	385
-sapien.	290
-Nulla	89
-per	182
-molestie	241
-tellus	60
-sed	73
-velit.	167
-ac	378
-mi	399
-arcu.	168
-amet	131
-Sed	137
-fermentum	103
-lorem,	392
-bibendum	356
-Duis	70
-Donec	260
-eu	280
-lorem	207
-Curabitur	370
-elementum	234
-magnis	51
-magna	19
-lacus.	96
-dolor.	259
-pede	285
-Quisque	281
-scelerisque	240
-a	129
-non,	34
-sed	120
-ullamcorper,	303
-Donec	119
-mauris,	38
-sagittis.	182
-viverra.	277
-nec	123
-dui.	90
-et	254
-dolor,	91
-aliquam	136
-tellus.	133
-orci	334
-ridiculus	11
-varius	211
-diam.	33
-orci,	262
-eget	238
-tristique	69
-vehicula	211
-sem,	158
-nec	224
-malesuada	60
-vulputate	31
-ultricies	208
-euismod	341
-convallis,	227
-molestie	227
-nunc	255
-aliquet	82
-mi	211
-augue	58
-montes,	291
-dolor	326
-odio	386
-non	136
-auctor,	277
-ligula	32
-sollicitudin	71
-malesuada	20
-et	161
-nec	351
-Nunc	337
-iaculis	151
-a	179
-nonummy	287
-accumsan	6
-accumsan	226
-id	271
-magna	386
-et	250
-Nunc	25
-iaculis	168
-tempor	109
-odio	144
-diam.	123
-lorem	336
-aliquam,	18
-magnis	160
-Aliquam	147
-eget	279
-magna.	157
-a,	372
-dui.	177
-quis	334
-fringilla	148
-non,	72
-leo.	267
-et,	46
-dui	306
-ornare	181
-commodo	164
-laoreet	390
-molestie	291
-iaculis	387
-rhoncus.	63
-Duis	127
-Donec	74
-ipsum	240
-tempor	293
-arcu	135
-amet	12
-vel	173
-sodales	318
-purus,	366
-nec	256
-pede	252
-ultricies	293
-fringilla,	4
-adipiscing,	23
-amet	112
-dui.	219
-vel,	99
-egestas	327
-purus,	233
-sagittis	399
-euismod	73
-purus.	89
-sociis	8
-congue	189
-et	297
-egestas.	196
-aliquet	267
-in	28
-Quisque	179
-pede	10
-convallis	57
-metus	302
-pretium	299
-Nam	226
-ac	163
-Aliquam	309
-ac	320
-nisi	379
-non,	151
-ornare	322
-tristique	6
-luctus	81
-ut	287
-dictum	118
-non,	199
-tristique	297
-sed	217
-at	348
-luctus	150
-mauris	390
-pede.	48
-egestas.	265
-vel	251
-tellus	252
-diam	172
-Ut	36
-sit	32
-vestibulum	128
-sem	88
-sapien.	136
-Donec	265
-dui,	353
-vulputate	320
-Duis	34
-dui.	332
-Maecenas	54
-eu	147
-aliquet,	187
-sapien	9
-elit,	83
-malesuada	196
-Proin	393
-magna	240
-orci	218
-Aenean	314
-Praesent	223
-Nulla	277
-amet	210
-sit	202
-sagittis	73
-Nunc	214
-in,	204
-libero.	21
-mi	152
-vehicula	301
-nisi.	52
-ligula.	93
-diam	309
-at,	100
-turpis	276
-mi	238
-odio.	400
-Praesent	122
-Nunc	322
-aliquam	365
-consectetuer	103
-scelerisque	127
-magna.	152
-Duis	13
-porttitor	316
-Duis	387
-lacus,	324
-sit	359
-metus	219
-id	387
-sagittis	397
-Cum	170
-posuere,	390
-leo	194
-eget	129
-neque	318
-ipsum.	143
-fringilla.	284
-nunc.	315
-non	4
-nunc	345
-dui.	56
-molestie	316
-ridiculus	274
-Sed	313
-euismod	268
-feugiat	294
-Quisque	342
-Curabitur	305
-hendrerit	254
-mi,	182
-consequat	263
-iaculis	57
-id,	268
-feugiat	174
-sed,	385
-sem.	391
-dolor.	276
-tempor	391
-dolor	106
-accumsan	73
-montes,	103
-eu,	22
-fringilla	110
-tristique	255
-erat	215
-Fusce	230
-Nam	153
-ridiculus	230
-eget	250
-viverra.	349
-urna.	372
-tortor,	281
-felis	280
-viverra.	384
-mauris	320
-consequat	215
-bibendum	154
-erat	136
-eu	307
-morbi	64
-a	78
-Donec	314
-In	257
-Donec	173
-molestie	116
-hendrerit	82
-accumsan	231
-Cras	138
-aliquet,	190
-vulputate,	176
-cursus,	274
-augue.	283
-porta	336
-sed	226
-amet,	172
-vel	115
-aliquet	225
-lorem	316
-Duis	97
-tincidunt	243
-In	295
-scelerisque	320
-Quisque	86
-luctus	354
-Curabitur	4
-non	292
-odio	168
-purus,	57
-Etiam	217
-Nam	204
-gravida	58
-Aliquam	50
-risus	129
-amet,	343
-vitae,	95
-imperdiet	216
-Lorem	238
-velit	260
-tortor.	253
-vestibulum,	25
-tincidunt	249
-sed	288
-elit	59
-Donec	368
-est,	16
-lacinia	254
-nibh.	1
-convallis	174
-Aliquam	181
-sit	143
-lectus	312
-convallis	286
-non	20
-tincidunt	74
-ut	343
-vehicula.	387
-tempor	5
-sodales	256
-Vivamus	168
-pellentesque,	364
-volutpat	245
-in	329
-adipiscing	110
-nunc.	220
-egestas	352
-vel	357
-cubilia	361
-mi.	294
-vel,	260
-diam.	268
-Phasellus	353
-Quisque	302
-enim.	213
-et	271
-blandit	186
-sit	352
-adipiscing	383
-tortor.	31
-eget	350
-consequat	35
-nibh	93
-dignissim	157
-Duis	303
-ipsum	282
-sem	87
-erat	361
-eu	389
-Nullam	379
-venenatis	205
-laoreet	265
-ornare.	230
-Aenean	94
-arcu.	329
-vulputate	58
-euismod	358
-metus	133
-Mauris	211
-ante.	219
-egestas.	159
-pretium	248
-lorem	294
-fermentum	108
-placerat.	122
-magna.	143
-scelerisque	121
-fringilla	306
-risus.	252
-luctus	90
-Cras	350
-mollis	379
-aliquet	379
-tellus.	141
-Nunc	365
-accumsan	151
-est	20
-in	5
-Donec	320
-Sed	141
-mi.	160
-nibh	243
-eu	30
-dui.	102
-In	11
-tellus	371
-lorem	42
-arcu.	132
-Cras	290
-nonummy	340
-a,	23
-mauris.	384
-a	357
-dolor.	212
-Mauris	210
-Nunc	57
-ultrices	115
+Science	1
+University	2
+Horror	3
+Adventure	4
+Science	5
+Drama	6
+Comedy	7
+Sci-Fi	8
+Drama	9
+University	10
+Fighting	11
+University	12
+Romance	13
+Adventure	14
+School	15
+Drama	16
+Adventure	17
+Science	18
+Science	19
+Fighting	20
+Sci-Fi	21
+Fantasy	22
+Fighting	23
+Adventure	24
+Comedy	25
+Adventure	26
+Fantasy	27
+School	28
+Horror	29
+School	30
+Drama	31
+Fighting	32
+Comedy	33
+Drama	34
+School	35
+Fighting	36
+Drama	37
+Fighting	38
+Comedy	39
+Science	40
+University	41
+School	42
+Sci-Fi	43
+Science	44
+School	45
+Science	46
+Romance	47
+Sci-Fi	48
+Comedy	49
+Fighting	50
+Romance	51
+School	52
+Fighting	53
+Sci-Fi	54
+Drama	55
+Drama	56
+Comedy	57
+Adventure	58
+University	59
+Sci-Fi	60
+Science	61
+Drama	62
+Fighting	63
+University	64
+University	65
+Science	66
+Romance	67
+University	68
+Horror	69
+Sci-Fi	70
+Horror	71
+Adventure	72
+Romance	73
+Science	74
+School	75
+Adventure	76
+Adventure	77
+Horror	78
+Adventure	79
+School	80
+School	81
+University	82
+Fantasy	83
+Sci-Fi	84
+Science	85
+Fighting	86
+Romance	87
+University	88
+University	89
+Drama	90
+Science	91
+Drama	92
+Horror	93
+Adventure	94
+School	95
+Comedy	96
+Comedy	97
+Fighting	98
+Comedy	99
+Sci-Fi	100
+Fighting	101
+Fighting	102
+Fighting	103
+Fantasy	104
+Fantasy	105
+Sci-Fi	106
+Drama	107
+Adventure	108
+University	109
+Sci-Fi	110
+Romance	111
+School	112
+Drama	113
+Drama	114
+Horror	115
+Drama	116
+Fighting	117
+Adventure	118
+School	119
+Romance	120
+Drama	121
+Fantasy	122
+Sci-Fi	123
+Sci-Fi	124
+Fighting	125
+Sci-Fi	126
+Drama	127
+Fantasy	128
+Romance	129
+School	130
+School	131
+Fighting	132
+School	133
+School	134
+Adventure	135
+Romance	136
+Science	137
+Horror	138
+Fighting	139
+Romance	140
+Fantasy	141
+Comedy	142
+Fantasy	143
+Sci-Fi	144
+School	145
+Fantasy	146
+Fantasy	147
+Comedy	148
+Fighting	149
+Adventure	150
+School	151
+Romance	152
+Horror	153
+School	154
+Science	155
+Sci-Fi	156
+Comedy	157
+Fantasy	158
+Comedy	159
+Fighting	160
+Drama	161
+School	162
+Romance	163
+Fantasy	164
+School	165
+University	166
+Horror	167
+Fantasy	168
+Adventure	169
+Fighting	170
+Adventure	171
+School	172
+Science	173
+Adventure	174
+School	175
+Adventure	176
+Comedy	177
+Drama	178
+Drama	179
+Sci-Fi	180
+University	181
+Drama	182
+Fighting	183
+Science	184
+School	185
+Fantasy	186
+Fantasy	187
+Science	188
+Romance	189
+Sci-Fi	190
+Fighting	191
+Horror	192
+Science	193
+University	194
+Fighting	195
+Horror	196
+Comedy	197
+Romance	198
+Romance	199
+Sci-Fi	200
+University	201
+Fighting	202
+Fantasy	203
+Drama	204
+Horror	205
+Comedy	206
+Adventure	207
+University	208
+Horror	209
+Comedy	210
+Adventure	211
+Comedy	212
+Comedy	213
+Science	214
+Drama	215
+Science	216
+School	217
+Fantasy	218
+Comedy	219
+Fighting	220
+Fighting	221
+Fantasy	222
+Fighting	223
+Drama	224
+Romance	225
+Science	226
+Comedy	227
+Sci-Fi	228
+Science	229
+Fantasy	230
+Horror	231
+Adventure	232
+School	233
+Comedy	234
+Science	235
+Adventure	236
+Fantasy	237
+Sci-Fi	238
+Fighting	239
+Science	240
+School	241
+Horror	242
+Adventure	243
+Science	244
+Comedy	245
+Adventure	246
+Science	247
+Drama	248
+Science	249
+Adventure	250
+Comedy	251
+Drama	252
+Fantasy	253
+Comedy	254
+Fighting	255
+Comedy	256
+Fantasy	257
+Science	258
+School	259
+Fantasy	260
+Sci-Fi	261
+Romance	262
+University	263
+Science	264
+Sci-Fi	265
+Science	266
+University	267
+Science	268
+School	269
+Sci-Fi	270
+Drama	271
+Romance	272
+Drama	273
+Adventure	274
+Sci-Fi	275
+Romance	276
+Comedy	277
+Adventure	278
+Fantasy	279
+Horror	280
+Fantasy	281
+Science	282
+Science	283
+University	284
+Fantasy	285
+Sci-Fi	286
+Science	287
+University	288
+Fantasy	289
+School	290
+Sci-Fi	291
+Adventure	292
+School	293
+School	294
+Fighting	295
+Science	296
+Sci-Fi	297
+Adventure	298
+Comedy	299
+University	300
+Drama	301
+Fantasy	302
+University	303
+Fighting	304
+University	305
+Adventure	306
+Romance	307
+Fighting	308
+Sci-Fi	309
+University	310
+Comedy	311
+Science	312
+Comedy	313
+Science	314
+Science	315
+Drama	316
+Fantasy	317
+Adventure	318
+Adventure	319
+Fantasy	320
+Adventure	321
+Comedy	322
+University	323
+Adventure	324
+Sci-Fi	325
+Drama	326
+Science	327
+Romance	328
+Sci-Fi	329
+University	330
+Fantasy	331
+Fantasy	332
+Fantasy	333
+Fantasy	334
+Fighting	335
+Horror	336
+Sci-Fi	337
+Sci-Fi	338
+Science	339
+School	340
+Comedy	341
+Drama	342
+University	343
+Sci-Fi	344
+Science	345
+Sci-Fi	346
+School	347
+Sci-Fi	348
+Fantasy	349
+School	350
+School	351
+Fantasy	352
+School	353
+Drama	354
+University	355
+University	356
+Science	357
+Fighting	358
+Sci-Fi	359
+Drama	360
+Comedy	361
+University	362
+Adventure	363
+Adventure	364
+Drama	365
+Sci-Fi	366
+Horror	367
+Romance	368
+School	369
+Sci-Fi	370
+Science	371
+Comedy	372
+Science	373
+School	374
+Comedy	375
+Drama	376
+University	377
+University	378
+Sci-Fi	379
+Science	380
+Sci-Fi	381
+Fantasy	382
+University	383
+Drama	384
+School	385
+Drama	386
+School	387
+Science	388
+Adventure	389
+School	390
+Fighting	391
+Fantasy	392
+Comedy	393
+Science	394
+Fantasy	395
+Adventure	396
+Comedy	397
+Sci-Fi	398
+Drama	399
+Adventure	400
+Romance	1
+Comedy	2
+Adventure	3
+Drama	4
+Fantasy	5
+Fantasy	6
+Fantasy	7
+Romance	8
+Science	10
+Drama	12
+Adventure	13
+School	14
+Sci-Fi	15
+School	16
+Fantasy	17
+Adventure	18
+Horror	19
+Adventure	21
+Drama	22
+Science	25
+Comedy	26
+University	27
+University	28
+Comedy	29
+Romance	30
+Romance	31
+Sci-Fi	32
+Science	33
+Comedy	34
+Science	35
+Adventure	36
+Adventure	37
+University	38
+Romance	39
+Horror	40
+Adventure	41
+Science	42
+Romance	43
+Adventure	44
+Sci-Fi	45
+Drama	46
+Science	47
+Romance	48
+Sci-Fi	49
+Sci-Fi	51
+Adventure	52
+School	53
+University	54
+Horror	55
+Sci-Fi	56
+Fantasy	57
+Science	58
+Comedy	59
+Horror	60
+University	61
+School	62
+Romance	63
+Romance	64
+Adventure	66
+Fighting	67
+Drama	68
+Sci-Fi	69
+Romance	70
+University	71
+Romance	72
+School	73
+University	74
+Fighting	75
+School	76
+School	77
+Romance	78
+Romance	79
+University	80
+Science	81
+Drama	82
+University	83
+Romance	84
+Romance	85
+School	86
+Comedy	87
+School	88
+University	91
+Science	92
+School	93
+Fantasy	94
+Drama	95
+Fantasy	96
+University	97
+Romance	98
+Science	99
+Fantasy	100
+Fantasy	102
+Horror	103
+University	104
+Romance	105
+Romance	106
+Comedy	107
+Fantasy	108
+School	110
+Drama	111
+University	112
+Fighting	113
+School	114
+Adventure	115
+Romance	116
+University	117
+Comedy	118
+School	120
+University	121
+Science	122
+University	123
+Drama	124
+Comedy	125
+Science	126
+Horror	127
+Science	128
+School	129
+Romance	130
+University	131
+Science	132
+University	134
+Romance	135
+Adventure	136
+University	138
+Romance	139
+Horror	141
+Science	143
+Science	144
+Science	145
+School	146
+Fighting	147
+Romance	148
+Horror	150
+Fantasy	151
+Comedy	152
+Romance	153
+Adventure	154
+Drama	156
+Romance	157
+Drama	158
+Drama	159
+Science	161
+University	162
+School	163
+University	164
+School	167
+School	168
+University	169
+School	170
+Fighting	172
+Horror	173
+Romance	174
+Science	175
+Fighting	176
+Horror	177
+University	178
+Science	179
+Comedy	180
+Horror	181
+University	182
+Sci-Fi	183
+Fantasy	184
+Fighting	185
+Romance	186
+Adventure	187
+Fighting	188
+Fighting	189
+Fighting	190
+Sci-Fi	192
+Sci-Fi	193
+Romance	194
+Romance	195
+School	196
+School	197
+School	198
+Adventure	199
+Fantasy	200
+Sci-Fi	201
+Science	202
+University	203
+School	204
+Fighting	205
+Fighting	206
+Science	207
+Sci-Fi	208
+Romance	210
+Fighting	212
+Science	213
+Horror	214
+University	215
+School	216
+Romance	217
+Sci-Fi	218
+Drama	219
+Adventure	220
+Comedy	222
+Horror	223
+Adventure	224
+School	225
+Fantasy	226
+Fantasy	227
+University	228
+Fantasy	229
+School	230
+University	231
+School	232
+Science	233
+Science	234
+School	235
+Comedy	236
+Horror	237
+Comedy	238
+Adventure	239
+Sci-Fi	240
+Horror	241
+Adventure	242
+Comedy	243
+Horror	244
+Romance	245
+School	246
+Comedy	247
+Sci-Fi	248
+School	249
+Drama	250
+Fantasy	251
+Fantasy	252
+Sci-Fi	253
+Romance	254
+Romance	255
+Adventure	257
+Comedy	259
+University	260
+Adventure	261
+Adventure	262
+Sci-Fi	263
+Sci-Fi	264
+Romance	265
+Comedy	266
+Romance	267
+Fantasy	268
+Fighting	269
+Romance	270
+Comedy	271
+University	272
+Sci-Fi	273
+Drama	275
+Sci-Fi	276
+School	277
+Fighting	278
+University	279
+Fighting	280
+Sci-Fi	281
+Romance	283
+Horror	284
+Adventure	285
+Fighting	286
+Fantasy	288
+University	289
+Drama	290
+University	291
+Sci-Fi	292
+Comedy	293
+University	294
+Comedy	295
+Romance	297
+School	298
+Adventure	299
+Horror	300
+School	301
+School	302
+Drama	303
+University	304
+Adventure	305
+Science	306
+Sci-Fi	307
+Science	308
+School	309
+School	310
+Romance	311
+University	312
+Horror	313
+Comedy	314
+University	315
+Fantasy	316
+Horror	317
+Comedy	318
+Sci-Fi	319
+Fighting	320
+Fantasy	321
+Fighting	322
+Fantasy	323
+Romance	324
+Romance	325
+Comedy	326
+Horror	327
+Romance	329
+Fighting	330
+Comedy	331
+Horror	332
+Drama	333
+Science	334
+Comedy	335
+University	336
+University	337
+Adventure	338
+Drama	340
+University	341
+Fantasy	342
+Adventure	343
+Science	344
+Fantasy	345
+University	347
+Horror	348
+Horror	350
+Science	351
+Horror	352
+Fantasy	353
+Science	355
+School	356
+Adventure	357
+Drama	359
+School	360
+Fantasy	361
+Fantasy	362
+Romance	364
+Fighting	365
+Horror	366
+Adventure	367
+Comedy	368
+Fantasy	369
+Romance	370
+Adventure	371
+Horror	372
+Fantasy	374
+Fantasy	375
+University	376
+Horror	377
+Comedy	378
+University	379
+Romance	380
+Romance	381
+Drama	383
+Comedy	386
+Science	387
+Sci-Fi	388
+Horror	389
+University	390
+University	391
+Adventure	392
+Sci-Fi	393
+School	394
+Science	395
+School	396
+Horror	398
+Fighting	399
+Comedy	400
 \.
 
 
 --
--- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.log ("time", description, purchase_id) FROM stdin;
@@ -2306,7 +2562,7 @@ COPY public.log ("time", description, purchase_id) FROM stdin;
 
 
 --
--- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.publishers (publisher_id, name) FROM stdin;
@@ -2414,28 +2670,27 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 
 
 --
--- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
-8	2020-06-11 02:15:22.693783	$10.00	1	\N	paid
 \.
 
 
 --
--- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
-COPY public.purchased_book (book_id, purchase_id, quanity) FROM stdin;
-1	8	1
+COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
 \.
 
 
 --
--- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, cons, date) FROM stdin;
+5	1	1	5	\N	\N	\N	2020-06-10 17:54:57.513562
 9	1	11	10	nice	nice	not nice	2020-06-10 17:55:56.785995
 11	2	90	7	\N	\N	\N	2020-06-10 18:51:10.442313
 12	47	43	2	luctus vulputate,	Curabitur	eu dolor egestas rhoncus. Proin nisl	2020-06-10 18:58:12.939536
@@ -2838,12 +3093,11 @@ COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, co
 409	75	26	7	\N	\N	\N	2020-06-10 19:02:04.509975
 410	16	26	9	\N	\N	\N	2020-06-10 19:02:04.509975
 411	366	18	1	\N	\N	\N	2020-06-10 19:02:04.509975
-425	1	1	10	\N	\N	\N	2020-06-11 02:26:38.959631
 \.
 
 
 --
--- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: kirill
+-- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
 COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
@@ -2861,63 +3115,63 @@ COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
 
 
 --
--- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.authors_id_seq', 1, false);
 
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.comic_book_id_seq', 2, true);
 
 
 --
--- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.customer_id_seq', 1, false);
 
 
 --
--- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.employee_id_seq', 1, false);
 
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.publishers_id_seq', 1, false);
 
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.purchase_id_seq', 8, true);
 
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.reviews_id_seq', 427, true);
 
 
 --
--- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+-- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
 --
 
 SELECT pg_catalog.setval('public.series_id_seq', 1, true);
 
 
 --
--- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -2925,7 +3179,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.authors
@@ -2933,7 +3187,7 @@ ALTER TABLE ONLY public.authors
 
 
 --
--- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -2941,7 +3195,7 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.customers
@@ -2949,7 +3203,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.employee
@@ -2957,7 +3211,7 @@ ALTER TABLE ONLY public.employee
 
 
 --
--- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.genre
@@ -2965,7 +3219,7 @@ ALTER TABLE ONLY public.genre
 
 
 --
--- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.log
@@ -2973,7 +3227,7 @@ ALTER TABLE ONLY public.log
 
 
 --
--- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.publishers
@@ -2981,7 +3235,7 @@ ALTER TABLE ONLY public.publishers
 
 
 --
--- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -2989,15 +3243,15 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchase_id);
+    ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchaise_id);
 
 
 --
--- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+-- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.series
@@ -3005,79 +3259,79 @@ ALTER TABLE ONLY public.series
 
 
 --
--- Name: fki_author; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_author; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_author ON public.author_book USING btree (author_id);
 
 
 --
--- Name: fki_book; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_book; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_book ON public.purchased_book USING btree (book_id);
 
 
 --
--- Name: fki_comic; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_comic; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_comic ON public.author_book USING btree (comic_id);
 
 
 --
--- Name: fki_customer; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_customer; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_customer ON public.purchase USING btree (customer_id);
 
 
 --
--- Name: fki_employee; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_employee; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_employee ON public.purchase USING btree (employee_id);
 
 
 --
--- Name: fki_publishers; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_publishers; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 
 
 --
--- Name: fki_purchase; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_purchase; Type: INDEX; Schema: public; Owner: livbig
 --
 
-CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchase_id);
+CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
 
 
 --
--- Name: fki_series_id; Type: INDEX; Schema: public; Owner: kirill
+-- Name: fki_series_id; Type: INDEX; Schema: public; Owner: livbig
 --
 
 CREATE INDEX fki_series_id ON public.comic_book USING btree (series_id);
 
 
 --
--- Name: reviews check_purchase; Type: TRIGGER; Schema: public; Owner: kirill
+-- Name: reviews check_purchase; Type: TRIGGER; Schema: public; Owner: livbig
 --
 
-CREATE TRIGGER check_purchase BEFORE INSERT ON public.reviews FOR EACH ROW EXECUTE FUNCTION public.check_purchase();
+CREATE TRIGGER check_purchase BEFORE INSERT ON public.reviews FOR EACH ROW EXECUTE PROCEDURE public.check_purchase();
 
 ALTER TABLE public.reviews DISABLE TRIGGER check_purchase;
 
 
 --
--- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: kirill
+-- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: livbig
 --
 
-CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE FUNCTION public.status_update();
+CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE PROCEDURE public.status_update();
 
 
 --
--- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -3085,7 +3339,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -3093,7 +3347,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews
@@ -3101,7 +3355,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.author_book
@@ -3109,15 +3363,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: genre comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
---
-
-ALTER TABLE ONLY public.genre
-    ADD CONSTRAINT comic FOREIGN KEY (comic_id) REFERENCES public.comic_book(comic_id) NOT VALID;
-
-
---
--- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.reviews
@@ -3125,7 +3371,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -3133,7 +3379,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchase
@@ -3141,7 +3387,15 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: genre genre_comic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+--
+
+ALTER TABLE ONLY public.genre
+    ADD CONSTRAINT genre_comic_id_fkey FOREIGN KEY (comic_id) REFERENCES public.comic_book(comic_id);
+
+
+--
+-- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -3149,15 +3403,15 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.purchased_book
-    ADD CONSTRAINT purchase FOREIGN KEY (purchase_id) REFERENCES public.purchase(purchase_id) NOT VALID;
+    ADD CONSTRAINT purchase FOREIGN KEY (purchaise_id) REFERENCES public.purchase(purchase_id) NOT VALID;
 
 
 --
--- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+-- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: livbig
 --
 
 ALTER TABLE ONLY public.comic_book
