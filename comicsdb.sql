@@ -34,7 +34,7 @@ BEGIN
     ELSIF st < NEW.quanity THEN
     		RAISE EXCEPTION 'Selected quanity is more than available';
     ELSE
-    		UPDATE comic_book SET stock = stock-st WHERE comic_id=NEW.book_id;
+    		UPDATE comic_book SET stock = stock-NEW.quanity WHERE comic_id=NEW.book_id;
         RETURN NEW;
     END IF;
 END;
@@ -102,6 +102,19 @@ CREATE FUNCTION public.status_update() RETURNS trigger
 BEGIN
     IF NEW.status != OLD.status OR (TG_OP = 'INSERT') THEN
         INSERT INTO log (time, description, purchase_id) VALUES (CURRENT_TIMESTAMP, NEW.status, NEW.purchase_id);
+        IF NEW.status = 'canceled' THEN
+            CREATE TEMP TABLE tabletemp (id integer, quanity integer);
+            INSERT INTO tabletemp
+            SELECT pb.book_id, quanity FROM purchase as p, purchased_book as pb
+            WHERE p.purchase_id = pb.purchase_id
+            AND customer_id = NEW.customer_id;
+            
+            UPDATE comic_book as cb
+            SET stock = (stock+quanity)
+            FROM tabletemp
+            WHERE cb.comic_id = tabletemp.id;
+            DROP TABLE tabletemp;
+        END IF;
     END IF;
 RETURN NULL;
 END;
@@ -433,7 +446,7 @@ CREATE TABLE public.purchase (
     employee_id integer,
     status text NOT NULL,
     CONSTRAINT purchase_price_check CHECK (((price)::numeric >= (0)::numeric)),
-    CONSTRAINT purchase_status_check CHECK (((status = 'paid'::text) OR (status = 'in progress'::text) OR (status = 'delivered'::text)))
+    CONSTRAINT purchase_status_check CHECK (((status = 'paid'::text) OR (status = 'in progress'::text) OR (status = 'delivered'::text) OR (status = 'canceled'::text)))
 );
 
 
@@ -1450,13 +1463,9 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59	Dismantled
 360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46	Son of Heaven, Son of Hell
 395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41	The Shower
-2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18	State-Legislature
-3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65	Gov. Carey
-4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86	Jimmy Carter & Friends
 5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100	Iran -- Shah -- Khomeini -- Hostages
 6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25	Watergate
 7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85	Freedom of the Press
-9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88	General
 12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47	Deaths
 13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37	The Rodeo Robbers!
 15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51	The Robber of Rainbow Buttes!
@@ -1479,6 +1488,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5	Superman in Superman Land
 33	3	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82	Parlez Kung Vous [Part One]
 34	8	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67	Parlez Kung Vous Part Deux
+3	5	15	mauris a nunc. In at	$10.52	1938-11-14	2	65	Gov. Carey
 37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6	Hang Up on the Hang Low, Part Two
 38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77	Hang Up on the Hang Low, Part Three
 42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8	Idol Chatter
@@ -1675,7 +1685,10 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51	Treasure
 399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9	Clear Skies
 400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43	Indomitable Human Spirit
-1	6	0	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
+1	6	100	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
+2	4	20	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18	State-Legislature
+9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88	General
+4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86	Jimmy Carter & Friends
 \.
 
 
@@ -3054,6 +3067,12 @@ COPY public.log ("time", description, purchase_id) FROM stdin;
 2020-06-11 02:22:49.195683	delivered	8
 2020-06-11 02:26:51.334096	paid	8
 2020-06-11 18:07:05.770688	paid	9
+2020-06-11 20:25:19.165693	delivered	9
+2020-06-11 20:27:56.967153	canceled	9
+2020-06-11 20:28:22.853643	paid	10
+2020-06-11 20:33:22.729143	canceled	10
+2020-06-11 20:36:28.272907	paid	11
+2020-06-11 20:41:43.592272	canceled	11
 \.
 
 
@@ -3170,7 +3189,9 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 --
 
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
-9	2020-06-11 18:07:05.770688	$10.00	1	1	paid
+9	2020-06-11 18:07:05.770688	$10.00	1	1	canceled
+10	2020-06-11 20:28:22.853643	$40.00	1	\N	canceled
+11	2020-06-11 20:36:28.272907	$50.00	1	\N	canceled
 \.
 
 
@@ -3180,6 +3201,13 @@ COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status
 
 COPY public.purchased_book (book_id, purchase_id, quanity) FROM stdin;
 1	9	100
+1	10	10
+2	10	10
+3	10	10
+1	11	10
+3	11	5
+9	11	10
+4	11	10
 \.
 
 
@@ -3658,7 +3686,7 @@ SELECT pg_catalog.setval('public.publishers_id_seq', 1, false);
 -- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
-SELECT pg_catalog.setval('public.purchase_id_seq', 9, true);
+SELECT pg_catalog.setval('public.purchase_id_seq', 11, true);
 
 
 --
