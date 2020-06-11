@@ -154,6 +154,28 @@ $_$;
 ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO kirill;
 
 --
+-- Name: top_by_genre(text[]); Type: FUNCTION; Schema: public; Owner: kirill
+--
+
+CREATE FUNCTION public.top_by_genre(VARIADIC arr text[]) RETURNS TABLE(id integer, comic text, stars integer)
+    LANGUAGE plpgsql
+    AS $_$
+begin
+    return query
+    select comic_book.comic_id, comic_book.title, comic_book.rating
+    from comic_book
+    inner join (select comic_id from genre where genre = ANY($1)
+								GROUP BY comic_id
+								HAVING count(*) = cardinality($1)) as foo
+    on comic_book.comic_id = foo.comic_id
+    order by comic_book.rating desc;
+end;
+$_$;
+
+
+ALTER FUNCTION public.top_by_genre(VARIADIC arr text[]) OWNER TO kirill;
+
+--
 -- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
@@ -3073,6 +3095,7 @@ COPY public.log ("time", description, purchase_id) FROM stdin;
 2020-06-11 20:33:22.729143	canceled	10
 2020-06-11 20:36:28.272907	paid	11
 2020-06-11 20:41:43.592272	canceled	11
+2020-06-11 20:43:12.20637	delivered	11
 \.
 
 
@@ -3191,7 +3214,7 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
 9	2020-06-11 18:07:05.770688	$10.00	1	1	canceled
 10	2020-06-11 20:28:22.853643	$40.00	1	\N	canceled
-11	2020-06-11 20:36:28.272907	$50.00	1	\N	canceled
+11	2020-06-11 20:36:28.272907	$50.00	1	\N	delivered
 \.
 
 
@@ -3619,6 +3642,7 @@ COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, co
 409	75	26	7	\N	\N	\N	2020-06-10 19:02:04.509975
 410	16	26	9	\N	\N	\N	2020-06-10 19:02:04.509975
 411	366	18	1	\N	\N	\N	2020-06-10 19:02:04.509975
+429	1	1	10	\N	\N	\N	2020-06-11 20:45:47.716654
 \.
 
 
@@ -3693,7 +3717,7 @@ SELECT pg_catalog.setval('public.purchase_id_seq', 11, true);
 -- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
-SELECT pg_catalog.setval('public.reviews_id_seq', 427, true);
+SELECT pg_catalog.setval('public.reviews_id_seq', 430, true);
 
 
 --
