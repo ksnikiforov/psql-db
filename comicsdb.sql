@@ -113,6 +113,26 @@ $_$;
 
 ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO livbig;
 
+--
+-- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: livbig
+--
+
+CREATE FUNCTION public.top_by_genre(text) RETURNS TABLE(comic integer, stars integer)
+    LANGUAGE plpgsql
+    AS $_$
+begin
+    return query
+    select comic_book.comic_id, comic_book.rating
+    from comic_book
+    inner join (select comic_id from genre where genre = $1) as foo
+    on comic_book.comic_id = foo.comic_id
+    order by comic_book.rating desc;
+end;
+$_$;
+
+
+ALTER FUNCTION public.top_by_genre(text) OWNER TO livbig;
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
