@@ -339,6 +339,42 @@ CREATE TABLE public.genre (
 ALTER TABLE public.genre OWNER TO kirill;
 
 --
+-- Name: images; Type: TABLE; Schema: public; Owner: kirill
+--
+
+CREATE TABLE public.images (
+    id integer NOT NULL,
+    comic_id integer NOT NULL,
+    img_path text,
+    img_name text NOT NULL
+);
+
+
+ALTER TABLE public.images OWNER TO kirill;
+
+--
+-- Name: images_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+--
+
+CREATE SEQUENCE public.images_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.images_id_seq OWNER TO kirill;
+
+--
+-- Name: images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+--
+
+ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
+
+
+--
 -- Name: log; Type: TABLE; Schema: public; Owner: kirill
 --
 
@@ -542,6 +578,13 @@ ALTER TABLE ONLY public.customers ALTER COLUMN customer_id SET DEFAULT nextval('
 --
 
 ALTER TABLE ONLY public.employee ALTER COLUMN emp_id SET DEFAULT nextval('public.employee_id_seq'::regclass);
+
+
+--
+-- Name: images id; Type: DEFAULT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
 
 
 --
@@ -1487,6 +1530,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 125	9	101	Ut semper pretium neque. Morbi quis	$57.26	1977-02-05	6	87	Criminal Genius: Dredd Breaks the Spell
 126	7	994	Nullam velit dui, semper et, lacinia vitae, sodales at, velit.	$27.12	1943-01-04	2	38	Like a Rat Out of Hell!
 131	5	628	diam. Sed diam lorem, auctor quis, tristique	$28.47	1957-02-28	9	58	Sector House Part 8
+243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28	Terrorists Part 7
 139	4	725	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	$35.29	2007-07-17	9	67	A Murder of Angels, Part 6
 140	7	378	ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet	$26.49	2001-08-12	5	60	Wyrd Science
 141	5	349	sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis	$44.77	1959-05-24	5	62	A Murder of Angels, Part 7
@@ -1540,7 +1584,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 231	5	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55	Engine Summer Part 4
 234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78	The Shroud Part 1
 240	4	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51	Engine Summer Part 6
-243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28	Terrorists Part 7
 247	9	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17	Book 11 The Thousand Year Stare Part 9
 250	2	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89	Live Evil Part 3
 251	7	432	id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus,	$67.50	1983-03-10	2	51	Book 11 The Thousand Year Stare Part 11
@@ -2599,6 +2642,410 @@ Comedy	400
 
 
 --
+-- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: kirill
+--
+
+COPY public.images (id, comic_id, img_path, img_name) FROM stdin;
+1	1	comicimages/	buddy-longway_3-1.jpg
+2	2	comicimages/	grackle_3-1.jpg
+3	3	comicimages/	los-4-fantasticos_98-4.jpg
+4	4	comicimages/	weapon-zero_5-1.jpg
+5	5	comicimages/	normalman_5-1.jpg
+6	6	comicimages/	revere_1-1.jpg
+7	7	comicimages/	supergirl_75-1.jpg
+8	8	comicimages/	astro-boy_4-1.jpg
+9	9	comicimages/	punisher-mini-series_5-5.jpg
+10	10	comicimages/	marshal-blueberry_1-3.jpg
+11	11	comicimages/	cine-mondial_27-1.jpg
+12	12	comicimages/	millie-the-model_99-10.jpg
+13	13	comicimages/	escalator_1-1.jpg
+14	14	comicimages/	batman-gotham-nights_4-1.jpg
+15	15	comicimages/	liberty-meadows_3-1.jpg
+16	16	comicimages/	challengers-of-the-fantastic_1-1.jpg
+17	17	comicimages/	falling-in-love_49-6.jpg
+18	18	comicimages/	thrilling-comics_65-1.jpg
+19	19	comicimages/	bat-thing_1-1.jpg
+20	20	comicimages/	true-adventures_13-1.jpg
+21	21	comicimages/	russian-dvds_95-1.jpg
+22	22	comicimages/	strange-sports-stories_2-1.jpg
+23	23	comicimages/	3d-batman_1-1.jpg
+24	24	comicimages/	rivets_1-1.jpg
+25	25	comicimages/	sire_1-1.jpg
+26	26	comicimages/	blue-inferior_1-1.jpg
+27	27	comicimages/	avon-fantasy-reader_17-1.jpg
+28	28	comicimages/	smash_137-1.jpg
+29	29	comicimages/	durango_7-9.jpg
+30	30	comicimages/	bogie-man_4-1.jpg
+31	31	comicimages/	grusel-schocker_42-1.jpg
+32	32	comicimages/	arm_1-1.jpg
+33	33	comicimages/	avengers-1998_81-1.jpg
+34	34	comicimages/	flash-gordon_24-1.jpg
+35	35	comicimages/	3-x-3-augen_29-1.jpg
+36	36	comicimages/	planet-of-the-apes_3-1.jpg
+37	37	comicimages/	rick-master-kult-editionen_40-3.jpg
+38	38	comicimages/	icon_3-1.jpg
+39	39	comicimages/	brute_2-1.jpg
+40	40	comicimages/	new-man_1-1.jpg
+41	41	comicimages/	crisis_40-1.jpg
+42	42	comicimages/	battle_61-1.jpg
+43	43	comicimages/	thorgal_16-4.jpg
+44	44	comicimages/	neotopia-3_3-1.jpg
+45	45	comicimages/	hoshin-engi_1-1.jpg
+46	46	comicimages/	daring-mystery_11-1.jpg
+47	47	comicimages/	astounding-stories_729-1.jpg
+48	48	comicimages/	ein-fall-fuer-jeff-jordan_1-1.jpg
+49	49	comicimages/	force-of-buddhas-palm_51-1.jpg
+50	50	comicimages/	electrical-experimenter_50-1.jpg
+51	51	comicimages/	science-books_290-3.jpg
+52	52	comicimages/	batman-dark-knight-strikes-again_2-1.jpg
+53	53	comicimages/	country-gentleman_53-1.jpg
+54	54	comicimages/	new-story-magazine_18-1.jpg
+55	55	comicimages/	prinz-eisenherz_12-4.jpg
+56	56	comicimages/	infinity-gauntlet_4-1.jpg
+57	57	comicimages/	doom-2099_5-1.jpg
+58	58	comicimages/	black-coat_1-1.jpg
+59	59	comicimages/	justice-league-america_79-1.jpg
+60	60	comicimages/	new-gods_4-1.jpg
+61	61	comicimages/	betty-veronica-summer-fun_1-1.jpg
+62	62	comicimages/	digital-graffiti_3-1.jpg
+63	63	comicimages/	nam_71-1.jpg
+64	64	comicimages/	wizard_55-5.jpg
+65	65	comicimages/	daredevil_366-1.jpg
+66	66	comicimages/	tozzer-2_3-1.jpg
+67	67	comicimages/	lustiges-taschenbuch_235-1.jpg
+68	68	comicimages/	.DS_Store
+69	69	comicimages/	search-for-love_1-1.jpg
+70	70	comicimages/	pluck-and-luck_14-1.jpg
+71	71	comicimages/	amazing-man-comics_17-9.jpg
+72	72	comicimages/	sky-ape_1-1.jpg
+73	73	comicimages/	jughead-with-archie-digest_41-1.jpg
+74	74	comicimages/	jughead-friends-digest_7-1.jpg
+75	75	comicimages/	backlash_25-1.jpg
+76	76	comicimages/	famous-fantastic_31-1.jpg
+77	77	comicimages/	wartime-romances_16-8.jpg
+78	78	comicimages/	pm-computerheft_23-2.jpg
+79	79	comicimages/	baraka-and-black-magic-in-morocco_1-1.jpg
+80	80	comicimages/	aquaman_35-1.jpg
+81	81	comicimages/	conan-the-king_22-8.jpg
+82	82	comicimages/	sandman-mystery-theatre_44-1.jpg
+83	83	comicimages/	black-mask_38-1.jpg
+84	84	comicimages/	out-of-this-world_8-1.jpg
+85	85	comicimages/	saucy-movie_7-1.jpg
+86	86	comicimages/	dragonring_4-1.jpg
+87	87	comicimages/	canton-kid_3-1.jpg
+88	88	comicimages/	monsters-from-outer-space_3-1.jpg
+89	89	comicimages/	thunder-agents_17-1.jpg
+90	90	comicimages/	police-comics_68-1.jpg
+91	91	comicimages/	puma-blues_6-1.jpg
+92	92	comicimages/	how-to-draw-transforming-robots_1-1.jpg
+93	93	comicimages/	a1_6-1.jpg
+94	94	comicimages/	superman-birthright_3-1.jpg
+95	95	comicimages/	whats-michael_2-1.jpg
+96	96	comicimages/	exciting-sports_19-1.jpg
+97	97	comicimages/	simpsons-comics_31-1.jpg
+98	98	comicimages/	bloodthirst_2-1.jpg
+99	99	comicimages/	arena37c_47-1.jpg
+100	100	comicimages/	aquaman-german_9-3.jpg
+101	101	comicimages/	astounding-stories_841-1.jpg
+102	102	comicimages/	falken-der-meere_2-7.jpg
+103	103	comicimages/	archie-at-riverdale-high_2-1.jpg
+104	104	comicimages/	dangerous-secrets_1-1.jpg
+105	105	comicimages/	netherworlds_1-1.jpg
+106	106	comicimages/	sam-and-twitch_26-1.jpg
+107	107	comicimages/	adam-and-eve-ad_1-1.jpg
+108	108	comicimages/	black-hole_9-12.jpg
+109	109	comicimages/	don-winslow-of-the-navy_46-6.jpg
+110	110	comicimages/	percy-pickwick_9-1.jpg
+111	111	comicimages/	retief-and-the-warlords_2-1.jpg
+112	112	comicimages/	thrills-incorporated_8-1.jpg
+113	113	comicimages/	c64-games_1910-1.jpg
+114	114	comicimages/	new-avengers_1-1.jpg
+115	115	comicimages/	devils-keeper_3-1.jpg
+116	116	comicimages/	bartman_6-1.jpg
+117	117	comicimages/	american-rifleman_100-2.jpg
+118	118	comicimages/	anima_5-5.jpg
+119	119	comicimages/	tarzan-collection_6-3.jpg
+120	120	comicimages/	western-yarns_1-1.jpg
+121	121	comicimages/	books-about-movies_22-2.jpg
+122	122	comicimages/	madonna_74-1.jpg
+123	123	comicimages/	x-patrol_1-1.jpg
+124	124	comicimages/	aquaman_29-1.jpg
+125	125	comicimages/	yenny_5-1.jpg
+126	126	comicimages/	halle-the-hooters-girl_1-1.jpg
+127	127	comicimages/	adventures-on-the-planet-of-the-apes_4-9.jpg
+128	128	comicimages/	apple-ii-games_36-1.jpg
+129	129	comicimages/	superman-presents-tip-top_94-1.jpg
+130	130	comicimages/	dune-buggies-and-hot-vws_57-8.jpg
+131	131	comicimages/	boneyard_14-1.jpg
+132	132	comicimages/	batman-face-the-face_1-1.jpg
+133	133	comicimages/	sixgun-samurai_5-1.jpg
+134	134	comicimages/	destructor_1-1.jpg
+135	135	comicimages/	police-detective-cases_9-1.jpg
+136	136	comicimages/	richie-rich-bank-books_20-1.jpg
+137	137	comicimages/	all-funny-comics_22-6.jpg
+138	138	comicimages/	paper-theater_1-1.jpg
+139	139	comicimages/	next_22-3.jpg
+140	140	comicimages/	thrilling-western_12-1.jpg
+141	141	comicimages/	sega-magazin_57-2.jpg
+142	142	comicimages/	kalle-anka-co_28-3.jpg
+143	143	comicimages/	amiga-special_50-4.jpg
+144	144	comicimages/	buffalo-bill_5-8.jpg
+145	145	comicimages/	popeye_61-1.jpg
+146	146	comicimages/	crimson_9-1.jpg
+147	147	comicimages/	western-yarns_3-1.jpg
+148	148	comicimages/	youngblood-strikefile_7-8.jpg
+149	149	comicimages/	naru-taru_9-1.jpg
+150	150	comicimages/	umpah-pah_5-5.jpg
+151	151	comicimages/	skeleton-hand_1-1.jpg
+152	152	comicimages/	challengers-of-the-unknown_15-1.jpg
+153	153	comicimages/	herbie-1991_1-1.jpg
+154	154	comicimages/	those-who-hunt-elves_4-1.jpg
+155	155	comicimages/	pc-player_46-3.jpg
+156	156	comicimages/	dylan-dog_33-1.jpg
+157	157	comicimages/	batman-dark-victory_2-1.jpg
+158	158	comicimages/	batman-cult_2-1.jpg
+159	159	comicimages/	spirit-of-the-tao_4-16.jpg
+160	160	comicimages/	die-gringos_6-4.jpg
+161	161	comicimages/	tarzan-collection_4-7.jpg
+162	162	comicimages/	robotech-vermilion_4-1.jpg
+163	163	comicimages/	tweety-and-sylvester_104-1.jpg
+164	164	comicimages/	c64-games_932-1.jpg
+165	165	comicimages/	outlaw-nation_17-1.jpg
+166	166	comicimages/	armorquest_2-1.jpg
+167	167	comicimages/	superman-for-earth_1-1.jpg
+168	168	comicimages/	danger-girl_2-1.jpg
+169	169	comicimages/	other-worlds-science-stories_1-1.jpg
+170	170	comicimages/	commando_2781-1.jpg
+171	171	comicimages/	wolverine-2003_19-1.jpg
+172	172	comicimages/	rex-morgan-md_3-1.jpg
+173	173	comicimages/	x-isle_3-1.jpg
+174	174	comicimages/	iron-lantern_1-1.jpg
+175	175	comicimages/	dragonring-2_12-1.jpg
+176	176	comicimages/	daemonen-land_116-1.jpg
+177	177	comicimages/	ghost_35-1.jpg
+178	178	comicimages/	wilbur_50-1.jpg
+179	179	comicimages/	bumperboy_1-1.jpg
+180	180	comicimages/	silver-surfer-2003_9-1.jpg
+181	181	comicimages/	spider-man-books_51-4.jpg
+182	182	comicimages/	superman-4-movie_1-1.jpg
+183	183	comicimages/	union-jacks_1-1.jpg
+184	184	comicimages/	greyshirt_3-1.jpg
+185	185	comicimages/	dennis-the-menace_127-1.jpg
+186	186	comicimages/	world-war-hulk_4-1.jpg
+187	187	comicimages/	wampus_3-1.jpg
+188	188	comicimages/	wonder-man_3-1.jpg
+189	189	comicimages/	powers-that-be_3-1.jpg
+190	190	comicimages/	white-princess-of-the-jungle_3-1.jpg
+191	191	comicimages/	spy-stories_2-1.jpg
+192	192	comicimages/	venus-wars-ii_6-2.jpg
+193	193	comicimages/	gentlemen-gmbh_2-2.jpg
+194	194	comicimages/	ir_3-6.jpg
+195	195	comicimages/	stark-future_10-1.jpg
+196	196	comicimages/	shadow-comics_26-1.jpg
+197	197	comicimages/	black-fury_57-1.jpg
+198	198	comicimages/	assassin-school-2_2-1.jpg
+199	199	comicimages/	captain-america-2004_28-1.jpg
+200	200	comicimages/	everythings-archie_133-1.jpg
+201	201	comicimages/	batman-dark-knight-returns_4-1.jpg
+202	202	comicimages/	barbie_52-1.jpg
+203	203	comicimages/	winnie-the-pooh_2-4.jpg
+204	204	comicimages/	complete-cowboy-magazine_18-1.jpg
+205	205	comicimages/	donald-duck-adventures_30-1.jpg
+206	206	comicimages/	lassie_42-1.jpg
+207	207	comicimages/	house-of-frightenstein_1-1.jpg
+208	208	comicimages/	hardware_37-1.jpg
+209	209	comicimages/	love-romances_76-1.jpg
+210	210	comicimages/	cgc-10-comics_21-1.jpg
+211	211	comicimages/	reggie-and-me_66-1.jpg
+212	212	comicimages/	sure-fire-comics_4-1.jpg
+213	213	comicimages/	gadget_1-1.jpg
+214	214	comicimages/	star-trek-the-next-generation_16-3.jpg
+215	215	comicimages/	aquaman-german_6-2.jpg
+216	216	comicimages/	novel-library_38-1.jpg
+217	217	comicimages/	badger_50-1.jpg
+218	218	comicimages/	fate_344-1.jpg
+219	219	comicimages/	murderous-gangsters_1-1.jpg
+220	220	comicimages/	smithsonian_272-6.jpg
+221	221	comicimages/	twin-signal_1-1.jpg
+222	222	comicimages/	all-romances_4-1.jpg
+223	223	comicimages/	rogue_1-1.jpg
+224	224	comicimages/	hulk-2008_12-5.jpg
+225	225	comicimages/	illustrierte-klassiker_74-7.jpg
+226	226	comicimages/	kingdom-come_2-1.jpg
+227	227	comicimages/	young-lovers_1-1.jpg
+228	228	comicimages/	off-beat-detective-stories_2-1.jpg
+229	229	comicimages/	turbo-hi-tech-performance_9-5.jpg
+230	230	comicimages/	henry_32-1.jpg
+231	231	comicimages/	league-of-extraordinary-gentlemen_3-1.jpg
+232	232	comicimages/	ironman_3-7.jpg
+233	233	comicimages/	molly-o-day_1-1.jpg
+234	234	comicimages/	dragonforce-chronicles_3-1.jpg
+235	235	comicimages/	turok-spring-break-in-the-lost-land_1-1.jpg
+236	236	comicimages/	boys-and-their-cars_19-1.jpg
+237	237	comicimages/	men_1-1.jpg
+238	238	comicimages/	pizzeria-kamikaze_1-1.jpg
+239	239	comicimages/	mick-tangy_4-2.jpg
+240	240	comicimages/	new-gods_9-1.jpg
+241	241	comicimages/	fifteen-western-tales_45-1.jpg
+242	242	comicimages/	sad-sack_54-1.jpg
+243	243	comicimages/	mothers-mouth_1-1.jpg
+244	244	comicimages/	hellblazer_188-1.jpg
+245	245	comicimages/	hip-hop-books_84-4.jpg
+246	246	comicimages/	super-soldier_1-1.jpg
+247	247	comicimages/	generations-2_1-1.jpg
+248	248	comicimages/	vampire-girls_2-1.jpg
+249	249	comicimages/	battle-of-the-planets_4-1.jpg
+250	250	comicimages/	science-fiction-monthly_8-1.jpg
+251	251	comicimages/	el-gato_2-1.jpg
+252	252	comicimages/	gang-world_11-1.jpg
+253	253	comicimages/	perma-books_104-1.jpg
+254	254	comicimages/	myriad_2-1.jpg
+255	255	comicimages/	alpha-shade_1-1.jpg
+256	256	comicimages/	war-stories_4-1.jpg
+257	257	comicimages/	west-coast-avengers_11-1.jpg
+258	258	comicimages/	der-magier_31-1.jpg
+259	259	comicimages/	richie-rich-money-world_15-1.jpg
+260	260	comicimages/	mans-life_7-1.jpg
+261	261	comicimages/	peter-parker-spider-man_37-1.jpg
+262	262	comicimages/	jughead-friends-digest_8-1.jpg
+263	263	comicimages/	deadfish-bedeviled_1-1.jpg
+264	264	comicimages/	brooklyn-dreams_1-1.jpg
+265	265	comicimages/	thor-1998_50-1.jpg
+266	266	comicimages/	colonial-homes_64-3.jpg
+267	267	comicimages/	spanish-dvds_445-1.jpg
+268	268	comicimages/	message-in-a-bottle_1-1.jpg
+269	269	comicimages/	colby_2-4.jpg
+270	270	comicimages/	funny-stuff_9-1.jpg
+271	271	comicimages/	etude_23-1.jpg
+272	272	comicimages/	white-death_1-1.jpg
+273	273	comicimages/	djinn_2-1.jpg
+274	274	comicimages/	der-neue-superman-handbuch_1-3.jpg
+275	275	comicimages/	buffy-the-vampire-slayer-books_252-9.jpg
+276	276	comicimages/	tomb-raider_21-1.jpg
+277	277	comicimages/	chaser-platoon_1-1.jpg
+278	278	comicimages/	astonishing_38-1.jpg
+279	279	comicimages/	south-park-books_35-1.jpg
+280	280	comicimages/	all-man_3-1.jpg
+281	281	comicimages/	troublemakers_11-1.jpg
+282	282	comicimages/	richie-rich-success-stories_55-1.jpg
+283	283	comicimages/	mark-hellmann_12-1.jpg
+284	284	comicimages/	all-funny-comics_17-2.jpg
+285	285	comicimages/	world-war-iii_1-1.jpg
+286	286	comicimages/	police_30-1.jpg
+287	287	comicimages/	kade_1-1.jpg
+288	288	comicimages/	my-greatest-adventure_70-1.jpg
+289	289	comicimages/	worst-album-covers_25-1.jpg
+290	290	comicimages/	candy-wrappers_1391-4.jpg
+291	291	comicimages/	astro-boy_9-1.jpg
+292	292	comicimages/	leatherface_1-1.jpg
+293	293	comicimages/	famous-monsters-of-filmland_81-4.jpg
+294	294	comicimages/	new-worlds_34-1.jpg
+295	295	comicimages/	magic-comics_93-1.jpg
+296	296	comicimages/	new-worlds-fiction_3-1.jpg
+297	297	comicimages/	gokinjo-monogatari_1-1.jpg
+298	298	comicimages/	adrenaline_3-1.jpg
+299	299	comicimages/	mark-hellmann_6-1.jpg
+300	300	comicimages/	ninjak_9-1.jpg
+301	301	comicimages/	all-detective-magazine_20-1.jpg
+302	302	comicimages/	xenon_3-1.jpg
+303	303	comicimages/	bloodshot_21-1.jpg
+304	304	comicimages/	lustiges-taschenbuch-neuauflage_13-1.jpg
+305	305	comicimages/	jsa_73-1.jpg
+306	306	comicimages/	special-detective_7-1.jpg
+307	307	comicimages/	design-books_197-5.jpg
+308	308	comicimages/	7-days-to-fame_3-1.jpg
+309	309	comicimages/	architectural-digest_179-7.jpg
+310	310	comicimages/	little-snow-fairy-sugar_2-1.jpg
+311	311	comicimages/	secret-origins-1986_39-16.jpg
+312	312	comicimages/	mighty-world-of-marvel_23-1.jpg
+313	313	comicimages/	profolio_1-1.jpg
+314	314	comicimages/	midnight_5-1.jpg
+315	315	comicimages/	straw-men_6-1.jpg
+316	316	comicimages/	funnies_24-1.jpg
+317	317	comicimages/	ironman_29-3.jpg
+318	318	comicimages/	buck-duck_1-1.jpg
+319	319	comicimages/	spider-man-fairy-tales_1-1.jpg
+320	320	comicimages/	archie_249-1.jpg
+321	321	comicimages/	sojourn_9-1.jpg
+322	322	comicimages/	okko_1-1.jpg
+323	323	comicimages/	trollords_2-1.jpg
+324	324	comicimages/	naughty-bits_19-1.jpg
+325	325	comicimages/	cowboy-stories_33-1.jpg
+326	326	comicimages/	hit-comics_38-1.jpg
+327	327	comicimages/	archies-madhouse_6-1.jpg
+328	328	comicimages/	punisher_93-8.jpg
+329	329	comicimages/	jsa_61-12.jpg
+330	330	comicimages/	rumblestrips_1-1.jpg
+331	331	comicimages/	turok-timewalker_1-1.jpg
+332	332	comicimages/	next_6-8.jpg
+333	333	comicimages/	rg-veda_1-1.jpg
+334	334	comicimages/	mystery-adventures_2-1.jpg
+335	335	comicimages/	killer_1-1.jpg
+336	336	comicimages/	premier-magazine_5-1.jpg
+337	337	comicimages/	love-letters_6-1.jpg
+338	338	comicimages/	mega-dragon-tiger_2-2.jpg
+339	339	comicimages/	die-gringos_5-9.jpg
+340	340	comicimages/	madman_5-1.jpg
+341	341	comicimages/	elfenwelt_3-1.jpg
+342	342	comicimages/	spectre_3-1.jpg
+343	343	comicimages/	dime-mystery_31-1.jpg
+344	344	comicimages/	rg-veda_3-1.jpg
+345	345	comicimages/	captain-marvel_59-2.jpg
+346	346	comicimages/	justice-league-america_91-1.jpg
+347	347	comicimages/	economist_1741-6.jpg
+348	348	comicimages/	stray-bullets_1-1.jpg
+349	349	comicimages/	tv-action-countdown_102-16.jpg
+350	350	comicimages/	tales-of-the-unexpected_218-1.jpg
+351	351	comicimages/	ari_1-1.jpg
+352	352	comicimages/	little-monsters_35-1.jpg
+353	353	comicimages/	xiii_1-1.jpg
+354	354	comicimages/	baby-huey-and-papa_16-1.jpg
+355	355	comicimages/	battle-binder-plus_4-1.jpg
+356	356	comicimages/	archies-joke-book_174-1.jpg
+357	357	comicimages/	apocalypse_3-1.jpg
+358	358	comicimages/	el-gato_1-1.jpg
+359	359	comicimages/	dead-heat_1-1.jpg
+360	360	comicimages/	diary-loves_14-1.jpg
+361	361	comicimages/	worlds-finest-1999_1-1.jpg
+362	362	comicimages/	maxx_1-1.jpg
+363	363	comicimages/	xenon_2-1.jpg
+364	364	comicimages/	how-to-draw-manga-next-generation_9-1.jpg
+365	365	comicimages/	warrior-nun-areala-ghosts-of-the-past_4-1.jpg
+366	366	comicimages/	anthro_4-1.jpg
+367	367	comicimages/	wow_1-1.jpg
+368	368	comicimages/	first-love-illustrated_53-5.jpg
+369	369	comicimages/	adventure-comics_117-1.jpg
+370	370	comicimages/	my-romantic-adventures_117-1.jpg
+371	371	comicimages/	pendulum_1-1.jpg
+372	372	comicimages/	die-blauen-boys_12-1.jpg
+373	373	comicimages/	wretch_5-1.jpg
+374	374	comicimages/	marvel-comics_73-1.jpg
+375	375	comicimages/	bloodshot_39-1.jpg
+376	376	comicimages/	history-books_882-6.jpg
+377	377	comicimages/	team-nippon_2-1.jpg
+378	378	comicimages/	bluesman_3-1.jpg
+379	379	comicimages/	perma-books_493-1.jpg
+380	380	comicimages/	junge-giganten_10-9.jpg
+381	381	comicimages/	arik-khan_1-1.jpg
+382	382	comicimages/	new-mutants_37-1.jpg
+383	383	comicimages/	x-men-fairy-tales_1-1.jpg
+384	384	comicimages/	goofy-comics_3-1.jpg
+385	385	comicimages/	four-color_1255-1.jpg
+386	386	comicimages/	toxic_4-1.jpg
+387	387	comicimages/	silver-surfer_14-1.jpg
+388	388	comicimages/	my-greatest-adventure_10-1.jpg
+389	389	comicimages/	fantasy-and-science-fiction_80-1.jpg
+390	390	comicimages/	innomables_4-1.jpg
+391	391	comicimages/	flex_116-8.jpg
+392	392	comicimages/	adventures-of-dean-martin-and-jerry-lewis_26-8.jpg
+393	393	comicimages/	gravitation_11-1.jpg
+394	394	comicimages/	dragonforce-chronicles_4-1.jpg
+395	395	comicimages/	mutant-x_14-1.jpg
+396	396	comicimages/	cages_9-1.jpg
+\.
+
+
+--
 -- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
@@ -3194,6 +3641,13 @@ SELECT pg_catalog.setval('public.employee_id_seq', 1, false);
 
 
 --
+-- Name: images_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+--
+
+SELECT pg_catalog.setval('public.images_id_seq', 396, true);
+
+
+--
 -- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
@@ -3267,6 +3721,14 @@ ALTER TABLE ONLY public.employee
 
 ALTER TABLE ONLY public.genre
     ADD CONSTRAINT genre_pkey PRIMARY KEY (genre, comic_id);
+
+
+--
+-- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT images_pkey PRIMARY KEY (id);
 
 
 --
@@ -3450,6 +3912,14 @@ ALTER TABLE ONLY public.purchase
 
 ALTER TABLE ONLY public.genre
     ADD CONSTRAINT genre_comic_id_fkey FOREIGN KEY (comic_id) REFERENCES public.comic_book(comic_id);
+
+
+--
+-- Name: images images; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT images FOREIGN KEY (comic_id) REFERENCES public.comic_book(comic_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
