@@ -117,12 +117,12 @@ ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWN
 -- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: livbig
 --
 
-CREATE FUNCTION public.top_by_genre(text) RETURNS TABLE(comic integer, stars integer)
+CREATE FUNCTION public.top_by_genre(text) RETURNS TABLE(comic text, stars integer)
     LANGUAGE plpgsql
     AS $_$
 begin
     return query
-    select comic_book.comic_id, comic_book.rating
+    select comic_book.title, comic_book.rating
     from comic_book
     inner join (select comic_id from genre where genre = $1) as foo
     on comic_book.comic_id = foo.comic_id
@@ -197,6 +197,7 @@ CREATE TABLE public.comic_book (
     release_date date NOT NULL,
     series_id integer,
     publisher_id integer,
+    title text,
     CONSTRAINT comic_book_price_check CHECK (((price)::numeric >= (0)::numeric)),
     CONSTRAINT comic_book_rating_check CHECK (((0 <= rating) AND (rating <= 10)))
 );
@@ -1204,407 +1205,407 @@ COPY public.authors (author_id, name, surname) FROM stdin;
 -- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: livbig
 --
 
-COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id) FROM stdin;
-8	8	910	consequat, lectus sit amet luctus vulputate, nisi sem semper	$32.26	2003-09-13	5	14
-10	2	467	euismod et, commodo at, libero.	$3.49	1963-09-04	10	16
-11	2	670	fringilla ornare placerat, orci lacus vestibulum lorem, sit amet ultricies sem	$7.80	2016-05-01	10	20
-21	5	620	Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate	$24.26	2009-05-24	6	99
-24	1	563	dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu odio tristique pharetra.	$88.18	1976-03-14	9	81
-25	3	973	lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum fermentum arcu. Vestibulum	$30.79	2004-05-16	5	82
-26	1	749	lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$80.37	1960-02-22	1	21
-27	5	160	a, malesuada id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis	$27.14	2007-09-27	10	32
-32	6	204	elit, a feugiat tellus lorem eu metus. In lorem. Donec	$40.10	1971-01-07	10	39
-36	10	904	lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$79.03	1955-12-22	5	80
-39	6	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13
-40	1	73	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam auctor, velit	$46.09	1972-12-12	1	69
-41	5	114	erat neque non quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames	$25.70	1981-06-12	6	57
-45	6	600	Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales	$44.28	1943-06-21	3	40
-49	10	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80
-50	1	221	Fusce aliquet magna a neque. Nullam ut nisi	$87.70	1984-11-27	6	66
-52	2	776	risus varius orci, in consequat enim diam vel arcu. Curabitur ut odio vel est	$90.99	1987-06-13	6	64
-54	8	963	iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$7.31	1976-06-30	1	5
-55	1	822	amet nulla. Donec non justo. Proin	$54.91	1947-02-24	8	23
-63	2	230	Morbi metus. Vivamus euismod urna.	$25.24	1996-08-19	4	70
-65	4	546	sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet,	$69.17	1964-08-06	6	48
-69	9	689	velit. Cras lorem lorem, luctus ut,	$17.91	1948-07-18	6	3
-73	1	563	Praesent luctus. Curabitur egestas nunc sed libero. Proin sed turpis nec mauris blandit mattis.	$0.78	1952-04-19	9	94
-74	3	528	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus.	$7.31	1936-06-27	9	15
-81	8	90	In tincidunt congue turpis. In condimentum. Donec at	$41.01	1963-05-07	9	10
-82	1	951	sed libero. Proin sed turpis nec mauris blandit	$91.56	1957-06-01	2	23
-83	6	905	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$85.22	1999-05-14	7	63
-86	7	470	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc	$85.19	2004-10-10	3	11
-92	7	88	magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$94.88	1993-05-18	3	68
-94	8	576	leo, in lobortis tellus justo sit amet nulla. Donec	$84.89	1934-03-28	9	2
-97	4	993	quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$85.84	1963-05-29	5	69
-101	2	82	erat, in consectetuer ipsum nunc	$94.57	1955-08-20	10	14
-102	5	724	magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus.	$26.77	1957-05-19	5	95
-107	1	250	mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam adipiscing	$16.26	2006-11-03	3	47
-108	1	777	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat	$80.82	1968-03-05	3	46
-110	10	672	Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus. Proin nisl	$55.33	1988-11-28	7	91
-114	2	854	Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	$82.78	2002-08-03	7	73
-117	9	676	faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.	$62.68	1993-02-19	8	32
-122	8	830	ut, pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis	$47.88	1943-07-21	8	98
-123	7	597	eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$91.94	1999-11-13	3	61
-127	3	82	vitae risus. Duis a mi fringilla mi	$92.29	1933-12-25	1	18
-130	2	281	adipiscing elit. Etiam laoreet, libero et tristique	$82.33	2005-06-04	10	8
-132	4	153	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend	$56.64	1972-05-20	5	1
-133	4	829	nec, diam. Duis mi enim, condimentum eget, volutpat ornare, facilisis eget, ipsum. Donec	$87.84	1996-04-29	4	3
-134	7	625	pede. Suspendisse dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer	$64.53	1952-07-16	7	14
-135	2	127	arcu. Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing.	$86.54	2004-05-24	2	67
-136	6	631	mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$46.67	1960-10-11	4	4
-137	5	333	amet massa. Quisque porttitor eros nec	$40.51	1961-05-18	5	62
-138	6	318	ipsum. Suspendisse non leo. Vivamus nibh dolor,	$17.91	1961-02-22	3	32
-143	10	815	Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam.	$29.80	1990-07-06	8	65
-144	5	500	molestie in, tempus eu, ligula.	$80.22	1951-12-19	8	68
-148	4	563	Quisque purus sapien, gravida non, sollicitudin	$56.83	2012-04-23	2	90
-150	7	434	magnis dis parturient montes, nascetur ridiculus mus. Proin	$51.18	1982-07-11	10	34
-152	6	697	quam quis diam. Pellentesque habitant morbi tristique senectus et	$32.56	1985-07-18	10	57
-154	6	579	Proin velit. Sed malesuada augue ut lacus. Nulla	$50.14	1979-09-22	3	90
-156	4	426	id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec,	$10.92	1943-03-10	4	31
-158	8	913	odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$94.47	1948-05-20	1	64
-161	2	545	odio a purus. Duis elementum, dui quis accumsan convallis,	$34.53	1966-08-16	5	7
-162	1	698	dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer sem elit,	$24.78	1980-09-08	10	84
-172	2	752	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed	$49.53	2010-11-01	3	7
-176	2	378	quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla. In tincidunt congue	$17.15	1983-01-04	8	44
-238	9	340	non leo. Vivamus nibh dolor, nonummy ac, feugiat	$8.65	2003-03-23	5	66
-179	3	287	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer	$92.38	1973-01-19	10	13
-182	2	935	libero. Proin sed turpis nec	$58.61	1960-05-07	7	84
-183	2	872	adipiscing fringilla, porttitor vulputate, posuere	$90.93	2018-07-20	5	20
-185	9	261	dapibus id, blandit at, nisi. Cum sociis natoque	$31.62	1939-07-16	5	76
-186	3	599	dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit.	$96.29	1997-03-27	6	48
-188	10	965	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et,	$9.63	1953-02-18	3	2
-193	9	962	urna. Nunc quis arcu vel quam dignissim	$60.45	1970-01-05	10	20
-201	5	730	mauris. Morbi non sapien molestie orci tincidunt	$72.06	1982-02-22	1	47
-202	4	321	penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$83.45	1987-08-30	8	86
-204	5	731	neque. In ornare sagittis felis. Donec tempor, est ac	$78.33	2012-10-29	5	81
-205	7	775	ac libero nec ligula consectetuer rhoncus. Nullam velit dui, semper et, lacinia vitae,	$38.36	2016-09-17	8	12
-206	5	623	leo. Morbi neque tellus, imperdiet non, vestibulum nec, euismod in,	$95.62	1940-10-02	7	6
-207	10	761	Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$37.65	1953-03-27	2	72
-210	9	550	sit amet ultricies sem magna nec quam. Curabitur vel lectus. Cum sociis natoque penatibus	$49.24	1943-12-07	7	9
-211	6	516	tempor lorem, eget mollis lectus pede	$71.45	1986-06-28	6	20
-217	3	753	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam	$23.30	1942-06-27	4	90
-219	4	669	Nullam feugiat placerat velit. Quisque varius. Nam	$38.26	1956-11-01	7	28
-220	3	997	dui quis accumsan convallis, ante lectus convallis	$3.14	1996-11-11	6	100
-222	8	684	non nisi. Aenean eget metus. In nec orci. Donec nibh. Quisque nonummy ipsum non	$75.11	1952-12-10	5	87
-229	7	818	Aliquam tincidunt, nunc ac mattis ornare, lectus ante dictum	$39.00	1992-02-12	2	68
-233	2	82	egestas a, dui. Cras pellentesque. Sed dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed	$38.09	1941-11-07	6	64
-235	9	585	accumsan neque et nunc. Quisque ornare tortor at	$9.13	1956-05-23	3	10
-236	7	616	sed tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet ullamcorper.	$83.86	2000-03-03	4	24
-237	1	135	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida	$32.37	1992-08-09	9	44
-178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44
-239	10	176	ante lectus convallis est, vitae sodales nisi magna sed	$11.53	1988-04-05	8	44
-241	6	788	sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent	$24.11	2003-06-27	6	14
-244	10	488	Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$50.35	1990-11-30	10	14
-245	5	714	sed pede nec ante blandit viverra. Donec tempus, lorem	$76.80	1996-07-27	6	31
-246	8	393	dui quis accumsan convallis, ante	$19.31	1936-12-22	8	60
-248	1	80	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem, eget mollis	$20.02	1963-02-27	7	57
-252	9	910	ligula. Aenean euismod mauris eu elit. Nulla facilisi.	$9.76	1962-11-30	8	84
-255	8	285	fermentum metus. Aenean sed pede nec ante blandit viverra.	$41.88	2013-08-19	7	31
-256	4	555	placerat, orci lacus vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$91.54	1949-09-27	2	92
-257	8	987	massa. Integer vitae nibh. Donec est	$91.15	1968-09-04	8	3
-259	3	978	velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus.	$45.66	1943-07-31	2	87
-260	3	659	augue id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$26.19	2006-12-25	9	15
-261	9	955	torquent per conubia nostra, per inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare.	$99.09	1984-11-21	8	78
-264	5	526	Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan laoreet ipsum.	$68.11	1930-06-25	3	95
-266	9	279	Etiam laoreet, libero et tristique pellentesque, tellus	$37.51	1966-02-08	2	4
-271	1	108	convallis, ante lectus convallis est, vitae sodales nisi magna sed dui.	$62.84	2000-05-07	2	18
-272	5	322	sed leo. Cras vehicula aliquet libero. Integer in magna. Phasellus	$28.31	1979-09-15	8	68
-275	1	601	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem	$26.41	1982-05-13	8	80
-276	6	510	pede. Nunc sed orci lobortis augue scelerisque mollis. Phasellus libero mauris, aliquam	$5.06	1964-02-24	1	54
-277	5	63	facilisis, magna tellus faucibus leo, in lobortis tellus justo sit amet nulla.	$63.82	2016-03-22	8	75
-279	5	111	quis arcu vel quam dignissim	$10.89	1973-04-21	5	72
-281	2	857	lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$33.96	1959-10-08	1	78
-282	10	152	rhoncus. Nullam velit dui, semper	$13.28	1946-12-09	10	1
-294	3	555	mollis. Duis sit amet diam eu dolor	$71.42	1955-11-08	8	37
-298	7	336	vel est tempor bibendum. Donec	$73.68	1948-07-19	10	1
-303	3	172	nibh lacinia orci, consectetuer euismod est arcu ac orci. Ut semper pretium neque. Morbi quis	$67.26	1994-06-22	3	28
-304	5	563	est, mollis non, cursus non, egestas a,	$14.29	2013-02-02	1	75
-305	1	272	id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt	$51.48	2010-10-19	9	24
-306	5	98	nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas	$20.43	1959-06-04	7	4
-308	6	761	vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$84.51	1997-12-29	8	62
-310	3	653	Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue	$8.54	1980-08-08	7	12
-318	8	58	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae	$22.73	2014-03-22	3	17
-320	7	309	diam. Pellentesque habitant morbi tristique senectus et netus	$54.42	1986-02-01	10	48
-325	5	393	tellus. Phasellus elit pede, malesuada vel, venenatis vel, faucibus id, libero. Donec consectetuer	$66.35	1932-09-04	7	71
-328	6	785	at, iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$56.57	2005-10-19	6	42
-329	5	572	montes, nascetur ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu.	$78.61	1930-07-18	10	35
-332	1	772	Cras vehicula aliquet libero. Integer in magna. Phasellus dolor elit,	$2.06	2020-04-22	10	76
-333	4	638	pede ac urna. Ut tincidunt vehicula risus. Nulla eget metus eu	$13.25	1995-09-08	9	50
-335	4	196	enim. Suspendisse aliquet, sem ut cursus	$70.66	1943-12-10	9	4
-336	5	152	amet ornare lectus justo eu arcu. Morbi	$53.61	2018-10-18	6	38
-338	7	416	amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus. Ut nec urna	$98.12	1955-09-24	3	37
-342	9	26	Lorem ipsum dolor sit amet, consectetuer adipiscing elit.	$14.90	1941-06-09	3	39
-344	7	253	pellentesque, tellus sem mollis dui, in	$26.03	2014-08-12	7	40
-345	9	402	natoque penatibus et magnis dis	$57.18	1999-07-16	8	82
-346	10	342	pede et risus. Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan	$47.88	2003-10-28	7	87
-352	2	658	est, mollis non, cursus non, egestas a, dui. Cras pellentesque. Sed	$5.34	1961-02-06	3	40
-353	8	227	ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque	$18.43	1974-03-09	6	34
-355	8	9	vel arcu. Curabitur ut odio vel est	$36.50	1998-09-04	7	28
-356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59
-360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46
-367	4	966	id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis quis,	$76.41	2019-05-27	7	28
-371	1	296	dictum placerat, augue. Sed molestie. Sed id risus quis	$30.10	1995-01-12	7	78
-372	1	141	vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat.	$50.97	1993-04-11	7	56
-377	7	309	amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas	$93.49	1987-10-19	4	39
-383	2	66	est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue ut lacus. Nulla	$20.12	1974-03-08	1	72
-385	4	158	magna. Sed eu eros. Nam consequat dolor	$17.28	1985-06-27	4	25
-386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45
-388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5
-395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41
-1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19
-2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18
-3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65
-4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86
-5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100
-6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25
-7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85
-9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88
-12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47
-13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37
-14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70
-15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51
-16	9	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89
-17	4	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6
-18	9	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18
-19	10	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12
-20	8	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65
-22	8	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36
-23	3	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40
-28	8	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18
-29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68
-30	6	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79
-31	5	666	vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus.	$70.89	1965-05-09	4	72
-33	3	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82
-34	8	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67
-35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73
-37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6
-38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77
-42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8
-43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71
-44	6	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54
-46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98
-47	3	647	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem,	$50.36	2001-02-07	1	52
-48	1	798	vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate	$98.98	1958-09-06	10	56
-51	7	251	cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem.	$94.75	1972-08-18	3	92
-53	2	91	libero. Donec consectetuer mauris id sapien. Cras dolor dolor, tempus	$87.25	1933-07-18	4	24
-56	6	684	dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed eu eros.	$51.07	1973-01-15	6	72
-57	3	406	accumsan convallis, ante lectus convallis est, vitae sodales	$77.13	1986-08-22	8	50
-58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44
-59	8	132	arcu. Curabitur ut odio vel est tempor bibendum. Donec	$5.59	2019-08-07	6	34
-60	4	525	quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus.	$65.64	1945-10-09	6	21
-61	2	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91
-62	1	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75
-64	1	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77
-66	9	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13
-67	2	691	eget, ipsum. Donec sollicitudin adipiscing ligula. Aenean gravida nunc sed pede. Cum	$11.20	1936-10-21	7	54
-68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75
-70	9	342	Nunc commodo auctor velit. Aliquam nisl. Nulla eu neque	$65.14	1937-02-07	1	77
-71	10	786	Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam	$52.02	1952-03-03	10	27
-72	4	655	dolor sit amet, consectetuer adipiscing elit. Aliquam	$8.03	1993-04-04	1	80
-75	5	898	dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac	$68.43	2001-12-04	9	15
-76	10	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49
-77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6
-78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72
-79	5	918	ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce aliquam, enim nec tempus	$77.75	1936-07-31	6	63
-80	4	286	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend non, dapibus rutrum,	$86.10	2006-08-07	4	73
-84	6	289	neque. Morbi quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla.	$84.64	1993-04-27	5	7
-85	10	787	pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec est. Nunc ullamcorper,	$90.19	1947-11-16	1	24
-87	4	45	diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est	$6.03	1938-11-19	7	23
-88	2	954	placerat, orci lacus vestibulum lorem, sit amet ultricies	$57.70	1932-07-15	10	65
-89	6	962	quam quis diam. Pellentesque habitant morbi tristique senectus	$27.07	2008-03-21	7	19
-90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15
-91	7	525	arcu. Vestibulum ante ipsum primis in faucibus orci luctus	$20.31	1947-09-07	9	77
-93	10	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78
-95	4	769	non ante bibendum ullamcorper. Duis cursus, diam at pretium aliquet,	$21.18	1936-10-15	7	58
-96	10	417	Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc	$65.53	2010-06-24	10	41
-98	8	196	purus. Duis elementum, dui quis accumsan convallis,	$32.34	1933-06-10	9	99
-99	8	408	venenatis vel, faucibus id, libero.	$34.94	1959-09-29	4	61
-100	4	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60
-103	6	951	mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$87.01	1944-11-07	5	71
-104	7	184	mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$32.08	2019-07-30	8	8
-105	5	260	adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis	$55.58	1989-08-04	3	57
-106	8	468	Nullam scelerisque neque sed sem egestas blandit. Nam nulla magna, malesuada vel,	$32.15	1970-03-03	6	48
-109	6	498	tellus, imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor	$16.04	1983-01-13	5	6
-111	2	632	Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a, malesuada id,	$92.93	1982-04-13	9	86
-112	9	271	eget metus eu erat semper rutrum. Fusce dolor quam, elementum at, egestas a,	$19.66	1949-05-10	3	17
-113	2	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2
-115	7	536	Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper.	$36.28	1973-03-22	10	25
-116	6	491	sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris	$36.42	1989-06-22	7	41
-118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63
-119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2
-120	4	51	adipiscing ligula. Aenean gravida nunc sed pede. Cum sociis natoque	$41.49	2013-04-06	1	97
-121	5	332	cursus non, egestas a, dui. Cras	$25.42	2007-05-24	7	83
-124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79
-125	9	101	Ut semper pretium neque. Morbi quis	$57.26	1977-02-05	6	87
-126	7	994	Nullam velit dui, semper et, lacinia vitae, sodales at, velit.	$27.12	1943-01-04	2	38
-128	6	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27
-129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100
-131	5	628	diam. Sed diam lorem, auctor quis, tristique	$28.47	1957-02-28	9	58
-139	4	725	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	$35.29	2007-07-17	9	67
-140	7	378	ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet	$26.49	2001-08-12	5	60
-141	5	349	sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis	$44.77	1959-05-24	5	62
-142	2	279	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem	$65.49	1938-08-31	5	98
-145	6	513	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit	$5.60	1940-01-20	9	7
-146	4	41	Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$6.19	1992-06-26	9	13
-147	6	917	risus. Nulla eget metus eu erat semper rutrum. Fusce dolor quam, elementum at,	$32.50	1978-08-27	6	31
-149	8	582	semper erat, in consectetuer ipsum nunc id enim. Curabitur massa. Vestibulum accumsan neque et	$3.24	1972-12-08	6	22
-151	4	937	feugiat. Lorem ipsum dolor sit amet,	$30.34	1956-03-10	4	10
-153	4	34	egestas ligula. Nullam feugiat placerat velit. Quisque	$82.06	2011-02-14	7	9
-155	9	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34
-157	10	250	nascetur ridiculus mus. Aenean eget magna. Suspendisse tristique neque	$99.80	1956-10-28	9	78
-159	8	550	justo sit amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper.	$72.39	2006-07-10	9	28
-160	4	710	ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor	$43.16	1974-07-04	4	14
-163	3	70	ipsum nunc id enim. Curabitur	$19.21	1940-12-13	2	71
-164	6	541	enim. Etiam gravida molestie arcu. Sed eu nibh vulputate mauris sagittis placerat. Cras	$94.44	1931-08-17	5	43
-165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32
-166	6	186	bibendum fermentum metus. Aenean sed pede nec ante blandit viverra.	$51.41	1960-12-21	2	44
-167	2	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10
-168	6	383	ut, nulla. Cras eu tellus eu augue porttitor interdum.	$25.01	1980-07-10	3	92
-169	5	348	libero mauris, aliquam eu, accumsan sed,	$25.22	2015-12-19	7	3
-170	5	488	Nullam nisl. Maecenas malesuada fringilla est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed	$99.49	1954-04-06	3	47
-171	10	887	dapibus gravida. Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$86.24	1938-01-13	8	31
-173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44
-174	9	488	Integer vitae nibh. Donec est mauris, rhoncus id,	$89.97	1965-01-15	5	69
-175	8	929	eleifend. Cras sed leo. Cras	$69.77	1962-03-13	4	11
-177	7	129	sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh. Aliquam ornare, libero at	$40.86	2013-08-13	5	24
-180	7	153	Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$61.28	1983-10-02	7	96
-181	4	447	lorem lorem, luctus ut, pellentesque eget,	$85.19	2008-09-14	4	7
-184	1	545	enim diam vel arcu. Curabitur ut odio vel est tempor	$2.82	1942-10-14	1	82
-187	3	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8
-189	8	469	a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$39.94	1943-07-22	10	93
-190	9	445	Cras sed leo. Cras vehicula aliquet libero. Integer	$71.56	1959-11-14	1	85
-191	7	855	malesuada augue ut lacus. Nulla tincidunt,	$34.71	1941-06-12	10	19
-192	6	784	dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus. Vivamus euismod urna. Nullam	$11.94	1949-12-20	2	57
-194	4	528	ut ipsum ac mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris	$54.20	1977-08-08	2	13
-195	7	758	dui quis accumsan convallis, ante lectus	$80.99	1949-01-08	4	53
-196	3	233	molestie orci tincidunt adipiscing. Mauris molestie pharetra	$2.51	1976-09-02	6	87
-197	8	550	enim. Curabitur massa. Vestibulum accumsan neque	$45.08	1961-06-06	4	100
-198	8	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48
-199	7	1	eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur	$54.18	1931-04-10	7	64
-200	2	558	dui augue eu tellus. Phasellus elit	$8.74	1982-02-01	5	6
-203	1	40	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus.	$22.40	1960-07-11	9	49
-208	6	906	imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas. Duis	$30.08	1979-03-23	5	79
-209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36
-212	2	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37
-213	7	53	urna. Nunc quis arcu vel quam dignissim pharetra.	$41.57	2018-06-09	1	69
-214	4	429	sapien. Nunc pulvinar arcu et pede. Nunc sed orci	$48.61	1931-04-19	1	43
-215	8	141	Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec	$16.58	1980-04-06	3	67
-216	8	263	magna. Cras convallis convallis dolor. Quisque tincidunt pede	$84.40	2008-07-04	3	46
-218	4	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81
-221	8	187	eu enim. Etiam imperdiet dictum magna.	$66.80	1989-12-17	2	70
-223	7	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89
-224	5	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16
-225	1	46	viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$78.85	1952-03-19	6	48
-226	4	781	vulputate, posuere vulputate, lacus. Cras interdum. Nunc	$42.81	1983-01-23	6	7
-227	4	196	malesuada malesuada. Integer id magna et ipsum cursus	$44.01	1947-02-17	5	28
-228	6	567	Proin velit. Sed malesuada augue ut lacus. Nulla	$37.77	1942-11-04	6	57
-230	2	353	Donec luctus aliquet odio. Etiam ligula tortor, dictum eu, placerat eget, venenatis a, magna. Lorem	$2.27	1968-11-22	2	48
-231	5	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55
-232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15
-234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78
-240	4	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51
-242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49
-243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28
-247	9	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17
-249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62
-250	2	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89
-251	7	432	id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus,	$67.50	1983-03-10	2	51
-253	10	230	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac	$5.24	2008-12-05	7	81
-254	6	321	Quisque ornare tortor at risus.	$55.69	1971-01-11	9	23
-258	2	365	consectetuer adipiscing elit. Etiam laoreet, libero	$2.19	1980-02-12	5	74
-262	1	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82
-263	3	672	fermentum vel, mauris. Integer sem elit, pharetra ut, pharetra	$85.61	1989-01-26	3	6
-265	9	960	vel sapien imperdiet ornare. In faucibus. Morbi vehicula.	$7.93	1943-03-12	5	27
-267	5	307	Curabitur consequat, lectus sit amet luctus vulputate, nisi sem semper	$74.32	1965-01-01	4	84
-268	3	93	mauris elit, dictum eu, eleifend nec,	$74.74	1970-05-22	10	30
-269	6	874	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus.	$15.93	1941-08-17	2	72
-270	2	486	est mauris, rhoncus id, mollis nec, cursus	$51.06	1944-06-12	10	63
-273	4	623	amet, risus. Donec nibh enim, gravida	$12.84	1958-06-28	1	49
-274	6	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78
-278	10	85	amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam	$18.54	1985-05-28	5	35
-280	3	106	quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce	$7.97	2007-04-01	8	73
-283	7	786	elementum sem, vitae aliquam eros	$2.42	1943-12-18	1	6
-284	6	170	amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat.	$36.76	1966-01-12	3	88
-285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45
-286	10	385	arcu iaculis enim, sit amet ornare	$73.09	2005-09-13	10	20
-287	1	60	dignissim pharetra. Nam ac nulla.	$28.47	1959-05-31	7	30
-288	4	229	et malesuada fames ac turpis	$31.58	1983-09-29	5	16
-289	7	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10
-290	2	246	vitae purus gravida sagittis. Duis gravida. Praesent eu nulla	$10.08	1981-07-26	2	53
-291	3	664	lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis,	$7.51	1982-05-11	3	25
-292	10	523	ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut sagittis lobortis	$28.27	1987-02-21	6	78
-293	6	109	euismod est arcu ac orci. Ut semper	$27.96	2008-02-21	10	79
-295	4	992	pharetra. Nam ac nulla. In tincidunt	$89.51	1967-06-20	7	29
-296	5	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25
-297	5	876	dictum. Phasellus in felis. Nulla tempor	$94.42	2017-11-22	8	3
-299	5	328	augue ut lacus. Nulla tincidunt, neque vitae semper egestas,	$87.32	2008-04-18	8	47
-300	6	162	Duis mi enim, condimentum eget, volutpat	$98.56	1975-09-20	4	39
-301	4	749	mauris elit, dictum eu, eleifend	$93.82	2006-08-15	3	100
-302	10	374	ut mi. Duis risus odio, auctor vitae, aliquet	$88.77	1979-07-28	6	72
-307	7	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33
-309	5	828	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam	$71.23	1981-12-26	1	78
-311	7	304	augue malesuada malesuada. Integer id	$73.57	1968-01-25	6	44
-312	10	432	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit,	$36.57	1991-11-30	6	86
-313	5	592	Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$70.59	1954-12-14	9	34
-314	8	289	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac facilisis facilisis, magna	$60.35	1978-11-28	9	18
-315	2	783	Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$30.63	1979-01-25	2	64
-316	10	969	mollis nec, cursus a, enim. Suspendisse aliquet,	$19.29	1966-03-13	3	82
-317	7	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97
-319	2	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72
-321	2	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31
-322	8	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2
-323	7	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5
-324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39
-326	6	478	justo faucibus lectus, a sollicitudin orci	$51.06	1931-06-24	4	95
-327	7	542	sem ut dolor dapibus gravida.	$82.02	1974-03-19	1	64
-330	8	742	ipsum non arcu. Vivamus sit amet risus. Donec egestas. Aliquam nec	$88.30	1988-09-20	5	19
-331	10	524	lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit	$39.60	1986-03-07	1	96
-334	3	106	velit. Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices.	$85.18	1962-12-20	1	82
-337	4	317	eu, odio. Phasellus at augue id ante	$56.46	1994-02-05	3	71
-339	9	844	egestas. Duis ac arcu. Nunc mauris. Morbi non sapien molestie	$37.60	1947-10-11	6	70
-340	6	581	aliquet, sem ut cursus luctus,	$52.47	1952-01-17	4	22
-341	9	171	at, nisi. Cum sociis natoque penatibus et magnis dis parturient	$76.66	2002-11-11	8	30
-343	4	332	ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$59.85	1951-08-24	3	77
-347	6	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14
-348	3	803	vulputate, lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$11.30	1962-06-04	6	75
-349	10	847	non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum	$4.23	1988-06-29	3	28
-350	2	745	nisl arcu iaculis enim, sit amet ornare lectus justo eu arcu. Morbi sit amet massa.	$98.45	1997-03-24	5	34
-351	8	857	adipiscing lobortis risus. In mi pede, nonummy ut,	$35.10	1990-10-10	2	31
-354	2	576	ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;	$95.56	2016-09-10	8	78
-357	4	700	a, enim. Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum	$88.44	1980-02-20	1	37
-358	5	196	sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$20.67	2012-09-27	9	37
-359	2	491	erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt pede ac urna.	$39.79	1940-10-18	6	89
-361	3	662	consequat auctor, nunc nulla vulputate	$48.28	1933-02-01	7	83
-362	8	549	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris	$13.11	1949-11-09	3	66
-363	8	443	egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor scelerisque	$29.75	1965-02-15	10	40
-364	7	919	mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a	$45.73	1940-02-28	9	80
-365	5	193	tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet	$11.99	1986-11-30	2	71
-366	1	124	dis parturient montes, nascetur ridiculus	$90.22	2012-08-22	7	70
-368	2	20	Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing. Mauris	$19.13	1945-06-19	9	17
-369	8	707	Integer id magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim tempor arcu.	$78.40	1963-07-14	7	25
-370	7	273	luctus vulputate, nisi sem semper erat, in consectetuer ipsum nunc id enim. Curabitur	$38.99	1952-09-19	5	8
-373	3	628	Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum	$62.18	2016-02-24	7	41
-374	5	481	aliquam, enim nec tempus scelerisque, lorem	$4.36	1966-12-18	5	21
-375	7	925	sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed	$50.47	1958-11-22	3	6
-376	2	389	Proin mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$81.60	2008-04-26	6	71
-378	6	286	porttitor tellus non magna. Nam	$31.05	1952-08-14	9	79
-379	8	766	Phasellus ornare. Fusce mollis. Duis sit	$12.19	1932-05-23	9	69
-380	6	113	augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$63.02	2000-06-12	2	47
-381	9	344	scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed	$30.54	2000-05-25	10	91
-382	7	405	metus. Aenean sed pede nec ante blandit viverra.	$21.22	1952-01-10	8	98
-384	1	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48
-387	4	359	elit. Aliquam auctor, velit eget laoreet posuere, enim nisl elementum	$48.17	2009-11-01	9	57
-389	7	354	mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla	$96.58	1943-08-11	10	34
-390	5	988	Pellentesque tincidunt tempus risus. Donec egestas.	$92.30	1958-12-14	2	80
-391	4	337	dictum. Proin eget odio. Aliquam	$99.20	1942-05-07	10	36
-392	6	684	dignissim tempor arcu. Vestibulum ut	$38.70	1985-04-14	9	51
-393	8	38	mus. Proin vel arcu eu odio tristique pharetra. Quisque ac libero	$24.89	1967-09-20	8	54
-394	5	681	ac mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$42.39	1949-08-18	1	92
-396	5	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18
-397	4	204	tellus non magna. Nam ligula elit, pretium et, rutrum	$3.38	1983-03-04	4	36
-398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51
-399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9
-400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43
+COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id, title) FROM stdin;
+55	1	822	amet nulla. Donec non justo. Proin	$54.91	1947-02-24	8	23	100 Bullets #21 cover
+58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44	In Stinked Part Two
+68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75	La Cinta 1 de 2
+78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72	The Menace of Aqualad!
+90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15	Epic Moments In International Relations
+100	4	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60	Go Vest, Young Man
+113	2	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2	Revenge (a.k.a. Four Dark Judges)
+118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63	1981 Is the Year of the Alien!
+124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79	Zombie Beat!
+165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32	Book 10 The Märze Murderer Part 6
+173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44	Part Eight
+285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45	In the Realm of Pyrrhus Part Five
+384	1	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48	The Kryptonite Man!
+396	5	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18	A Tale of Two Brothers
+35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73	Parlez Kung Vous Conclusion
+36	10	904	lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$79.03	1955-12-22	5	80	Hang Up on the Hang Low Part One
+39	6	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13	Hang Up on the Hang Low, Conclusion
+40	1	73	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam auctor, velit	$46.09	1972-12-12	1	69	The Mimic
+41	5	114	erat neque non quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames	$25.70	1981-06-12	6	57	Loser
+45	6	600	Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales	$44.28	1943-06-21	3	40	In Stinked Part One
+46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98	In Stinked Part Two
+49	10	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80	Punch Line Part Two
+50	1	221	Fusce aliquet magna a neque. Nullam ut nisi	$87.70	1984-11-27	6	66	Hang Up on the Hang Low Conclusion
+52	2	776	risus varius orci, in consequat enim diam vel arcu. Curabitur ut odio vel est	$90.99	1987-06-13	6	64	Hang Up on the Hang Low Part Two
+54	8	963	iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$7.31	1976-06-30	1	5	Idol Chatter
+128	6	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27	Account Yorga-Vampire Part 2
+155	9	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34	Hunted Part Three
+8	8	910	consequat, lectus sit amet luctus vulputate, nisi sem semper	$32.26	2003-09-13	5	14	Caricature Sculpture
+10	2	467	euismod et, commodo at, libero.	$3.49	1963-09-04	10	16	International
+11	2	670	fringilla ornare placerat, orci lacus vestibulum lorem, sit amet ultricies sem	$7.80	2016-05-01	10	20	Energy
+21	5	620	Mauris blandit enim consequat purus. Maecenas libero est, congue a, aliquet vel, vulputate	$24.26	2009-05-24	6	99	Notes from the World
+24	1	563	dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu odio tristique pharetra.	$88.18	1976-03-14	9	81	Operación Riesgo
+25	3	973	lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum fermentum arcu. Vestibulum	$30.79	2004-05-16	5	82	Parlez kung vous [parte 1]
+26	1	749	lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$80.37	1960-02-22	1	21	Parlez kung vous, Conclusion
+27	5	160	a, malesuada id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis	$27.14	2007-09-27	10	32	O ídolo tagarela!
+29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68	Graves
+30	6	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79	Jaula fedida: Parte três
+32	6	204	elit, a feugiat tellus lorem eu metus. In lorem. Donec	$40.10	1971-01-07	10	39	100 Bullets #83
+249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62	Engine Summer Part 9
+262	1	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82	Memories Are Made of This
+274	6	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78	The Son Part Three
+289	7	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10	The Son Part Six
+296	5	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25	The Gangbusters Chapter Two: Death From Above!
+92	7	88	magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$94.88	1993-05-18	3	68	Come On In, the Waters Cold
+94	8	576	leo, in lobortis tellus justo sit amet nulla. Donec	$84.89	1934-03-28	9	2	And Away We Go! Jackie Gleason
+97	4	993	quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$85.84	1963-05-29	5	69	The Morris Theory of Musical Shapes
+101	2	82	erat, in consectetuer ipsum nunc	$94.57	1955-08-20	10	14	Sinbad and the City of the Dead Part Two
+102	5	724	magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus.	$26.77	1957-05-19	5	95	An Exciting War Story
+117	9	676	faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.	$62.68	1993-02-19	8	32	Everest [Part 2]
+129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100	Case Eight: Worlds at War
+187	3	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8	Life on Earth
+198	8	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48	Last Breath
+209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36	War Buds Part One
+218	4	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81	War Buds Part Three
+307	7	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33	The Big Empty
+324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39	Beowulf Storms The Gates In October
+63	2	230	Morbi metus. Vivamus euismod urna.	$25.24	1996-08-19	4	70	100 Bullets #27
+65	4	546	sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet,	$69.17	1964-08-06	6	48	100 Degrees in the Shade Part IV
+69	9	689	velit. Cras lorem lorem, luctus ut,	$17.91	1948-07-18	6	3	Desde el Infierno
+73	1	563	Praesent luctus. Curabitur egestas nunc sed libero. Proin sed turpis nec mauris blandit mattis.	$0.78	1952-04-19	9	94	Summons to Paradise
+74	3	528	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus.	$7.31	1936-06-27	9	15	Introducing Stretch Skinner
+77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6	Nostradamus Predicts
+81	8	90	In tincidunt congue turpis. In condimentum. Donec at	$41.01	1963-05-07	9	10	The Trial of Superboy
+82	1	951	sed libero. Proin sed turpis nec mauris blandit	$91.56	1957-06-01	2	23	The Boy of the Year Contest
+83	6	905	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$85.22	1999-05-14	7	63	Battle Doll!
+86	7	470	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc	$85.19	2004-10-10	3	11	[The Injustice Society of the World!] Chapter 2
+107	1	250	mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam adipiscing	$16.26	2006-11-03	3	47	Chapter One: Tyranny in Timely
+108	1	777	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat	$80.82	1968-03-05	3	46	Resan till månen
+110	10	672	Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus. Proin nisl	$55.33	1988-11-28	7	91	Code Name: Assassin
+114	2	854	Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	$82.78	2002-08-03	7	73	The Black Plague! (part 1)
+223	7	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89	Book 11 The Thousand Year Stare Part 3
+224	5	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16	Fallout Part Three
+232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15	Book 11 The Thousand Year Stare Part 5
+137	5	333	amet massa. Quisque porttitor eros nec	$40.51	1961-05-18	5	62	The Last Thing I Do (Part 6)
+138	6	318	ipsum. Suspendisse non leo. Vivamus nibh dolor,	$17.91	1961-02-22	3	32	Fire and Ice
+143	10	815	Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam.	$29.80	1990-07-06	8	65	And the Beast Shall Feast
+144	5	500	molestie in, tempus eu, ligula.	$80.22	1951-12-19	8	68	A Wolfs Age
+148	4	563	Quisque purus sapien, gravida non, sollicitudin	$56.83	2012-04-23	2	90	Book 10 The Märze Murderer Part 2
+150	7	434	magnis dis parturient montes, nascetur ridiculus mus. Proin	$51.18	1982-07-11	10	34	Hunted Part Two
+152	6	697	quam quis diam. Pellentesque habitant morbi tristique senectus et	$32.56	1985-07-18	10	57	Get Sin Part Two
+154	6	579	Proin velit. Sed malesuada augue ut lacus. Nulla	$50.14	1979-09-22	3	90	Book 10 The Märze Murderer Part 3
+156	4	426	id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec,	$10.92	1943-03-10	4	31	Get Sin Part Three
+158	8	913	odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$94.47	1948-05-20	1	64	Book 10 The Märze Murderer Part 4
+161	2	545	odio a purus. Duis elementum, dui quis accumsan convallis,	$34.53	1966-08-16	5	7	Book 10 The Märze Murderer Part 5
+162	1	698	dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer sem elit,	$24.78	1980-09-08	10	84	Gorehead Part Four
+172	2	752	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed	$49.53	2010-11-01	3	7	Gorehead Part Six
+176	2	378	quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla. In tincidunt congue	$17.15	1983-01-04	8	44	Book 10 The Märze Murderer Part 8
+238	9	340	non leo. Vivamus nibh dolor, nonummy ac, feugiat	$8.65	2003-03-23	5	66	The Shroud Part 2
+122	8	830	ut, pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis	$47.88	1943-07-21	8	98	The Statutes of Liberty
+123	7	597	eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$91.94	1999-11-13	3	61	The Hateful Dead!
+127	3	82	vitae risus. Duis a mi fringilla mi	$92.29	1933-12-25	1	18	Curse of the Spider Man
+130	2	281	adipiscing elit. Etiam laoreet, libero et tristique	$82.33	2005-06-04	10	8	Scene Of The Crime
+132	4	153	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend	$56.64	1972-05-20	5	1	Bison Part One
+133	4	829	nec, diam. Duis mi enim, condimentum eget, volutpat ornare, facilisis eget, ipsum. Donec	$87.84	1996-04-29	4	3	Along Came a Spider! Arach Attack in Strontium Dog!
+134	7	625	pede. Suspendisse dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer	$64.53	1952-07-16	7	14	Road House Part two
+135	2	127	arcu. Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing.	$86.54	2004-05-24	2	67	Vaped! Part two
+136	6	631	mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$46.67	1960-10-11	4	4	What Lies Beneath Part One
+178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44	Hunted Part Eight
+179	3	287	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer	$92.38	1973-01-19	10	13	Part Nine
+182	2	935	libero. Proin sed turpis nec	$58.61	1960-05-07	7	84	Gorehead Part Eight
+183	2	872	adipiscing fringilla, porttitor vulputate, posuere	$90.93	2018-07-20	5	20	Hunted Part Nine
+185	9	261	dapibus id, blandit at, nisi. Cum sociis natoque	$31.62	1939-07-16	5	76	Diehards Part Fourteen
+186	3	599	dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit.	$96.29	1997-03-27	6	48	Box-Office Bomb
+188	10	965	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et,	$9.63	1953-02-18	3	2	Skeleton Life Part 17
+193	9	962	urna. Nunc quis arcu vel quam dignissim	$60.45	1970-01-05	10	20	Furies Part Seven
+201	5	730	mauris. Morbi non sapien molestie orci tincidunt	$72.06	1982-02-22	1	47	Furies Part Ten
+202	4	321	penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$83.45	1987-08-30	8	86	Ouroboros Part Three
+204	5	731	neque. In ornare sagittis felis. Donec tempor, est ac	$78.33	2012-10-29	5	81	Inhuman Natures Part 2
+205	7	775	ac libero nec ligula consectetuer rhoncus. Nullam velit dui, semper et, lacinia vitae,	$38.36	2016-09-17	8	12	Hope For the Future Part 7
+206	5	623	leo. Morbi neque tellus, imperdiet non, vestibulum nec, euismod in,	$95.62	1940-10-02	7	6	Inhuman Natures Part 3
+207	10	761	Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$37.65	1953-03-27	2	72	Signal Six Twenty-Four Part Two
+210	9	550	sit amet ultricies sem magna nec quam. Curabitur vel lectus. Cum sociis natoque penatibus	$49.24	1943-12-07	7	9	Hope For the Future Part 8
+211	6	516	tempor lorem, eget mollis lectus pede	$71.45	1986-06-28	6	20	Inhuman Natures Part 4
+217	3	753	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam	$23.30	1942-06-27	4	90	Foul Play Part Seven
+219	4	669	Nullam feugiat placerat velit. Quisque varius. Nam	$38.26	1956-11-01	7	28	Foul Play Part Eight
+220	3	997	dui quis accumsan convallis, ante lectus convallis	$3.14	1996-11-11	6	100	Hope For the Future Part 10
+222	8	684	non nisi. Aenean eget metus. In nec orci. Donec nibh. Quisque nonummy ipsum non	$75.11	1952-12-10	5	87	Inhuman Natures Part 6
+229	7	818	Aliquam tincidunt, nunc ac mattis ornare, lectus ante dictum	$39.00	1992-02-12	2	68	Book 11 The Thousand Year Stare Part 4
+233	2	82	egestas a, dui. Cras pellentesque. Sed dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed	$38.09	1941-11-07	6	64	Fallout Part Five
+235	9	585	accumsan neque et nunc. Quisque ornare tortor at	$9.13	1956-05-23	3	10	Terrorists Part 5
+236	7	616	sed tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet ullamcorper.	$83.86	2000-03-03	4	24	Engine Summer Part 5
+237	1	135	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida	$32.37	1992-08-09	9	44	Book 11 The Thousand Year Stare Part 6
+244	10	488	Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$50.35	1990-11-30	10	14	Engine Summer Part 7
+245	5	714	sed pede nec ante blandit viverra. Donec tempus, lorem	$76.80	1996-07-27	6	31	Fallout Part Seven
+246	8	393	dui quis accumsan convallis, ante	$19.31	1936-12-22	8	60	Live Evil Part 1
+248	1	80	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem, eget mollis	$20.02	1963-02-27	7	57	Terrorists Part Nine: The Third Law of Bad Company
+252	9	910	ligula. Aenean euismod mauris eu elit. Nulla facilisi.	$9.76	1962-11-30	8	84	Fallout Part Eleven
+255	8	285	fermentum metus. Aenean sed pede nec ante blandit viverra.	$41.88	2013-08-19	7	31	Live Evil Part 4
+256	4	555	placerat, orci lacus vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$91.54	1949-09-27	2	92	Sunday Scientist
+257	8	987	massa. Integer vitae nibh. Donec est	$91.15	1968-09-04	8	3	Terrorists Part 12
+259	3	978	velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus.	$45.66	1943-07-31	2	87	Undertow Part One
+260	3	659	augue id ante dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$26.19	2006-12-25	9	15	In the Realm of Pyrrhus Part One
+261	9	955	torquent per conubia nostra, per inceptos hymenaeos. Mauris ut quam vel sapien imperdiet ornare.	$99.09	1984-11-21	8	78	Fit for Purpose Part 1
+264	5	526	Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan laoreet ipsum.	$68.11	1930-06-25	3	95	Freedom Wears Two Faces
+266	9	279	Etiam laoreet, libero et tristique pellentesque, tellus	$37.51	1966-02-08	2	4	Undertow Part Two
+271	1	108	convallis, ante lectus convallis est, vitae sodales nisi magna sed dui.	$62.84	2000-05-07	2	18	The Death Watch
+272	5	322	sed leo. Cras vehicula aliquet libero. Integer in magna. Phasellus	$28.31	1979-09-15	8	68	In the Field of Battle
+275	1	601	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam rutrum lorem	$26.41	1982-05-13	8	80	The Devil Dont Care Part One
+276	6	510	pede. Nunc sed orci lobortis augue scelerisque mollis. Phasellus libero mauris, aliquam	$5.06	1964-02-24	1	54	Undertow Part Four
+277	5	63	facilisis, magna tellus faucibus leo, in lobortis tellus justo sit amet nulla.	$63.82	2016-03-22	8	75	Divide + Conquer!
+279	5	111	quis arcu vel quam dignissim	$10.89	1973-04-21	5	72	The Devil Dont Care Part Two
+281	2	857	lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$33.96	1959-10-08	1	78	The Son Part Five
+282	10	152	rhoncus. Nullam velit dui, semper	$13.28	1946-12-09	10	1	Undertow Part Five
+294	3	555	mollis. Duis sit amet diam eu dolor	$71.42	1955-11-08	8	37	Undertow Part Eight
+298	7	336	vel est tempor bibendum. Donec	$73.68	1948-07-19	10	1	The Trouble With Gronkses
+239	10	176	ante lectus convallis est, vitae sodales nisi magna sed	$11.53	1988-04-05	8	44	Terrorists Part 6
+241	6	788	sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent	$24.11	2003-06-27	6	14	Book 11 The Thousand Year Stare Part 7
+303	3	172	nibh lacinia orci, consectetuer euismod est arcu ac orci. Ut semper pretium neque. Morbi quis	$67.26	1994-06-22	3	28	The Black Plague! (part 1)
+304	5	563	est, mollis non, cursus non, egestas a,	$14.29	2013-02-02	1	75	Everest [Part 2]
+305	1	272	id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt	$51.48	2010-10-19	9	24	Everest [Part 1]
+306	5	98	nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas	$20.43	1959-06-04	7	4	Fodder
+308	6	761	vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$84.51	1997-12-29	8	62	Juicemobiles
+310	3	653	Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue	$8.54	1980-08-08	7	12	Samenwerking op Links
+318	8	58	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae	$22.73	2014-03-22	3	17	The Book Club
+320	7	309	diam. Pellentesque habitant morbi tristique senectus et netus	$54.42	1986-02-01	10	48	Beowulf Storms The Gates In October
+325	5	393	tellus. Phasellus elit pede, malesuada vel, venenatis vel, faucibus id, libero. Donec consectetuer	$66.35	1932-09-04	7	71	The Angel Saga Continues
+328	6	785	at, iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$56.57	2005-10-19	6	42	Goedheiligvrouw
+329	5	572	montes, nascetur ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu.	$78.61	1930-07-18	10	35	Lootjes trekken
+332	1	772	Cras vehicula aliquet libero. Integer in magna. Phasellus dolor elit,	$2.06	2020-04-22	10	76	The Eyes Have It!
+333	4	638	pede ac urna. Ut tincidunt vehicula risus. Nulla eget metus eu	$13.25	1995-09-08	9	50	Chapter Two: Sanjiyan
+335	4	196	enim. Suspendisse aliquet, sem ut cursus	$70.66	1943-12-10	9	4	Rebirth: Chapter Three
+336	5	152	amet ornare lectus justo eu arcu. Morbi	$53.61	2018-10-18	6	38	When Our Ships Come In...
+338	7	416	amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus. Ut nec urna	$98.12	1955-09-24	3	37	Were Standing VIGIL With "Fall From Grace"!
+342	9	26	Lorem ipsum dolor sit amet, consectetuer adipiscing elit.	$14.90	1941-06-09	3	39	Part 2: Resistance!
+344	7	253	pellentesque, tellus sem mollis dui, in	$26.03	2014-08-12	7	40	Inca Insurgency from 1500s to Túpac Amaru, 1780s
+345	9	402	natoque penatibus et magnis dis	$57.18	1999-07-16	8	82	Apache Guerrillas of the Southwest!
+346	10	342	pede et risus. Quisque libero lacus, varius et, euismod et, commodo at, libero. Morbi accumsan	$47.88	2003-10-28	7	87	Aazhoodena Ipperwash / Stoney Point 1995
+352	2	658	est, mollis non, cursus non, egestas a, dui. Cras pellentesque. Sed	$5.34	1961-02-06	3	40	War on the Plains
+353	8	227	ut quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque	$18.43	1974-03-09	6	34	Pontiac 1763 Rebellion and the Royal Proclamation
+355	8	9	vel arcu. Curabitur ut odio vel est	$36.50	1998-09-04	7	28	The Unconquered Mapuche
+356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59	Dismantled
+360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46	Son of Heaven, Son of Hell
+395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41	The Shower
+1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
+2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18	State-Legislature
+3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65	Gov. Carey
+4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86	Jimmy Carter & Friends
+5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100	Iran -- Shah -- Khomeini -- Hostages
+6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25	Watergate
+7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85	Freedom of the Press
+9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88	General
+12	5	257	luctus aliquet odio. Etiam ligula tortor, dictum	$10.40	1999-10-22	5	47	Deaths
+13	9	39	scelerisque, lorem ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut	$50.87	1965-03-28	8	37	The Rodeo Robbers!
+15	7	89	ac tellus. Suspendisse sed dolor. Fusce mi lorem,	$66.56	1960-04-02	2	51	The Robber of Rainbow Buttes!
+16	9	904	ultrices. Duis volutpat nunc sit amet metus. Aliquam erat volutpat. Nulla facilisis. Suspendisse	$44.04	1979-06-18	3	89	The Case of the Curious Cards
+17	4	384	sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$71.44	1964-11-05	6	6	The Tombstone Curse!
+18	9	181	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus et magnis	$54.79	1972-11-06	5	18	The Book of Revelations
+19	10	430	orci luctus et ultrices posuere cubilia Curae; Donec tincidunt. Donec vitae erat vel pede	$75.98	1973-02-21	4	12	Notes from the World
+20	8	145	Phasellus at augue id ante dictum cursus.	$43.99	2001-01-24	3	65	Fire and Ice
+22	8	766	et arcu imperdiet ullamcorper. Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a,	$7.27	1983-10-14	2	36	Notes from the World
+14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70	The Desert Devil
+23	3	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40	My German Buddy
+28	8	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18	Anteriormente em 100 Balas
+367	4	966	id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis quis,	$76.41	2019-05-27	7	28	The Blood That Runs
+371	1	296	dictum placerat, augue. Sed molestie. Sed id risus quis	$30.10	1995-01-12	7	78	The Blood That Runs
+372	1	141	vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat.	$50.97	1993-04-11	7	56	Donald na Matemagicalândia
+377	7	309	amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas	$93.49	1987-10-19	4	39	The Origin of the Justice League!
+383	2	66	est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue ut lacus. Nulla	$20.12	1974-03-08	1	72	The Curse of Lena Thorul!
+385	4	158	magna. Sed eu eros. Nam consequat dolor	$17.28	1985-06-27	4	25	The Army of Living Kryptonite Men!
+386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45	The Conquest of Superman!
+388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5	Superman in Superman Land
+33	3	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82	Parlez Kung Vous [Part One]
+34	8	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67	Parlez Kung Vous Part Deux
+37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6	Hang Up on the Hang Low, Part Two
+38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77	Hang Up on the Hang Low, Part Three
+42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8	Idol Chatter
+43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71	Graves
+44	6	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54	In Stinked Part One
+47	3	647	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem,	$50.36	2001-02-07	1	52	In Stinked Conclusion
+48	1	798	vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate	$98.98	1958-09-06	10	56	Prey for Reign
+51	7	251	cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut, sem.	$94.75	1972-08-18	3	92	Hang Up on the Hang Low Part Three
+53	2	91	libero. Donec consectetuer mauris id sapien. Cras dolor dolor, tempus	$87.25	1933-07-18	4	24	The Mimic
+56	6	684	dictum. Proin eget odio. Aliquam vulputate ullamcorper magna. Sed eu eros.	$51.07	1973-01-15	6	72	In Stinked Conclusion
+57	3	406	accumsan convallis, ante lectus convallis est, vitae sodales	$77.13	1986-08-22	8	50	100 Bullets #49 Cover
+59	8	132	arcu. Curabitur ut odio vel est tempor bibendum. Donec	$5.59	2019-08-07	6	34	In Stinked [Part One]
+60	4	525	quam vel sapien imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus.	$65.64	1945-10-09	6	21	100 Bullets #47 Cover
+61	2	71	amet ultricies sem magna nec	$47.90	2013-03-20	8	91	Prey for Reign
+62	1	15	in magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum	$9.33	1940-08-12	9	75	Der erste Schuss, Teil 1
+64	1	200	pede. Cras vulputate velit eu sem. Pellentesque ut	$0.64	1950-04-28	10	77	100 kuler, del 1
+66	9	216	at risus. Nunc ac sem ut dolor dapibus gravida. Aliquam tincidunt, nunc ac	$93.56	1989-02-19	5	13	Gewähr mir Zuflucht
+67	2	691	eget, ipsum. Donec sollicitudin adipiscing ligula. Aenean gravida nunc sed pede. Cum	$11.20	1936-10-21	7	54	Skalpelle und Kettensägen
+70	9	342	Nunc commodo auctor velit. Aliquam nisl. Nulla eu neque	$65.14	1937-02-07	1	77	The Batmobile of 1950!
+71	10	786	Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam	$52.02	1952-03-03	10	27	Showdown with the Monk
+72	4	655	dolor sit amet, consectetuer adipiscing elit. Aliquam	$8.03	1993-04-04	1	80	Menace of the Monk
+75	5	898	dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac	$68.43	2001-12-04	9	15	Guardians Against Crime!
+76	10	604	quam quis diam. Pellentesque habitant morbi tristique senectus et netus et malesuada	$71.75	1973-02-28	2	49	Battle of the Tiny Titans!
+79	5	918	ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce aliquam, enim nec tempus	$77.75	1936-07-31	6	63	Dr. Cyclops -- The Villain with the Doomsday Stare
+80	4	286	dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis nec, eleifend non, dapibus rutrum,	$86.10	2006-08-07	4	73	Superbabys Search for a Pet!
+89	6	962	quam quis diam. Pellentesque habitant morbi tristique senectus	$27.07	2008-03-21	7	19	This Is My Life by Bob Hope
+91	7	525	arcu. Vestibulum ante ipsum primis in faucibus orci luctus	$20.31	1947-09-07	9	77	20,000 Legs Under the Sea
+93	10	450	sem ut dolor dapibus gravida.	$86.53	1966-08-30	3	78	Travel Agency
+103	6	951	mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$87.01	1944-11-07	5	71	One of Our Planes is MIssing!
+104	7	184	mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$32.08	2019-07-30	8	8	Next Issue
+105	5	260	adipiscing elit. Etiam laoreet, libero et tristique pellentesque, tellus sem mollis	$55.58	1989-08-04	3	57	15 Love Book 1
+106	8	468	Nullam scelerisque neque sed sem egestas blandit. Nam nulla magna, malesuada vel,	$32.15	1970-03-03	6	48	Next Issue
+109	6	498	tellus, imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor	$16.04	1983-01-13	5	6	Vem där?
+111	2	632	Duis at lacus. Quisque purus sapien, gravida non, sollicitudin a, malesuada id,	$92.93	1982-04-13	9	86	Insect Paranoia
+112	9	271	eget metus eu erat semper rutrum. Fusce dolor quam, elementum at, egestas a,	$19.66	1949-05-10	3	17	Project Black Sky
+115	7	536	Donec feugiat metus sit amet ante. Vivamus non lorem vitae odio sagittis semper.	$36.28	1973-03-22	10	25	The Return of Rico
+116	6	491	sagittis. Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris	$36.42	1989-06-22	7	41	Everest [Part 1]
+31	5	666	vitae risus. Duis a mi fringilla mi lacinia mattis. Integer eu lacus.	$70.89	1965-05-09	4	72	Rinhas, Parte dois
+84	6	289	neque. Morbi quis urna. Nunc quis arcu vel quam dignissim pharetra. Nam ac nulla.	$84.64	1993-04-27	5	7	The Flying Chief!
+85	10	787	pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec est. Nunc ullamcorper,	$90.19	1947-11-16	1	24	The Card Crimes of the Royal Flush Gang!
+87	4	45	diam dictum sapien. Aenean massa. Integer vitae nibh. Donec est	$6.03	1938-11-19	7	23	[The Amazing Story of Superman-Red and Superman-Blue! Part III] The End of Supermans Career!
+88	2	954	placerat, orci lacus vestibulum lorem, sit amet ultricies	$57.70	1932-07-15	10	65	Part I: The Super-Moby Dick of Space!
+95	4	769	non ante bibendum ullamcorper. Duis cursus, diam at pretium aliquet,	$21.18	1936-10-15	7	58	Phoney Business
+96	10	417	Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc	$65.53	2010-06-24	10	41	Go On; Take Two or Three
+98	8	196	purus. Duis elementum, dui quis accumsan convallis,	$32.34	1933-06-10	9	99	Suggestion Box
+99	8	408	venenatis vel, faucibus id, libero.	$34.94	1959-09-29	4	61	Were Sticklers for Stickers
+120	4	51	adipiscing ligula. Aenean gravida nunc sed pede. Cum sociis natoque	$41.49	2013-04-06	1	97	The Perfect Crime
+121	5	332	cursus non, egestas a, dui. Cras	$25.42	2007-05-24	7	83	Let the Galaxy Celebrate!
+125	9	101	Ut semper pretium neque. Morbi quis	$57.26	1977-02-05	6	87	Criminal Genius: Dredd Breaks the Spell
+126	7	994	Nullam velit dui, semper et, lacinia vitae, sodales at, velit.	$27.12	1943-01-04	2	38	Like a Rat Out of Hell!
+131	5	628	diam. Sed diam lorem, auctor quis, tristique	$28.47	1957-02-28	9	58	Sector House Part 8
+139	4	725	molestie in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed	$35.29	2007-07-17	9	67	A Murder of Angels, Part 6
+140	7	378	ultrices posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet	$26.49	2001-08-12	5	60	Wyrd Science
+141	5	349	sagittis felis. Donec tempor, est ac mattis semper, dui lectus rutrum urna, nec luctus felis	$44.77	1959-05-24	5	62	A Murder of Angels, Part 7
+142	2	279	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem	$65.49	1938-08-31	5	98	A Murder of Angels, Part 8
+145	6	513	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit	$5.60	1940-01-20	9	7	A Murder of Angels, Part 9
+166	6	186	bibendum fermentum metus. Aenean sed pede nec ante blandit viverra.	$51.41	1960-12-21	2	44	Gorehead Part Five
+167	2	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10	Act of Grud Part Three
+168	6	383	ut, nulla. Cras eu tellus eu augue porttitor interdum.	$25.01	1980-07-10	3	92	Hunted Part Six
+169	5	348	libero mauris, aliquam eu, accumsan sed,	$25.22	2015-12-19	7	3	Part Seven
+170	5	488	Nullam nisl. Maecenas malesuada fringilla est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed	$99.49	1954-04-06	3	47	The Cube Root of Evil Part 1
+171	10	887	dapibus gravida. Aliquam tincidunt, nunc ac mattis ornare, lectus ante	$86.24	1938-01-13	8	31	Book 10 The Märze Murderer Part 7
+174	9	488	Integer vitae nibh. Donec est mauris, rhoncus id,	$89.97	1965-01-15	5	69	Hunted Part Seven
+175	8	929	eleifend. Cras sed leo. Cras	$69.77	1962-03-13	4	11	The Cube Root of Evil Part 2
+177	7	129	sapien molestie orci tincidunt adipiscing. Mauris molestie pharetra nibh. Aliquam ornare, libero at	$40.86	2013-08-13	5	24	Gorehead Part Seven
+180	7	153	Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$61.28	1983-10-02	7	96	Return of the Revolutionaries
+181	4	447	lorem lorem, luctus ut, pellentesque eget,	$85.19	2008-09-14	4	7	Book 10 The Märze Murderer Part 9
+184	1	545	enim diam vel arcu. Curabitur ut odio vel est tempor	$2.82	1942-10-14	1	82	The Cube Root of Evil Part 3
+189	8	469	a mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$39.94	1943-07-22	10	93	Furies Part Six
+190	9	445	Cras sed leo. Cras vehicula aliquet libero. Integer	$71.56	1959-11-14	1	85	Foul Play Part One
+191	7	855	malesuada augue ut lacus. Nulla tincidunt,	$34.71	1941-06-12	10	19	Border Ops Part One
+192	6	784	dignissim lacus. Aliquam rutrum lorem ac risus. Morbi metus. Vivamus euismod urna. Nullam	$11.94	1949-12-20	2	57	Skeleton Life Part 18
+194	4	528	ut ipsum ac mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris	$54.20	1977-08-08	2	13	Last Breath
+195	7	758	dui quis accumsan convallis, ante lectus	$80.99	1949-01-08	4	53	The Wrap-Up
+196	3	233	molestie orci tincidunt adipiscing. Mauris molestie pharetra	$2.51	1976-09-02	6	87	Furies Part Eight
+197	8	550	enim. Curabitur massa. Vestibulum accumsan neque	$45.08	1961-06-06	4	100	Border Ops Part Two
+199	7	1	eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur	$54.18	1931-04-10	7	64	Ouroboros Part One
+200	2	558	dui augue eu tellus. Phasellus elit	$8.74	1982-02-01	5	6	The Body Politic
+203	1	40	adipiscing elit. Curabitur sed tortor. Integer aliquam adipiscing lacus.	$22.40	1960-07-11	9	49	Signal Six Twenty-Four Part One
+208	6	906	imperdiet ornare. In faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas. Duis	$30.08	1979-03-23	5	79	Foul Play Part Five
+212	2	286	Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis	$71.44	1985-05-22	6	37	Mechastopheles Part One
+213	7	53	urna. Nunc quis arcu vel quam dignissim pharetra.	$41.57	2018-06-09	1	69	Demonslayer!
+214	4	429	sapien. Nunc pulvinar arcu et pede. Nunc sed orci	$48.61	1931-04-19	1	43	Hope For the Future Part 9
+215	8	141	Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices. Vivamus rhoncus. Donec	$16.58	1980-04-06	3	67	Mechastopheles Part Two
+216	8	263	magna. Cras convallis convallis dolor. Quisque tincidunt pede	$84.40	2008-07-04	3	46	Inhuman Natures Part 5
+119	8	560	amet ornare lectus justo eu arcu. Morbi sit amet	$52.05	1946-01-18	3	2	Dredd Dead?
+146	4	41	Sed congue, elit sed consequat auctor, nunc nulla vulputate dui, nec	$6.19	1992-06-26	9	13	A Murder of Angels, Part 10
+147	6	917	risus. Nulla eget metus eu erat semper rutrum. Fusce dolor quam, elementum at,	$32.50	1978-08-27	6	31	The Butcher of Rome!
+149	8	582	semper erat, in consectetuer ipsum nunc id enim. Curabitur massa. Vestibulum accumsan neque et	$3.24	1972-12-08	6	22	Gorehead Part One
+151	4	937	feugiat. Lorem ipsum dolor sit amet,	$30.34	1956-03-10	4	10	Part Three
+153	4	34	egestas ligula. Nullam feugiat placerat velit. Quisque	$82.06	2011-02-14	7	9	Gorehead Part Two
+157	10	250	nascetur ridiculus mus. Aenean eget magna. Suspendisse tristique neque	$99.80	1956-10-28	9	78	Gorehead Part Three
+159	8	550	justo sit amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper.	$72.39	2006-07-10	9	28	Hunted Part Four
+160	4	710	ornare egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor	$43.16	1974-07-04	4	14	Act of Grud Part One
+163	3	70	ipsum nunc id enim. Curabitur	$19.21	1940-12-13	2	71	Didnt Manage to Pick Up the Sold-Out Cursed Earth Uncensored?
+164	6	541	enim. Etiam gravida molestie arcu. Sed eu nibh vulputate mauris sagittis placerat. Cras	$94.44	1931-08-17	5	43	Hunted Part Five
+225	1	46	viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$78.85	1952-03-19	6	48	Echoes Part 3
+226	4	781	vulputate, posuere vulputate, lacus. Cras interdum. Nunc	$42.81	1983-01-23	6	7	Terrorists
+227	4	196	malesuada malesuada. Integer id magna et ipsum cursus	$44.01	1947-02-17	5	28	Engine Summer Part 3
+228	6	567	Proin velit. Sed malesuada augue ut lacus. Nulla	$37.77	1942-11-04	6	57	Echoes Part 4
+230	2	353	Donec luctus aliquet odio. Etiam ligula tortor, dictum eu, placerat eget, venenatis a, magna. Lorem	$2.27	1968-11-22	2	48	Terrorists Part 4
+231	5	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55	Engine Summer Part 4
+234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78	The Shroud Part 1
+240	4	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51	Engine Summer Part 6
+242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49	The Shroud Part 3
+243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28	Terrorists Part 7
+247	9	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17	Book 11 The Thousand Year Stare Part 9
+250	2	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89	Live Evil Part 3
+251	7	432	id, mollis nec, cursus a, enim. Suspendisse aliquet, sem ut cursus luctus,	$67.50	1983-03-10	2	51	Book 11 The Thousand Year Stare Part 11
+253	10	230	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac	$5.24	2008-12-05	7	81	Terrorists Part Eleven
+254	6	321	Quisque ornare tortor at risus.	$55.69	1971-01-11	9	23	Engine Summer Part 11
+258	2	365	consectetuer adipiscing elit. Etiam laoreet, libero	$2.19	1980-02-12	5	74	Engine Summer Part 12
+263	3	672	fermentum vel, mauris. Integer sem elit, pharetra ut, pharetra	$85.61	1989-01-26	3	6	The Salad of Bad Cafe
+265	9	960	vel sapien imperdiet ornare. In faucibus. Morbi vehicula.	$7.93	1943-03-12	5	27	The Son Part One
+267	5	307	Curabitur consequat, lectus sit amet luctus vulputate, nisi sem semper	$74.32	1965-01-01	4	84	Fit For Purpose Part 2
+268	3	93	mauris elit, dictum eu, eleifend nec,	$74.74	1970-05-22	10	30	In the Realm of Pyrrhus Part Two
+269	6	874	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus.	$15.93	1941-08-17	2	72	The Son Part Two
+270	2	486	est mauris, rhoncus id, mollis nec, cursus	$51.06	1944-06-12	10	63	Undertow Part Three
+273	4	623	amet, risus. Donec nibh enim, gravida	$12.84	1958-06-28	1	49	In the Realm of Pyrrhus Part Three
+278	10	85	amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam	$18.54	1985-05-28	5	35	In the Realm of Pyrrhus Part Four
+283	7	786	elementum sem, vitae aliquam eros	$2.42	1943-12-18	1	6	New York State of Mind
+284	6	170	amet risus. Donec egestas. Aliquam nec enim. Nunc ut erat.	$36.76	1966-01-12	3	88	The Devil Dont Care Part Three
+290	2	246	vitae purus gravida sagittis. Duis gravida. Praesent eu nulla	$10.08	1981-07-26	2	53	Undertow Part Seven
+291	3	664	lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis,	$7.51	1982-05-11	3	25	The Son Part Seven
+292	10	523	ipsum sodales purus, in molestie tortor nibh sit amet orci. Ut sagittis lobortis	$28.27	1987-02-21	6	78	The Gangbusters Chapter One: Air Superiority!
+293	6	109	euismod est arcu ac orci. Ut semper	$27.96	2008-02-21	10	79	An Inconvenient Tooth
+295	4	992	pharetra. Nam ac nulla. In tincidunt	$89.51	1967-06-20	7	29	The Son Part Eight
+297	5	876	dictum. Phasellus in felis. Nulla tempor	$94.42	2017-11-22	8	3	The Puppet
+299	5	328	augue ut lacus. Nulla tincidunt, neque vitae semper egestas,	$87.32	2008-04-18	8	47	Dead Signal
+300	6	162	Duis mi enim, condimentum eget, volutpat	$98.56	1975-09-20	4	39	Savage Swamp
+301	4	749	mauris elit, dictum eu, eleifend	$93.82	2006-08-15	3	100	Living Your best Life
+302	10	374	ut mi. Duis risus odio, auctor vitae, aliquet	$88.77	1979-07-28	6	72	All-Ages Takeover Issue!
+309	5	828	posuere cubilia Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam	$71.23	1981-12-26	1	78	The Blood Beast
+311	7	304	augue malesuada malesuada. Integer id	$73.57	1968-01-25	6	44	Computer Love
+312	10	432	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit,	$36.57	1991-11-30	6	86	Underground
+313	5	592	Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$70.59	1954-12-14	9	34	Underground
+314	8	289	imperdiet dictum magna. Ut tincidunt orci quis lectus. Nullam suscipit, est ac facilisis facilisis, magna	$60.35	1978-11-28	9	18	Underground
+315	2	783	Sed neque. Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce	$30.63	1979-01-25	2	64	Underground
+316	10	969	mollis nec, cursus a, enim. Suspendisse aliquet,	$19.29	1966-03-13	3	82	Underground
+317	7	36	vestibulum lorem, sit amet ultricies sem magna nec quam. Curabitur	$70.86	1961-03-20	1	97	The Hand That Feeds
+319	2	726	egestas. Aliquam nec enim. Nunc ut erat. Sed nunc est, mollis non, cursus non, egestas	$92.61	2010-08-08	2	72	Welcome to 30 Days of Night
+321	2	717	semper et, lacinia vitae, sodales at, velit. Pellentesque ultricies dignissim lacus. Aliquam	$52.97	2007-12-26	6	31	From the Browser to the Bookshelf
+221	8	187	eu enim. Etiam imperdiet dictum magna.	$66.80	1989-12-17	2	70	Mechastopheles Part Three
+280	3	106	quis accumsan convallis, ante lectus convallis est, vitae sodales nisi magna sed dui. Fusce	$7.97	2007-04-01	8	73	The Son Part Four
+286	10	385	arcu iaculis enim, sit amet ornare	$73.09	2005-09-13	10	20	Undertow Part Six
+287	1	60	dignissim pharetra. Nam ac nulla.	$28.47	1959-05-31	7	30	The Devil Dont Care Part Four
+288	4	229	et malesuada fames ac turpis	$31.58	1983-09-29	5	16	In the Realm of Pyrrhus Part Six
+326	6	478	justo faucibus lectus, a sollicitudin orci	$51.06	1931-06-24	4	95	Easy Come Easy Go
+327	7	542	sem ut dolor dapibus gravida.	$82.02	1974-03-19	1	64	Chapter One: Honor
+330	8	742	ipsum non arcu. Vivamus sit amet risus. Donec egestas. Aliquam nec	$88.30	1988-09-20	5	19	Collectie
+331	10	524	lorem, vehicula et, rutrum eu, ultrices sit amet, risus. Donec nibh enim, gravida sit	$39.60	1986-03-07	1	96	House of Demons Part 1
+334	3	106	velit. Aliquam nisl. Nulla eu neque pellentesque massa lobortis ultrices.	$85.18	1962-12-20	1	82	So Where Are The Innovations, Anyway?
+337	4	317	eu, odio. Phasellus at augue id ante	$56.46	1994-02-05	3	71	House of Demons, Part Two
+340	6	581	aliquet, sem ut cursus luctus,	$52.47	1952-01-17	4	22	Parte 2. Vuelta al pasado
+341	9	171	at, nisi. Cum sociis natoque penatibus et magnis dis parturient	$76.66	2002-11-11	8	30	400 BC: The Story of the Ten Thousand
+343	4	332	ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam	$59.85	1951-08-24	3	77	Seminole Wars
+347	6	856	Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet	$75.31	1983-09-02	9	14	1995 Standoff at TsPeten
+351	8	857	adipiscing lobortis risus. In mi pede, nonummy ut,	$35.10	1990-10-10	2	31	War on the Coast
+354	2	576	ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;	$95.56	2016-09-10	8	78	1680 Pueblo Revolt
+357	4	700	a, enim. Suspendisse aliquet, sem ut cursus luctus, ipsum leo elementum	$88.44	1980-02-20	1	37	Desmantelado
+358	5	196	sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$20.67	2012-09-27	9	37	Solveig Muren Sanden 1918-2013
+359	2	491	erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt pede ac urna.	$39.79	1940-10-18	6	89	Solveig Muren Sanden 1918-2013
+361	3	662	consequat auctor, nunc nulla vulputate	$48.28	1933-02-01	7	83	Dinner with the Assassin
+362	8	549	Nam ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris	$13.11	1949-11-09	3	66	Seven Funerals
+363	8	443	egestas ligula. Nullam feugiat placerat velit. Quisque varius. Nam porttitor scelerisque	$29.75	1965-02-15	10	40	Interview with Dave Stewart
+364	7	919	mi eleifend egestas. Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a	$45.73	1940-02-28	9	80	The Long Road Home
+365	5	193	tortor. Integer aliquam adipiscing lacus. Ut nec urna et arcu imperdiet	$11.99	1986-11-30	2	71	Recap
+366	1	124	dis parturient montes, nascetur ridiculus	$90.22	2012-08-22	7	70	5: Dragonfire
+368	2	20	Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing. Mauris	$19.13	1945-06-19	9	17	Previously:
+369	8	707	Integer id magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim tempor arcu.	$78.40	1963-07-14	7	25	The Blood That Runs
+370	7	273	luctus vulputate, nisi sem semper erat, in consectetuer ipsum nunc id enim. Curabitur	$38.99	1952-09-19	5	8	Previously:
+373	3	628	Sed eget lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum	$62.18	2016-02-24	7	41	The Old Man of Metropolis!
+374	5	481	aliquam, enim nec tempus scelerisque, lorem	$4.36	1966-12-18	5	21	The Revenge of Luthor!
+375	7	925	sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed	$50.47	1958-11-22	3	6	The E-L-A-S-T-I-C Lad
+376	2	389	Proin mi. Aliquam gravida mauris ut mi. Duis risus odio, auctor vitae, aliquet nec,	$81.60	2008-04-26	6	71	The War Between Superman and Jimmy Olsen!
+378	6	286	porttitor tellus non magna. Nam	$31.05	1952-08-14	9	79	The Story of Supermans Life!
+322	8	765	tellus eu augue porttitor interdum. Sed auctor odio a purus. Duis elementum, dui quis	$94.37	1992-06-16	10	2	The Doctor Is In
+323	7	801	Nunc ac sem ut dolor	$30.81	1930-05-10	2	5	Niles and Sienkiewicz Plan a Trip to Barrow
+339	9	844	egestas. Duis ac arcu. Nunc mauris. Morbi non sapien molestie	$37.60	1947-10-11	6	70	House of Demons Part Three
+348	3	803	vulputate, lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$11.30	1962-06-04	6	75	The Oka Crisis
+349	10	847	non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum	$4.23	1988-06-29	3	28	Wounded Knee 73
+350	2	745	nisl arcu iaculis enim, sit amet ornare lectus justo eu arcu. Morbi sit amet massa.	$98.45	1997-03-24	5	34	No Justice on Stolen Land
+379	8	766	Phasellus ornare. Fusce mollis. Duis sit	$12.19	1932-05-23	9	69	The Origin of Flashs Masked Identity!
+380	6	113	augue ac ipsum. Phasellus vitae mauris sit amet lorem semper auctor. Mauris vel turpis. Aliquam	$63.02	2000-06-12	2	47	The Man from Robins Past
+381	9	344	scelerisque scelerisque dui. Suspendisse ac metus vitae velit egestas lacinia. Sed	$30.54	2000-05-25	10	91	Birth of the Atom!
+382	7	405	metus. Aenean sed pede nec ante blandit viverra.	$21.22	1952-01-10	8	98	The Impossible Mission!
+387	4	359	elit. Aliquam auctor, velit eget laoreet posuere, enim nisl elementum	$48.17	2009-11-01	9	57	The Terrible Trio!
+389	7	354	mauris elit, dictum eu, eleifend nec, malesuada ut, sem. Nulla	$96.58	1943-08-11	10	34	Jimmy the Genie!
+390	5	988	Pellentesque tincidunt tempus risus. Donec egestas.	$92.30	1958-12-14	2	80	Mrs. Superman
+391	4	337	dictum. Proin eget odio. Aliquam	$99.20	1942-05-07	10	36	The Day When Superman Proposed!
+392	6	684	dignissim tempor arcu. Vestibulum ut	$38.70	1985-04-14	9	51	Branie!
+393	8	38	mus. Proin vel arcu eu odio tristique pharetra. Quisque ac libero	$24.89	1967-09-20	8	54	The Carrier Pigeon
+394	5	681	ac mattis velit justo nec ante. Maecenas mi felis, adipiscing fringilla,	$42.39	1949-08-18	1	92	"H" Stands for Heroin
+397	4	204	tellus non magna. Nam ligula elit, pretium et, rutrum	$3.38	1983-03-04	4	36	Under the Peace Arch
+398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51	Treasure
+399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9	Clear Skies
+400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43	Indomitable Human Spirit
 \.
 
 
