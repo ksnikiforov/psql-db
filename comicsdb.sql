@@ -414,13 +414,36 @@ ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
 --
 
 CREATE TABLE public.log (
+    id integer NOT NULL,
     "time" timestamp without time zone NOT NULL,
-    description text,
-    purchase_id integer
+    description text NOT NULL,
+    purchase_id integer NOT NULL
 );
 
 
 ALTER TABLE public.log OWNER TO kirill;
+
+--
+-- Name: log_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
+--
+
+CREATE SEQUENCE public.log_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.log_id_seq OWNER TO kirill;
+
+--
+-- Name: log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
+--
+
+ALTER SEQUENCE public.log_id_seq OWNED BY public.log.id;
+
 
 --
 -- Name: publishers; Type: TABLE; Schema: public; Owner: kirill
@@ -620,6 +643,13 @@ ALTER TABLE ONLY public.employee ALTER COLUMN emp_id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
+
+
+--
+-- Name: log id; Type: DEFAULT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.log ALTER COLUMN id SET DEFAULT nextval('public.log_id_seq'::regclass);
 
 
 --
@@ -3084,18 +3114,18 @@ COPY public.images (id, comic_id, img_path, img_name) FROM stdin;
 -- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
-COPY public.log ("time", description, purchase_id) FROM stdin;
-2020-06-11 02:15:22.693783	paid	8
-2020-06-11 02:22:49.195683	delivered	8
-2020-06-11 02:26:51.334096	paid	8
-2020-06-11 18:07:05.770688	paid	9
-2020-06-11 20:25:19.165693	delivered	9
-2020-06-11 20:27:56.967153	canceled	9
-2020-06-11 20:28:22.853643	paid	10
-2020-06-11 20:33:22.729143	canceled	10
-2020-06-11 20:36:28.272907	paid	11
-2020-06-11 20:41:43.592272	canceled	11
-2020-06-11 20:43:12.20637	delivered	11
+COPY public.log (id, "time", description, purchase_id) FROM stdin;
+1	2020-06-11 02:15:22.693783	paid	8
+2	2020-06-11 02:22:49.195683	delivered	8
+3	2020-06-11 02:26:51.334096	paid	8
+4	2020-06-11 18:07:05.770688	paid	9
+5	2020-06-11 20:25:19.165693	delivered	9
+6	2020-06-11 20:27:56.967153	canceled	9
+7	2020-06-11 20:28:22.853643	paid	10
+8	2020-06-11 20:33:22.729143	canceled	10
+9	2020-06-11 20:36:28.272907	paid	11
+10	2020-06-11 20:41:43.592272	canceled	11
+11	2020-06-11 20:43:12.20637	delivered	11
 \.
 
 
@@ -3700,6 +3730,13 @@ SELECT pg_catalog.setval('public.images_id_seq', 396, true);
 
 
 --
+-- Name: log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
+--
+
+SELECT pg_catalog.setval('public.log_id_seq', 11, true);
+
+
+--
 -- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
@@ -3788,7 +3825,7 @@ ALTER TABLE ONLY public.images
 --
 
 ALTER TABLE ONLY public.log
-    ADD CONSTRAINT log_pkey PRIMARY KEY ("time");
+    ADD CONSTRAINT log_pkey PRIMARY KEY (id);
 
 
 --
@@ -3813,6 +3850,14 @@ ALTER TABLE ONLY public.purchase
 
 ALTER TABLE ONLY public.purchased_book
     ADD CONSTRAINT purchased_book_pkey PRIMARY KEY (book_id, purchase_id);
+
+
+--
+-- Name: reviews reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_pkey PRIMARY KEY (review_id);
 
 
 --
@@ -3845,10 +3890,24 @@ CREATE INDEX fki_comic ON public.author_book USING btree (comic_id);
 
 
 --
+-- Name: fki_comic_id; Type: INDEX; Schema: public; Owner: kirill
+--
+
+CREATE INDEX fki_comic_id ON public.reviews USING btree (comic_id);
+
+
+--
 -- Name: fki_customer; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_customer ON public.purchase USING btree (customer_id);
+
+
+--
+-- Name: fki_customer_id; Type: INDEX; Schema: public; Owner: kirill
+--
+
+CREATE INDEX fki_customer_id ON public.reviews USING btree (customer_id);
 
 
 --
@@ -3870,6 +3929,13 @@ CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 --
 
 CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchase_id);
+
+
+--
+-- Name: fki_purchase_id; Type: INDEX; Schema: public; Owner: kirill
+--
+
+CREATE INDEX fki_purchase_id ON public.log USING btree (purchase_id);
 
 
 --
@@ -3935,6 +4001,14 @@ ALTER TABLE ONLY public.author_book
 
 
 --
+-- Name: reviews comics; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT comics FOREIGN KEY (comic_id) REFERENCES public.comic_book(comic_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
 -- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
@@ -3948,6 +4022,14 @@ ALTER TABLE ONLY public.reviews
 
 ALTER TABLE ONLY public.purchase
     ADD CONSTRAINT customer FOREIGN KEY (customer_id) REFERENCES public.customers(customer_id) ON UPDATE CASCADE NOT VALID;
+
+
+--
+-- Name: reviews customers; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT customers FOREIGN KEY (customer_id) REFERENCES public.customers(customer_id) ON UPDATE CASCADE NOT VALID;
 
 
 --
@@ -3980,6 +4062,14 @@ ALTER TABLE ONLY public.images
 
 ALTER TABLE ONLY public.comic_book
     ADD CONSTRAINT publishers FOREIGN KEY (publisher_id) REFERENCES public.publishers(publisher_id) ON UPDATE CASCADE NOT VALID;
+
+
+--
+-- Name: log purchase; Type: FK CONSTRAINT; Schema: public; Owner: kirill
+--
+
+ALTER TABLE ONLY public.log
+    ADD CONSTRAINT purchase FOREIGN KEY (purchase_id) REFERENCES public.purchase(purchase_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
