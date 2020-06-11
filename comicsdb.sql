@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.7 (Raspbian 11.7-0+deb10u1)
--- Dumped by pg_dump version 11.7 (Raspbian 11.7-0+deb10u1)
+-- Dumped from database version 12.3
+-- Dumped by pg_dump version 12.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,34 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: check_purchase(); Type: FUNCTION; Schema: public; Owner: livbig
+-- Name: change_stock(); Type: FUNCTION; Schema: public; Owner: kirill
+--
+
+CREATE FUNCTION public.change_stock() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+		st integer;
+BEGIN
+    SELECT stock from comic_book where NEW.book_id=comic_id
+    INTO st;
+
+		IF st <= 0 THEN
+    		RAISE EXCEPTION 'Item selected is not available';
+    ELSIF st < NEW.quanity THEN
+    		RAISE EXCEPTION 'Selected quanity is more than available';
+    ELSE
+    		UPDATE comic_book SET stock = stock-st WHERE comic_id=NEW.book_id;
+        RETURN NEW;
+    END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.change_stock() OWNER TO kirill;
+
+--
+-- Name: check_purchase(); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
 CREATE FUNCTION public.check_purchase() RETURNS trigger
@@ -34,7 +61,7 @@ BEGIN
     INTO cond;
     
 		IF NOT cond THEN
-    		RETURN NULL;
+    		RAISE EXCEPTION 'Users can not leave reviews without confirmed purchase';
     ELSE
     		RETURN NEW;
     END IF;
@@ -42,10 +69,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.check_purchase() OWNER TO livbig;
+ALTER FUNCTION public.check_purchase() OWNER TO kirill;
 
 --
--- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: livbig
+-- Name: rating_recalculation(); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
 CREATE FUNCTION public.rating_recalculation() RETURNS void
@@ -63,10 +90,10 @@ end;
 $$;
 
 
-ALTER FUNCTION public.rating_recalculation() OWNER TO livbig;
+ALTER FUNCTION public.rating_recalculation() OWNER TO kirill;
 
 --
--- Name: status_update(); Type: FUNCTION; Schema: public; Owner: livbig
+-- Name: status_update(); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
 CREATE FUNCTION public.status_update() RETURNS trigger
@@ -81,10 +108,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.status_update() OWNER TO livbig;
+ALTER FUNCTION public.status_update() OWNER TO kirill;
 
 --
--- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: livbig
+-- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
 CREATE FUNCTION public.top_authors(book_num integer, lim integer, genre text DEFAULT ''::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
@@ -111,10 +138,10 @@ end;
 $_$;
 
 
-ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO livbig;
+ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO kirill;
 
 --
--- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: livbig
+-- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
 CREATE FUNCTION public.top_by_genre(text) RETURNS TABLE(comic text, stars integer)
@@ -131,14 +158,14 @@ end;
 $_$;
 
 
-ALTER FUNCTION public.top_by_genre(text) OWNER TO livbig;
+ALTER FUNCTION public.top_by_genre(text) OWNER TO kirill;
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
--- Name: author_book; Type: TABLE; Schema: public; Owner: livbig
+-- Name: author_book; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.author_book (
@@ -147,10 +174,10 @@ CREATE TABLE public.author_book (
 );
 
 
-ALTER TABLE public.author_book OWNER TO livbig;
+ALTER TABLE public.author_book OWNER TO kirill;
 
 --
--- Name: authors; Type: TABLE; Schema: public; Owner: livbig
+-- Name: authors; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.authors (
@@ -160,10 +187,10 @@ CREATE TABLE public.authors (
 );
 
 
-ALTER TABLE public.authors OWNER TO livbig;
+ALTER TABLE public.authors OWNER TO kirill;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.authors_id_seq
@@ -175,17 +202,17 @@ CREATE SEQUENCE public.authors_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authors_id_seq OWNER TO livbig;
+ALTER TABLE public.authors_id_seq OWNER TO kirill;
 
 --
--- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.author_id;
 
 
 --
--- Name: comic_book; Type: TABLE; Schema: public; Owner: livbig
+-- Name: comic_book; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.comic_book (
@@ -203,10 +230,10 @@ CREATE TABLE public.comic_book (
 );
 
 
-ALTER TABLE public.comic_book OWNER TO livbig;
+ALTER TABLE public.comic_book OWNER TO kirill;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: comic_book_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.comic_book_id_seq
@@ -218,17 +245,17 @@ CREATE SEQUENCE public.comic_book_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.comic_book_id_seq OWNER TO livbig;
+ALTER TABLE public.comic_book_id_seq OWNER TO kirill;
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: comic_book_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.comic_book_id_seq OWNED BY public.comic_book.comic_id;
 
 
 --
--- Name: customers; Type: TABLE; Schema: public; Owner: livbig
+-- Name: customers; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.customers (
@@ -239,10 +266,10 @@ CREATE TABLE public.customers (
 );
 
 
-ALTER TABLE public.customers OWNER TO livbig;
+ALTER TABLE public.customers OWNER TO kirill;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.customer_id_seq
@@ -254,17 +281,17 @@ CREATE SEQUENCE public.customer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.customer_id_seq OWNER TO livbig;
+ALTER TABLE public.customer_id_seq OWNER TO kirill;
 
 --
--- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.customer_id_seq OWNED BY public.customers.customer_id;
 
 
 --
--- Name: employee; Type: TABLE; Schema: public; Owner: livbig
+-- Name: employee; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.employee (
@@ -275,10 +302,10 @@ CREATE TABLE public.employee (
 );
 
 
-ALTER TABLE public.employee OWNER TO livbig;
+ALTER TABLE public.employee OWNER TO kirill;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: employee_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.employee_id_seq
@@ -290,17 +317,17 @@ CREATE SEQUENCE public.employee_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.employee_id_seq OWNER TO livbig;
+ALTER TABLE public.employee_id_seq OWNER TO kirill;
 
 --
--- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: employee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.employee_id_seq OWNED BY public.employee.emp_id;
 
 
 --
--- Name: genre; Type: TABLE; Schema: public; Owner: livbig
+-- Name: genre; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.genre (
@@ -309,10 +336,10 @@ CREATE TABLE public.genre (
 );
 
 
-ALTER TABLE public.genre OWNER TO livbig;
+ALTER TABLE public.genre OWNER TO kirill;
 
 --
--- Name: log; Type: TABLE; Schema: public; Owner: livbig
+-- Name: log; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.log (
@@ -322,10 +349,10 @@ CREATE TABLE public.log (
 );
 
 
-ALTER TABLE public.log OWNER TO livbig;
+ALTER TABLE public.log OWNER TO kirill;
 
 --
--- Name: publishers; Type: TABLE; Schema: public; Owner: livbig
+-- Name: publishers; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.publishers (
@@ -334,10 +361,10 @@ CREATE TABLE public.publishers (
 );
 
 
-ALTER TABLE public.publishers OWNER TO livbig;
+ALTER TABLE public.publishers OWNER TO kirill;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: publishers_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.publishers_id_seq
@@ -349,17 +376,17 @@ CREATE SEQUENCE public.publishers_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.publishers_id_seq OWNER TO livbig;
+ALTER TABLE public.publishers_id_seq OWNER TO kirill;
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: publishers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.publishers_id_seq OWNED BY public.publishers.publisher_id;
 
 
 --
--- Name: purchase; Type: TABLE; Schema: public; Owner: livbig
+-- Name: purchase; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.purchase (
@@ -374,10 +401,10 @@ CREATE TABLE public.purchase (
 );
 
 
-ALTER TABLE public.purchase OWNER TO livbig;
+ALTER TABLE public.purchase OWNER TO kirill;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: purchase_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.purchase_id_seq
@@ -389,17 +416,17 @@ CREATE SEQUENCE public.purchase_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.purchase_id_seq OWNER TO livbig;
+ALTER TABLE public.purchase_id_seq OWNER TO kirill;
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: purchase_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.purchase_id_seq OWNED BY public.purchase.purchase_id;
 
 
 --
--- Name: purchased_book; Type: TABLE; Schema: public; Owner: livbig
+-- Name: purchased_book; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.purchased_book (
@@ -409,10 +436,10 @@ CREATE TABLE public.purchased_book (
 );
 
 
-ALTER TABLE public.purchased_book OWNER TO livbig;
+ALTER TABLE public.purchased_book OWNER TO kirill;
 
 --
--- Name: reviews; Type: TABLE; Schema: public; Owner: livbig
+-- Name: reviews; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.reviews (
@@ -429,10 +456,10 @@ CREATE TABLE public.reviews (
 );
 
 
-ALTER TABLE public.reviews OWNER TO livbig;
+ALTER TABLE public.reviews OWNER TO kirill;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.reviews_id_seq
@@ -444,17 +471,17 @@ CREATE SEQUENCE public.reviews_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.reviews_id_seq OWNER TO livbig;
+ALTER TABLE public.reviews_id_seq OWNER TO kirill;
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.review_id;
 
 
 --
--- Name: series; Type: TABLE; Schema: public; Owner: livbig
+-- Name: series; Type: TABLE; Schema: public; Owner: kirill
 --
 
 CREATE TABLE public.series (
@@ -465,10 +492,10 @@ CREATE TABLE public.series (
 );
 
 
-ALTER TABLE public.series OWNER TO livbig;
+ALTER TABLE public.series OWNER TO kirill;
 
 --
--- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: livbig
+-- Name: series_id_seq; Type: SEQUENCE; Schema: public; Owner: kirill
 --
 
 CREATE SEQUENCE public.series_id_seq
@@ -480,73 +507,73 @@ CREATE SEQUENCE public.series_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.series_id_seq OWNER TO livbig;
+ALTER TABLE public.series_id_seq OWNER TO kirill;
 
 --
--- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: livbig
+-- Name: series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kirill
 --
 
 ALTER SEQUENCE public.series_id_seq OWNED BY public.series.series_id;
 
 
 --
--- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: authors author_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.authors ALTER COLUMN author_id SET DEFAULT nextval('public.authors_id_seq'::regclass);
 
 
 --
--- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: comic_book comic_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.comic_book ALTER COLUMN comic_id SET DEFAULT nextval('public.comic_book_id_seq'::regclass);
 
 
 --
--- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: customers customer_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.customers ALTER COLUMN customer_id SET DEFAULT nextval('public.customer_id_seq'::regclass);
 
 
 --
--- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: employee emp_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.employee ALTER COLUMN emp_id SET DEFAULT nextval('public.employee_id_seq'::regclass);
 
 
 --
--- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: publishers publisher_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.publishers ALTER COLUMN publisher_id SET DEFAULT nextval('public.publishers_id_seq'::regclass);
 
 
 --
--- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: purchase purchase_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchase ALTER COLUMN purchase_id SET DEFAULT nextval('public.purchase_id_seq'::regclass);
 
 
 --
--- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: reviews review_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.reviews ALTER COLUMN review_id SET DEFAULT nextval('public.reviews_id_seq'::regclass);
 
 
 --
--- Name: series series_id; Type: DEFAULT; Schema: public; Owner: livbig
+-- Name: series series_id; Type: DEFAULT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.series ALTER COLUMN series_id SET DEFAULT nextval('public.series_id_seq'::regclass);
 
 
 --
--- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: author_book; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.author_book (author_id, comic_id) FROM stdin;
@@ -1094,7 +1121,7 @@ COPY public.author_book (author_id, comic_id) FROM stdin;
 
 
 --
--- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.authors (author_id, name, surname) FROM stdin;
@@ -1202,7 +1229,7 @@ COPY public.authors (author_id, name, surname) FROM stdin;
 
 
 --
--- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: comic_book; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id, title) FROM stdin;
@@ -1357,6 +1384,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 304	5	563	est, mollis non, cursus non, egestas a,	$14.29	2013-02-02	1	75	Everest [Part 2]
 305	1	272	id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt	$51.48	2010-10-19	9	24	Everest [Part 1]
 306	5	98	nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas	$20.43	1959-06-04	7	4	Fodder
+242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49	The Shroud Part 3
 308	6	761	vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$84.51	1997-12-29	8	62	Juicemobiles
 310	3	653	Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue	$8.54	1980-08-08	7	12	Samenwerking op Links
 318	8	58	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae	$22.73	2014-03-22	3	17	The Book Club
@@ -1379,7 +1407,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59	Dismantled
 360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46	Son of Heaven, Son of Hell
 395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41	The Shower
-1	6	843	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
 2	4	410	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18	State-Legislature
 3	5	515	mauris a nunc. In at	$10.52	1938-11-14	2	65	Gov. Carey
 4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86	Jimmy Carter & Friends
@@ -1513,7 +1540,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 231	5	412	Sed malesuada augue ut lacus. Nulla tincidunt, neque vitae semper egestas, urna	$85.53	1931-07-21	4	55	Engine Summer Part 4
 234	6	459	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam	$21.88	1974-02-13	3	78	The Shroud Part 1
 240	4	160	nonummy ultricies ornare, elit elit fermentum	$81.18	2012-07-12	9	51	Engine Summer Part 6
-242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49	The Shroud Part 3
 243	4	380	lorem lorem, luctus ut, pellentesque	$68.85	1980-05-04	4	28	Terrorists Part 7
 247	9	15	Mauris molestie pharetra nibh. Aliquam ornare, libero	$15.13	1967-10-20	7	17	Book 11 The Thousand Year Stare Part 9
 250	2	272	urna, nec luctus felis purus ac tellus. Suspendisse sed dolor.	$15.38	1993-03-22	5	89	Live Evil Part 3
@@ -1606,11 +1632,12 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51	Treasure
 399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9	Clear Skies
 400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43	Indomitable Human Spirit
+1	6	0	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
 \.
 
 
 --
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.customers (customer_id, name, email, phone) FROM stdin;
@@ -1709,7 +1736,7 @@ COPY public.customers (customer_id, name, email, phone) FROM stdin;
 
 
 --
--- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: employee; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.employee (emp_id, name, surname, phone) FROM stdin;
@@ -1808,7 +1835,7 @@ COPY public.employee (emp_id, name, surname, phone) FROM stdin;
 
 
 --
--- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: genre; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.genre (genre, comic_id) FROM stdin;
@@ -2572,18 +2599,19 @@ Comedy	400
 
 
 --
--- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.log ("time", description, purchase_id) FROM stdin;
 2020-06-11 02:15:22.693783	paid	8
 2020-06-11 02:22:49.195683	delivered	8
 2020-06-11 02:26:51.334096	paid	8
+2020-06-11 18:07:05.770688	paid	9
 \.
 
 
 --
--- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: publishers; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.publishers (publisher_id, name) FROM stdin;
@@ -2691,23 +2719,25 @@ COPY public.publishers (publisher_id, name) FROM stdin;
 
 
 --
--- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: purchase; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.purchase (purchase_id, date, price, customer_id, employee_id, status) FROM stdin;
+9	2020-06-11 18:07:05.770688	$10.00	1	1	paid
 \.
 
 
 --
--- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: purchased_book; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.purchased_book (book_id, purchaise_id, quanity) FROM stdin;
+1	9	100
 \.
 
 
 --
--- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, cons, date) FROM stdin;
@@ -3118,7 +3148,7 @@ COPY public.reviews (review_id, comic_id, customer_id, rating, overall, pros, co
 
 
 --
--- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: livbig
+-- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: kirill
 --
 
 COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
@@ -3136,63 +3166,63 @@ COPY public.series (series_id, name, release_date, is_finished) FROM stdin;
 
 
 --
--- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.authors_id_seq', 1, false);
 
 
 --
--- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: comic_book_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.comic_book_id_seq', 2, true);
 
 
 --
--- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.customer_id_seq', 1, false);
 
 
 --
--- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: employee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.employee_id_seq', 1, false);
 
 
 --
--- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: publishers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.publishers_id_seq', 1, false);
 
 
 --
--- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: purchase_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
-SELECT pg_catalog.setval('public.purchase_id_seq', 8, true);
+SELECT pg_catalog.setval('public.purchase_id_seq', 9, true);
 
 
 --
--- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.reviews_id_seq', 427, true);
 
 
 --
--- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: livbig
+-- Name: series_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kirill
 --
 
 SELECT pg_catalog.setval('public.series_id_seq', 1, true);
 
 
 --
--- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: author_book author_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.author_book
@@ -3200,7 +3230,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.authors
@@ -3208,7 +3238,7 @@ ALTER TABLE ONLY public.authors
 
 
 --
--- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: comic_book comic_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -3216,7 +3246,7 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.customers
@@ -3224,7 +3254,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: employee employee_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.employee
@@ -3232,7 +3262,7 @@ ALTER TABLE ONLY public.employee
 
 
 --
--- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: genre genre_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.genre
@@ -3240,7 +3270,7 @@ ALTER TABLE ONLY public.genre
 
 
 --
--- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: log log_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.log
@@ -3248,7 +3278,7 @@ ALTER TABLE ONLY public.log
 
 
 --
--- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.publishers
@@ -3256,7 +3286,7 @@ ALTER TABLE ONLY public.publishers
 
 
 --
--- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchase purchase_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchase
@@ -3264,7 +3294,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchased_book purchased_book_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -3272,7 +3302,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: livbig
+-- Name: series series_pkey; Type: CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.series
@@ -3280,79 +3310,86 @@ ALTER TABLE ONLY public.series
 
 
 --
--- Name: fki_author; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_author; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_author ON public.author_book USING btree (author_id);
 
 
 --
--- Name: fki_book; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_book; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_book ON public.purchased_book USING btree (book_id);
 
 
 --
--- Name: fki_comic; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_comic; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_comic ON public.author_book USING btree (comic_id);
 
 
 --
--- Name: fki_customer; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_customer; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_customer ON public.purchase USING btree (customer_id);
 
 
 --
--- Name: fki_employee; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_employee; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_employee ON public.purchase USING btree (employee_id);
 
 
 --
--- Name: fki_publishers; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_publishers; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_publishers ON public.comic_book USING btree (publisher_id);
 
 
 --
--- Name: fki_purchase; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_purchase; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_purchase ON public.purchased_book USING btree (purchaise_id);
 
 
 --
--- Name: fki_series_id; Type: INDEX; Schema: public; Owner: livbig
+-- Name: fki_series_id; Type: INDEX; Schema: public; Owner: kirill
 --
 
 CREATE INDEX fki_series_id ON public.comic_book USING btree (series_id);
 
 
 --
--- Name: reviews check_purchase; Type: TRIGGER; Schema: public; Owner: livbig
+-- Name: reviews check_purchase; Type: TRIGGER; Schema: public; Owner: kirill
 --
 
-CREATE TRIGGER check_purchase BEFORE INSERT ON public.reviews FOR EACH ROW EXECUTE PROCEDURE public.check_purchase();
+CREATE TRIGGER check_purchase BEFORE INSERT ON public.reviews FOR EACH ROW EXECUTE FUNCTION public.check_purchase();
 
 ALTER TABLE public.reviews DISABLE TRIGGER check_purchase;
 
 
 --
--- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: livbig
+-- Name: purchased_book check_stock; Type: TRIGGER; Schema: public; Owner: kirill
 --
 
-CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE PROCEDURE public.status_update();
+CREATE TRIGGER check_stock BEFORE INSERT ON public.purchased_book FOR EACH ROW EXECUTE FUNCTION public.change_stock();
 
 
 --
--- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchase status_upgrade; Type: TRIGGER; Schema: public; Owner: kirill
+--
+
+CREATE TRIGGER status_upgrade AFTER INSERT OR UPDATE ON public.purchase FOR EACH ROW EXECUTE FUNCTION public.status_update();
+
+
+--
+-- Name: author_book author; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.author_book
@@ -3360,7 +3397,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchased_book book; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -3368,7 +3405,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: reviews comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.reviews
@@ -3376,7 +3413,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: author_book comic; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.author_book
@@ -3384,7 +3421,7 @@ ALTER TABLE ONLY public.author_book
 
 
 --
--- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: reviews customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.reviews
@@ -3392,7 +3429,7 @@ ALTER TABLE ONLY public.reviews
 
 
 --
--- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchase customer; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchase
@@ -3400,7 +3437,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchase employee; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchase
@@ -3408,7 +3445,7 @@ ALTER TABLE ONLY public.purchase
 
 
 --
--- Name: genre genre_comic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: genre genre_comic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.genre
@@ -3416,7 +3453,7 @@ ALTER TABLE ONLY public.genre
 
 
 --
--- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: comic_book publishers; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.comic_book
@@ -3424,7 +3461,7 @@ ALTER TABLE ONLY public.comic_book
 
 
 --
--- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: purchased_book purchase; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.purchased_book
@@ -3432,7 +3469,7 @@ ALTER TABLE ONLY public.purchased_book
 
 
 --
--- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: livbig
+-- Name: comic_book series_id; Type: FK CONSTRAINT; Schema: public; Owner: kirill
 --
 
 ALTER TABLE ONLY public.comic_book
