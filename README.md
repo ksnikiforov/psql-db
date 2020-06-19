@@ -12,7 +12,7 @@ This project is dedicated to database approach towards management of an American
 
 [Video](https://drive.google.com/file/d/1Etp_AA0G7JZAJ9SMi65fY4vTcum7UBBi/view?usp=sharing)
 
-[ER-Diagram](https://drive.google.com/file/d/1S8HSXafU6n3aUGxPB-Urk5W7jWokj1dc/view?usp=sharing)
+[ER-Diagram](https://drive.google.com/file/d/1o8vbBwrlKKsebbL2cIfK_aR1s3gIfpnk/view?usp=sharing)
 
 
 
