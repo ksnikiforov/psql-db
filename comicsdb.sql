@@ -124,34 +124,33 @@ $$;
 ALTER FUNCTION public.status_update() OWNER TO kirill;
 
 --
--- Name: top_authors(integer, integer, text); Type: FUNCTION; Schema: public; Owner: kirill
+-- Name: top_authors(integer, text); Type: FUNCTION; Schema: public; Owner: kirill
 --
 
-CREATE FUNCTION public.top_authors(book_num integer, lim integer, genre text DEFAULT ''::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
+CREATE FUNCTION public.top_authors(book_num integer, genre text DEFAULT ''::text) RETURNS TABLE(author_id integer, author_name text, author_surname text, average_rating numeric)
     LANGUAGE plpgsql
     AS $_$
 BEGIN
     RETURN QUERY
-    select foo.author_id, name, surname, avg_rating from (    
-        select author_book.author_id, ceil(avg(rating)) as avg_rating 
+    select foo.author_id, name, surname, avg_rating from (
+        select author_book.author_id, ceil(avg(rating)) as avg_rating
         from comic_book, author_book
         where comic_book.comic_id=author_book.comic_id
-      	and ($3 = ''
+        and ($2 = ''
         or comic_book.comic_id in (select comic_book.comic_id from comic_book, genre
-                                    where $3=genre.genre
+                                    where $2=genre.genre
                                     and comic_book.comic_id=genre.comic_id))
         group by author_book.author_id
         having count(comic_book.comic_id) >= $1
         order by author_book.author_id asc
     ) as foo, authors
     where foo.author_id = authors.author_id
-    order by avg_rating desc 
-    limit $2;
+    order by avg_rating desc;
 end;
 $_$;
 
 
-ALTER FUNCTION public.top_authors(book_num integer, lim integer, genre text) OWNER TO kirill;
+ALTER FUNCTION public.top_authors(book_num integer, genre text) OWNER TO kirill;
 
 --
 -- Name: top_by_genre(text[]); Type: FUNCTION; Schema: public; Owner: kirill
