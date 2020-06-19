@@ -175,26 +175,6 @@ $_$;
 
 ALTER FUNCTION public.top_by_genre(VARIADIC arr text[]) OWNER TO kirill;
 
---
--- Name: top_by_genre(text); Type: FUNCTION; Schema: public; Owner: kirill
---
-
-CREATE FUNCTION public.top_by_genre(text) RETURNS TABLE(comic text, stars integer)
-    LANGUAGE plpgsql
-    AS $_$
-begin
-    return query
-    select comic_book.title, comic_book.rating
-    from comic_book
-    inner join (select comic_id from genre where genre = $1) as foo
-    on comic_book.comic_id = foo.comic_id
-    order by comic_book.rating desc;
-end;
-$_$;
-
-
-ALTER FUNCTION public.top_by_genre(text) OWNER TO kirill;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -1342,32 +1322,15 @@ COPY public.authors (author_id, name, surname) FROM stdin;
 
 COPY public.comic_book (comic_id, rating, stock, description, price, release_date, series_id, publisher_id, title) FROM stdin;
 55	1	822	amet nulla. Donec non justo. Proin	$54.91	1947-02-24	8	23	100 Bullets #21 cover
-58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44	In Stinked Part Two
-68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75	La Cinta 1 de 2
-78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72	The Menace of Aqualad!
-90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15	Epic Moments In International Relations
-100	4	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60	Go Vest, Young Man
-113	2	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2	Revenge (a.k.a. Four Dark Judges)
-118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63	1981 Is the Year of the Alien!
-124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79	Zombie Beat!
-165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32	Book 10 The Märze Murderer Part 6
-173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44	Part Eight
-285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45	In the Realm of Pyrrhus Part Five
-384	1	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48	The Kryptonite Man!
-396	5	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18	A Tale of Two Brothers
-35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73	Parlez Kung Vous Conclusion
 36	10	904	lacus. Cras interdum. Nunc sollicitudin commodo ipsum. Suspendisse non leo.	$79.03	1955-12-22	5	80	Hang Up on the Hang Low Part One
 39	6	631	Integer sem elit, pharetra ut, pharetra sed, hendrerit a,	$82.51	1978-07-15	3	13	Hang Up on the Hang Low, Conclusion
 40	1	73	dolor. Fusce feugiat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam auctor, velit	$46.09	1972-12-12	1	69	The Mimic
 41	5	114	erat neque non quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames	$25.70	1981-06-12	6	57	Loser
 45	6	600	Etiam laoreet, libero et tristique pellentesque, tellus sem mollis dui, in sodales	$44.28	1943-06-21	3	40	In Stinked Part One
-46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98	In Stinked Part Two
 49	10	262	Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus	$15.86	1943-06-06	10	80	Punch Line Part Two
 50	1	221	Fusce aliquet magna a neque. Nullam ut nisi	$87.70	1984-11-27	6	66	Hang Up on the Hang Low Conclusion
 52	2	776	risus varius orci, in consequat enim diam vel arcu. Curabitur ut odio vel est	$90.99	1987-06-13	6	64	Hang Up on the Hang Low Part Two
 54	8	963	iaculis quis, pede. Praesent eu dui. Cum sociis natoque penatibus et magnis dis	$7.31	1976-06-30	1	5	Idol Chatter
-128	6	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27	Account Yorga-Vampire Part 2
-155	9	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34	Hunted Part Three
 8	8	910	consequat, lectus sit amet luctus vulputate, nisi sem semper	$32.26	2003-09-13	5	14	Caricature Sculpture
 10	2	467	euismod et, commodo at, libero.	$3.49	1963-09-04	10	16	International
 11	2	670	fringilla ornare placerat, orci lacus vestibulum lorem, sit amet ultricies sem	$7.80	2016-05-01	10	20	Energy
@@ -1376,33 +1339,18 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 25	3	973	lacus. Mauris non dui nec urna suscipit nonummy. Fusce fermentum fermentum arcu. Vestibulum	$30.79	2004-05-16	5	82	Parlez kung vous [parte 1]
 26	1	749	lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$80.37	1960-02-22	1	21	Parlez kung vous, Conclusion
 27	5	160	a, malesuada id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis	$27.14	2007-09-27	10	32	O ídolo tagarela!
-29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68	Graves
-30	6	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79	Jaula fedida: Parte três
 32	6	204	elit, a feugiat tellus lorem eu metus. In lorem. Donec	$40.10	1971-01-07	10	39	100 Bullets #83
-249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62	Engine Summer Part 9
-262	1	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82	Memories Are Made of This
-274	6	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78	The Son Part Three
-289	7	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10	The Son Part Six
-296	5	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25	The Gangbusters Chapter Two: Death From Above!
 92	7	88	magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$94.88	1993-05-18	3	68	Come On In, the Waters Cold
 94	8	576	leo, in lobortis tellus justo sit amet nulla. Donec	$84.89	1934-03-28	9	2	And Away We Go! Jackie Gleason
 97	4	993	quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem,	$85.84	1963-05-29	5	69	The Morris Theory of Musical Shapes
 101	2	82	erat, in consectetuer ipsum nunc	$94.57	1955-08-20	10	14	Sinbad and the City of the Dead Part Two
 102	5	724	magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus.	$26.77	1957-05-19	5	95	An Exciting War Story
 117	9	676	faucibus. Morbi vehicula. Pellentesque tincidunt tempus risus. Donec egestas.	$62.68	1993-02-19	8	32	Everest [Part 2]
-129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100	Case Eight: Worlds at War
-187	3	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8	Life on Earth
-198	8	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48	Last Breath
-209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36	War Buds Part One
-218	4	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81	War Buds Part Three
-307	7	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33	The Big Empty
-324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39	Beowulf Storms The Gates In October
 63	2	230	Morbi metus. Vivamus euismod urna.	$25.24	1996-08-19	4	70	100 Bullets #27
 65	4	546	sed dolor. Fusce mi lorem, vehicula et, rutrum eu, ultrices sit amet,	$69.17	1964-08-06	6	48	100 Degrees in the Shade Part IV
 69	9	689	velit. Cras lorem lorem, luctus ut,	$17.91	1948-07-18	6	3	Desde el Infierno
 73	1	563	Praesent luctus. Curabitur egestas nunc sed libero. Proin sed turpis nec mauris blandit mattis.	$0.78	1952-04-19	9	94	Summons to Paradise
 74	3	528	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit enim consequat purus.	$7.31	1936-06-27	9	15	Introducing Stretch Skinner
-77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6	Nostradamus Predicts
 81	8	90	In tincidunt congue turpis. In condimentum. Donec at	$41.01	1963-05-07	9	10	The Trial of Superboy
 82	1	951	sed libero. Proin sed turpis nec mauris blandit	$91.56	1957-06-01	2	23	The Boy of the Year Contest
 83	6	905	erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$85.22	1999-05-14	7	63	Battle Doll!
@@ -1411,9 +1359,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 108	1	777	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat	$80.82	1968-03-05	3	46	Resan till månen
 110	10	672	Curae; Phasellus ornare. Fusce mollis. Duis sit amet diam eu dolor egestas rhoncus. Proin nisl	$55.33	1988-11-28	7	91	Code Name: Assassin
 114	2	854	Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.	$82.78	2002-08-03	7	73	The Black Plague! (part 1)
-223	7	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89	Book 11 The Thousand Year Stare Part 3
-224	5	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16	Fallout Part Three
-232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15	Book 11 The Thousand Year Stare Part 5
 137	5	333	amet massa. Quisque porttitor eros nec	$40.51	1961-05-18	5	62	The Last Thing I Do (Part 6)
 138	6	318	ipsum. Suspendisse non leo. Vivamus nibh dolor,	$17.91	1961-02-22	3	32	Fire and Ice
 143	10	815	Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam.	$29.80	1990-07-06	8	65	And the Beast Shall Feast
@@ -1438,7 +1383,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 134	7	625	pede. Suspendisse dui. Fusce diam nunc, ullamcorper eu, euismod ac, fermentum vel, mauris. Integer	$64.53	1952-07-16	7	14	Road House Part two
 135	2	127	arcu. Nunc mauris. Morbi non sapien molestie orci tincidunt adipiscing.	$86.54	2004-05-24	2	67	Vaped! Part two
 136	6	631	mi fringilla mi lacinia mattis. Integer eu lacus. Quisque imperdiet, erat	$46.67	1960-10-11	4	4	What Lies Beneath Part One
-178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44	Hunted Part Eight
 179	3	287	sit amet, consectetuer adipiscing elit. Curabitur sed tortor. Integer	$92.38	1973-01-19	10	13	Part Nine
 182	2	935	libero. Proin sed turpis nec	$58.61	1960-05-07	7	84	Gorehead Part Eight
 183	2	872	adipiscing fringilla, porttitor vulputate, posuere	$90.93	2018-07-20	5	20	Hunted Part Nine
@@ -1492,7 +1436,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 304	5	563	est, mollis non, cursus non, egestas a,	$14.29	2013-02-02	1	75	Everest [Part 2]
 305	1	272	id, erat. Etiam vestibulum massa rutrum magna. Cras convallis convallis dolor. Quisque tincidunt	$51.48	2010-10-19	9	24	Everest [Part 1]
 306	5	98	nisi. Mauris nulla. Integer urna. Vivamus molestie dapibus ligula. Aliquam erat volutpat. Nulla dignissim. Maecenas	$20.43	1959-06-04	7	4	Fodder
-242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49	The Shroud Part 3
 308	6	761	vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$84.51	1997-12-29	8	62	Juicemobiles
 310	3	653	Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue	$8.54	1980-08-08	7	12	Samenwerking op Links
 318	8	58	elementum sem, vitae aliquam eros turpis non enim. Mauris quis turpis vitae	$22.73	2014-03-22	3	17	The Book Club
@@ -1515,6 +1458,53 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 356	6	657	tellus justo sit amet nulla. Donec non justo. Proin	$46.71	2016-12-16	3	59	Dismantled
 360	1	951	nec metus facilisis lorem tristique aliquet. Phasellus fermentum convallis ligula. Donec luctus aliquet	$40.53	1978-05-25	1	46	Son of Heaven, Son of Hell
 395	7	189	natoque penatibus et magnis dis	$1.40	2004-12-30	1	41	The Shower
+367	4	966	id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis quis,	$76.41	2019-05-27	7	28	The Blood That Runs
+371	1	296	dictum placerat, augue. Sed molestie. Sed id risus quis	$30.10	1995-01-12	7	78	The Blood That Runs
+372	1	141	vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat.	$50.97	1993-04-11	7	56	Donald na Matemagicalândia
+377	7	309	amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas	$93.49	1987-10-19	4	39	The Origin of the Justice League!
+383	2	66	est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue ut lacus. Nulla	$20.12	1974-03-08	1	72	The Curse of Lena Thorul!
+385	4	158	magna. Sed eu eros. Nam consequat dolor	$17.28	1985-06-27	4	25	The Army of Living Kryptonite Men!
+386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45	The Conquest of Superman!
+388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5	Superman in Superman Land
+43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71	Graves
+58	3	280	et, commodo at, libero. Morbi accumsan laoreet ipsum. Curabitur consequat, lectus sit amet luctus vulputate,	$18.39	1963-11-17	9	44	In Stinked Part Two
+68	2	445	risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque tellus, imperdiet non,	$58.27	1968-08-16	1	75	La Cinta 1 de 2
+78	3	174	in, tempus eu, ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque. Sed eget	$33.80	1995-01-07	4	72	The Menace of Aqualad!
+90	5	163	malesuada fames ac turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio	$69.69	1936-02-25	7	15	Epic Moments In International Relations
+100	4	232	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$95.44	1955-04-01	1	60	Go Vest, Young Man
+113	2	755	Duis risus odio, auctor vitae, aliquet nec, imperdiet nec, leo. Morbi neque	$12.46	1948-08-03	9	2	Revenge (a.k.a. Four Dark Judges)
+118	5	876	metus. Aenean sed pede nec ante blandit viverra. Donec	$50.85	2001-05-04	9	63	1981 Is the Year of the Alien!
+124	8	923	imperdiet non, vestibulum nec, euismod in, dolor. Fusce feugiat. Lorem ipsum dolor sit amet,	$98.93	1958-11-09	7	79	Zombie Beat!
+165	10	516	pede blandit congue. In scelerisque scelerisque dui. Suspendisse ac metus vitae	$9.93	1981-05-24	3	32	Book 10 The Märze Murderer Part 6
+173	7	619	mauris sagittis placerat. Cras dictum ultricies ligula. Nullam enim. Sed nulla ante, iaculis	$15.17	1931-10-09	8	44	Part Eight
+285	3	0	vitae aliquam eros turpis non enim. Mauris quis turpis vitae purus gravida sagittis. Duis	$98.47	2010-05-31	10	45	In the Realm of Pyrrhus Part Five
+167	2	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10	Act of Grud Part Three
+384	1	124	magna. Duis dignissim tempor arcu. Vestibulum ut eros non enim commodo hendrerit. Donec porttitor tellus	$79.53	1956-07-26	3	48	The Kryptonite Man!
+396	5	895	risus. Donec nibh enim, gravida sit amet, dapibus id, blandit at,	$98.98	2011-06-05	7	18	A Tale of Two Brothers
+35	8	19	ut odio vel est tempor bibendum. Donec felis orci, adipiscing non, luctus	$21.41	1994-08-03	5	73	Parlez Kung Vous Conclusion
+46	7	973	Nunc mauris sapien, cursus in, hendrerit consectetuer, cursus et, magna. Praesent interdum	$4.17	1956-09-22	7	98	In Stinked Part Two
+128	6	521	egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras	$29.32	1986-01-21	10	27	Account Yorga-Vampire Part 2
+155	9	749	tempus mauris erat eget ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla	$16.72	1954-10-06	1	34	Hunted Part Three
+29	5	144	non, egestas a, dui. Cras pellentesque. Sed dictum.	$24.01	1963-02-25	10	68	Graves
+30	6	292	mattis. Integer eu lacus. Quisque imperdiet, erat	$7.89	2018-03-19	6	79	Jaula fedida: Parte três
+249	6	216	dui. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean eget	$37.15	1990-10-03	5	62	Engine Summer Part 9
+262	1	315	ligula elit, pretium et, rutrum non, hendrerit id, ante. Nunc mauris sapien, cursus	$72.29	1989-07-09	9	82	Memories Are Made of This
+274	6	76	vitae, posuere at, velit. Cras lorem lorem, luctus ut,	$70.48	1936-04-05	5	78	The Son Part Three
+289	7	937	turpis egestas. Fusce aliquet magna a neque. Nullam ut nisi a odio semper cursus.	$43.20	1956-02-12	3	10	The Son Part Six
+296	5	897	vitae odio sagittis semper. Nam tempor diam dictum sapien.	$97.01	2007-03-04	8	25	The Gangbusters Chapter Two: Death From Above!
+129	6	65	Quisque varius. Nam porttitor scelerisque neque. Nullam nisl. Maecenas malesuada fringilla est. Mauris	$92.71	2010-04-19	10	100	Case Eight: Worlds at War
+187	3	225	pharetra. Nam ac nulla. In tincidunt congue turpis. In condimentum. Donec	$58.77	1948-01-21	9	8	Life on Earth
+198	8	292	purus mauris a nunc. In at pede. Cras vulputate velit eu sem. Pellentesque	$88.23	1934-01-29	3	48	Last Breath
+209	6	189	porttitor tellus non magna. Nam ligula elit, pretium et, rutrum non, hendrerit id, ante.	$1.54	1953-01-23	10	36	War Buds Part One
+218	4	968	sed orci lobortis augue scelerisque mollis.	$93.78	1987-03-01	3	81	War Buds Part Three
+307	7	21	Aliquam erat volutpat. Nulla dignissim. Maecenas ornare egestas ligula. Nullam feugiat placerat velit. Quisque	$36.00	1972-08-29	2	33	The Big Empty
+324	1	773	Donec vitae erat vel pede blandit congue. In scelerisque scelerisque dui. Suspendisse	$85.73	1933-02-28	4	39	Beowulf Storms The Gates In October
+77	3	694	ridiculus mus. Proin vel nisl. Quisque fringilla euismod enim. Etiam gravida molestie arcu. Sed eu	$64.49	1977-10-11	10	6	Nostradamus Predicts
+223	7	683	dictum cursus. Nunc mauris elit, dictum eu, eleifend nec, malesuada ut,	$44.49	1967-10-26	2	89	Book 11 The Thousand Year Stare Part 3
+224	5	544	eu, eleifend nec, malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla	$79.97	1976-05-31	6	16	Fallout Part Three
+232	7	995	malesuada vel, convallis in, cursus et, eros. Proin ultrices.	$51.14	2009-11-17	3	15	Book 11 The Thousand Year Stare Part 5
+178	9	503	et nunc. Quisque ornare tortor at	$34.55	1948-02-19	4	44	Hunted Part Eight
+242	10	221	ornare, elit elit fermentum risus,	$23.37	1985-06-23	8	49	The Shroud Part 3
 5	2	294	ligula. Aenean gravida nunc sed pede. Cum sociis natoque penatibus	$81.36	1958-01-01	4	100	Iran -- Shah -- Khomeini -- Hostages
 6	8	330	tristique ac, eleifend vitae, erat. Vivamus nisi. Mauris	$88.67	1985-06-06	1	25	Watergate
 7	6	804	quam quis diam. Pellentesque habitant morbi tristique senectus et netus	$9.82	1967-01-17	7	85	Freedom of the Press
@@ -1530,21 +1520,12 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 14	6	858	magna et ipsum cursus vestibulum. Mauris magna. Duis dignissim	$82.50	1973-05-01	9	70	The Desert Devil
 23	3	263	a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras vehicula	$33.67	1990-02-01	2	40	My German Buddy
 28	8	753	magnis dis parturient montes, nascetur ridiculus mus. Proin vel arcu eu	$64.59	2010-05-08	6	18	Anteriormente em 100 Balas
-367	4	966	id sapien. Cras dolor dolor, tempus non, lacinia at, iaculis quis,	$76.41	2019-05-27	7	28	The Blood That Runs
-371	1	296	dictum placerat, augue. Sed molestie. Sed id risus quis	$30.10	1995-01-12	7	78	The Blood That Runs
-372	1	141	vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat.	$50.97	1993-04-11	7	56	Donald na Matemagicalândia
-377	7	309	amet orci. Ut sagittis lobortis mauris. Suspendisse aliquet molestie tellus. Aenean egestas	$93.49	1987-10-19	4	39	The Origin of the Justice League!
-383	2	66	est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed malesuada augue ut lacus. Nulla	$20.12	1974-03-08	1	72	The Curse of Lena Thorul!
-385	4	158	magna. Sed eu eros. Nam consequat dolor	$17.28	1985-06-27	4	25	The Army of Living Kryptonite Men!
-386	10	409	sagittis. Duis gravida. Praesent eu nulla at sem molestie	$39.79	1966-10-24	10	45	The Conquest of Superman!
-388	4	651	Aliquam vulputate ullamcorper magna. Sed eu eros. Nam consequat dolor vitae dolor.	$50.42	1958-07-04	4	5	Superman in Superman Land
 33	3	583	pellentesque eget, dictum placerat, augue. Sed molestie. Sed id risus quis diam luctus	$96.50	1933-04-07	8	82	Parlez Kung Vous [Part One]
 34	8	843	Pellentesque ultricies dignissim lacus. Aliquam	$1.15	1994-03-13	7	67	Parlez Kung Vous Part Deux
 3	5	15	mauris a nunc. In at	$10.52	1938-11-14	2	65	Gov. Carey
 37	5	140	elementum purus, accumsan interdum libero dui	$80.31	1978-07-30	10	6	Hang Up on the Hang Low, Part Two
 38	1	762	Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus	$60.97	1973-10-28	5	77	Hang Up on the Hang Low, Part Three
 42	6	767	a, aliquet vel, vulputate eu, odio.	$59.32	1976-02-25	2	8	Idol Chatter
-43	6	912	malesuada id, erat. Etiam vestibulum massa	$78.20	2019-08-10	2	71	Graves
 44	6	94	Vivamus nibh dolor, nonummy ac,	$26.92	1936-11-06	7	54	In Stinked Part One
 47	3	647	nulla. Integer vulputate, risus a ultricies adipiscing, enim mi tempor lorem,	$50.36	2001-02-07	1	52	In Stinked Conclusion
 48	1	798	vitae velit egestas lacinia. Sed congue, elit sed consequat auctor, nunc nulla vulputate	$98.98	1958-09-06	10	56	Prey for Reign
@@ -1599,7 +1580,6 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 142	2	279	Sed pharetra, felis eget varius ultrices, mauris ipsum porta elit, a feugiat tellus lorem	$65.49	1938-08-31	5	98	A Murder of Angels, Part 8
 145	6	513	Duis gravida. Praesent eu nulla at sem molestie sodales. Mauris blandit	$5.60	1940-01-20	9	7	A Murder of Angels, Part 9
 166	6	186	bibendum fermentum metus. Aenean sed pede nec ante blandit viverra.	$51.41	1960-12-21	2	44	Gorehead Part Five
-167	2	607	tellus sem mollis dui, in sodales elit	$18.73	1981-09-05	3	10	Act of Grud Part Three
 168	6	383	ut, nulla. Cras eu tellus eu augue porttitor interdum.	$25.01	1980-07-10	3	92	Hunted Part Six
 169	5	348	libero mauris, aliquam eu, accumsan sed,	$25.22	2015-12-19	7	3	Part Seven
 170	5	488	Nullam nisl. Maecenas malesuada fringilla est. Mauris eu turpis. Nulla aliquet. Proin velit. Sed	$99.49	1954-04-06	3	47	The Cube Root of Evil Part 1
@@ -1737,7 +1717,7 @@ COPY public.comic_book (comic_id, rating, stock, description, price, release_dat
 398	10	269	eget magna. Suspendisse tristique neque venenatis lacus. Etiam bibendum fermentum metus. Aenean sed pede nec	$34.73	1960-04-14	6	51	Treasure
 399	5	337	dis parturient montes, nascetur ridiculus mus. Donec dignissim magna	$17.70	1935-06-29	4	9	Clear Skies
 400	8	300	commodo ipsum. Suspendisse non leo. Vivamus nibh dolor, nonummy ac,	$59.62	1934-04-05	6	43	Indomitable Human Spirit
-1	6	100	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
+1	7	100	Nullam ut nisi a odio semper cursus. Integer mollis. Integer tincidunt	$21.69	1954-03-02	8	19	title
 2	4	20	Mauris vel turpis. Aliquam adipiscing lobortis risus. In mi pede, nonummy ut,	$43.80	2018-05-02	10	18	State-Legislature
 9	10	530	justo. Proin non massa non ante bibendum ullamcorper. Duis cursus, diam at pretium	$51.09	1977-11-06	9	88	General
 4	6	756	massa. Suspendisse eleifend. Cras sed leo. Cras vehicula aliquet libero.	$76.48	2012-12-04	7	86	Jimmy Carter & Friends
