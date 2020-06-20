@@ -4,7 +4,7 @@ This project is dedicated to database approach towards management of an American
 
 ## Links
 
-[Check our Wiki!](https://github.com/ksnikiforov/psql-db/wiki)
+[**Check our Wiki!**](https://github.com/ksnikiforov/psql-db/wiki)
 
 [Analysis of subject area](https://docs.google.com/document/d/1PxptiWDNVIaJBFEbmTKDFsYLJF2IDGvx7TVomAm2cgM/edit?usp=sharing)
 
