@@ -2,6 +2,11 @@
 
 This project is dedicated to database approach towards management of an American store of Japanese comics in Palestine. 
 
+Try it online (sslmode=require):
+```
+psql postgres://yiffqttwdnjdhe:94e6625fbd1055e51a101f06a78e772364a3e6413505718323169673a1482cc0@ec2-54-246-90-10.eu-west-1.compute.amazonaws.com:5432/d120aim0686iun
+```
+
 ## Links
 
 [**Check our Wiki!**](https://github.com/ksnikiforov/psql-db/wiki)
