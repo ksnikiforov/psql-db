@@ -1,6 +1,6 @@
 # ComicsDB
 
-This project is dedicated to database approach towards management of an American store of Japanese comics in Palestine. 
+This project is dedicated to database approach towards management of an American comics store. 
 
 Try it online (sslmode=require):
 ```
